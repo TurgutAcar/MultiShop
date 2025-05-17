@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.IdentityDtos.LoginDtos;
 using MultiShop.WebUI.Models;
-using MultiShop.WebUI.Services;
 using MultiShop.WebUI.Services.Interface;
 
 namespace MultiShop.WebUI.Controllers
@@ -32,54 +31,22 @@ namespace MultiShop.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(CreateLoginDto createLoginDto)
         {
-            var client= _httpClientFactory.CreateClient();
-            var jsonValue=Newtonsoft.Json.JsonConvert.SerializeObject(createLoginDto);
-            StringContent content = new StringContent(jsonValue,Encoding.UTF8,"application/json");
-            var response = await client.PostAsync("http://localhost:5001/api/Logins", content);
-            if(response.IsSuccessStatusCode)
-            {
-                var jsonData=await response.Content.ReadAsStringAsync();
-                var tokenModel = JsonSerializer.Deserialize<JwtResponseModel>(jsonData, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy=JsonNamingPolicy.CamelCase
-                });
-                if(tokenModel != null)
-                {
-                    JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-                    var token=handler.ReadJwtToken(tokenModel.Token);
-                    var claims=token.Claims.ToList();
-                    if(tokenModel.Token!=null)
-                    {
-                        claims.Add(new Claim("multishoptoken", tokenModel.Token));
-                        var claimsIdentity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
-                        var authProps = new AuthenticationProperties
-                        {
-                            ExpiresUtc = tokenModel.ExpireDate,
-                            IsPersistent = true,
-                        };
-                        await HttpContext.SignInAsync(JwtBearerDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProps);
-                        foreach (var claim in HttpContext.User.Claims)
-                        {
-                            Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
-                        }
-                        Console.WriteLine($"User Authenticated: {HttpContext.User.Identity.IsAuthenticated}");
-                        var id = _loginService.GetUserId;
-                        return RedirectToAction("Index", "Default");
-                    }
-                }
-            }
+    
             return View();
         }
-        [HttpGet]
-        public IActionResult SignIn()
-        {
-            return View();
-        }
-        [HttpPost]
+      //  [HttpGet]
+       // public IActionResult SignIn()
+      //  {
+      //
+        //    return View();
+      //  }
+      //  [HttpPost]
         public async Task<IActionResult> SignIn(SignInDto signInDto)
         {
+            signInDto.UserName = "turgut";
+            signInDto.Password = "11111aA*";
             await _identityService.SignIn(signInDto);
-            return RedirectToAction("Index", "");
+            return RedirectToAction("Index", "User");
         }
 
     }
