@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.ProductDetailDtos;
+using MultiShop.WebUI.Services.ProductDetailServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,45 +14,38 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     public class ProductDetailController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IProductDetailService _productDetailService;
 
-        public ProductDetailController(IHttpClientFactory httpClientFactory)
+        public ProductDetailController(IHttpClientFactory httpClientFactory, IProductDetailService productDetailService)
         {
             _httpClientFactory = httpClientFactory;
+            _productDetailService = productDetailService;
         }
 
         [HttpGet]
         [Route("UpdateProductDetail/{id}")]
         public async Task<IActionResult> UpdateProductDetail(string id)
         {
-            ViewBag.v0 = "Ürün İşlemleri";
-            ViewBag.v1 = "Ana Sayfa";
-            ViewBag.v2 = "Ürünler";
-            ViewBag.v3 = "Ürün Açıklama ve Bilgi GÜncelleme Sayfası";
-            var client=_httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"https://localhost:7070/api/ProductDetails/GetProductDetailByProductId?id={id}");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<UpdateProductDetailDto>(jsonData);
-                return View(values);
-            }
-            return View();
+            ProductDetailViewbagList();
+            var values=await _productDetailService.GetByProductIdProductDetailAsync(id);
+            return View(values);
+          
         }
 
         [Route("UpdateProductDetail/{id}")]
         [HttpPost]
         public async Task<IActionResult> UpdateProductDetail(UpdateProductDetailDto updateProductDetailDto)
         {
-            var client = _httpClientFactory.CreateClient();
-            var values=JsonConvert.SerializeObject(updateProductDetailDto);
-            StringContent content = new StringContent(values, Encoding.UTF8, "application/json");
+            await _productDetailService.UpdateProductDetailAsync(updateProductDetailDto);
+            return RedirectToAction("ProductListWithCategory", "Product", new { area = "Admin" });
 
-            var responseMessage = await client.PutAsync($"https://localhost:7070/api/ProductDetails",content);
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                return RedirectToAction("ProductListWithCategory", "Product", new { area = "Admin" });
-            }
-            return View();
+        }
+        void ProductDetailViewbagList()
+        {
+            ViewBag.v0 = "Ürün İşlemleri";
+            ViewBag.v1 = "Ana Sayfa";
+            ViewBag.v2 = "Ürünler";
+            ViewBag.v3 = "Ürün Açıklama ve Bilgi GÜncelleme Sayfası";
         }
     }
 }

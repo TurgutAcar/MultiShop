@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.CategoryDtos;
+using MultiShop.WebUI.Services.CatologService.CategoryService;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.ViewComponents.UILayoutViewComponent
 {
     public class _NavbarLayoutComponentPartial: ViewComponent
     {
-        private IHttpClientFactory _httpClientFactory;
+        private ICategoryService _categoryService;
 
-        public _NavbarLayoutComponentPartial(IHttpClientFactory httpClientFactory)
+        public _NavbarLayoutComponentPartial(ICategoryService categoryService)
         {
-            _httpClientFactory = httpClientFactory;
+            _categoryService = categoryService;
         }
 
 
@@ -18,16 +19,9 @@ namespace MultiShop.WebUI.ViewComponents.UILayoutViewComponent
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync("https://localhost:7070/api/Categories");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultCategoryDto>>(jsonData);
-                return View(values);
-            }
-
-            return View();
+            var values=await _categoryService.GetAllCategoryAsync();
+            return View(values);
+          
         }
     }
 }

@@ -7,6 +7,7 @@
             @foreach(var item in Model)
             {
                 <div class="media mb-4">
+
                     <img src="@item.ImageUrl" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
                     <div class="media-body">
                         <h6>@item.NameSurname<small> - <i>@item.CreatedDate.ToShortDateString()</i></small></h6>

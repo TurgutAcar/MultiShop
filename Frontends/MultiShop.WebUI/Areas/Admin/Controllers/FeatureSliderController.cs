@@ -2,47 +2,38 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.FeatureSliderDtos;
+using MultiShop.WebUI.Services.CatologService.FeatureSliderServices;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AllowAnonymous]
     [Route("Admin/FeatureSlider")]
     public class FeatureSliderController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFeatureSliderService _featureSliderService;
 
-        public FeatureSliderController(IHttpClientFactory httpClientFactory)
+        public FeatureSliderController(IHttpClientFactory httpClientFactory, IFeatureSliderService featureSliderService)
         {
             _httpClientFactory = httpClientFactory;
+            _featureSliderService = featureSliderService;
         }
 
         [Route("Index")]
         public async Task<IActionResult> Index()
         {
-            ViewBag.v1 = "Ana Sayfa";
-            ViewBag.v2 = "Öne Çıkan Görseller";
-            ViewBag.v3 = "Slider Öne Çıkan Görsel Listesi";
-            ViewBag.v0 = "Öne Çıkan Slider Görsel İşlemleri";
-            var client = _httpClientFactory.CreateClient();
-            var response =await client.GetAsync("https://localhost:7070/api/FeatureSliders");
-            if (response.IsSuccessStatusCode) 
-            { 
-                   var jsonData=await response.Content.ReadAsStringAsync();
-                   var values = JsonConvert.DeserializeObject<List<ResultFeatureSliderDto>>(jsonData);
-                   return View(values);
-            }
-            return View();
+            FeatureSliderViewbagList();
+            var values=await _featureSliderService.GetAllFeatureSliderAsync();
+            return View(values);
+         
         }
         [HttpGet]
         [Route("CreateFeatureSlider")]
         public IActionResult CreateFeatureSlider()
         {
-            ViewBag.v1 = "Ana Sayfa";
-            ViewBag.v2 = "Öne Çıkan Görseller";
-            ViewBag.v3 = "Slider Öne Çıkan Görsel Listesi";
-            ViewBag.v0 = "Öne Çıkan Slider Görsel İşlemleri";
+            FeatureSliderViewbagList();
+
             return View();
         }
         [HttpPost]
@@ -50,60 +41,41 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateFeatureSlider(CreateFeatureSliderDto createFeatureSliderDto)
         {
             createFeatureSliderDto.Status = false;
-            var jsonData=JsonConvert.SerializeObject(createFeatureSliderDto);
-            StringContent stringContent = new StringContent(jsonData,Encoding.UTF8,"application/json");
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync("https://localhost:7070/api/FeatureSliders",stringContent);
-            if (response.IsSuccessStatusCode) 
-            {
-                return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
-            }
-            return View();
+            await _featureSliderService.CreateFeatureSliderAsync(createFeatureSliderDto);
+            return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
+
         }
         [HttpGet]
         [Route("UpdateFeatureSlider/{id}")]
         public async Task<IActionResult> UpdateFeatureSlider(string id)
         {
-            ViewBag.v1 = "Ana Sayfa";
-            ViewBag.v2 = "Öne Çıkan Görseller";
-            ViewBag.v3 = "Slider Öne Çıkan Görsel Listesi";
-            ViewBag.v0 = "Öne Çıkan Slider Görsel İşlemleri";
-            var client =  _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"https://localhost:7070/api/FeatureSliders/{id}");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<UpdateFeatureSliderDto>(jsonData);
-                return View(values);
-            }
-            return View();
+            FeatureSliderViewbagList();
+            var value=await _featureSliderService.GetByIdFeatureSliderAsync(id);
+            return View(value);
+          
         }
         [HttpPost]
         [Route("UpdateFeatureSlider/{id}")]
         public async Task<IActionResult> UpdateFeatureSlider(UpdateFeatureSliderDto updateFeatureSliderDto)
         {
-            var client = _httpClientFactory.CreateClient();
-            var jsonData=JsonConvert.SerializeObject(updateFeatureSliderDto);
-            StringContent stringContent=new StringContent(jsonData,Encoding.UTF8,"application/json");
-            var response = await client.PutAsync("https://localhost:7070/api/FeatureSliders", stringContent);
+            await _featureSliderService.UpdateFeatureSliderAsync(updateFeatureSliderDto);
+            return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
-            }
-            return View();
+       
         }
         [Route("DeleteFeatureSlider/{id}")]
         public async Task<IActionResult> DeleteFeatureSlider(string id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"https://localhost:7070/api/FeatureSliders?id={id}");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
-            }
-            return View();
+            await _featureSliderService.DeleteFeatureSliderAsync(id);
+            return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
+        
         }
-
+        void FeatureSliderViewbagList()
+        {
+            ViewBag.v1 = "Ana Sayfa";
+            ViewBag.v2 = "Öne Çıkan Görseller";
+            ViewBag.v3 = "Slider Öne Çıkan Görsel Listesi";
+            ViewBag.v0 = "Öne Çıkan Slider Görsel İşlemleri";
+        }
     }
 }

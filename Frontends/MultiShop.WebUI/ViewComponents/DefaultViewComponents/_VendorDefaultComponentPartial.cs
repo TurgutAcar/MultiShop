@@ -1,30 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
+using MultiShop.WebUI.Services.BrandServices;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.ViewComponents.DefaultViewComponents
 {
     public class _VendorDefaultComponentPartial:ViewComponent
     {
-        private IHttpClientFactory _httpClientFactory;
+        private IBrandService _brandService;
 
-        public _VendorDefaultComponentPartial(IHttpClientFactory httpClientFactory)
+        public _VendorDefaultComponentPartial(IBrandService brandService)
         {
-            _httpClientFactory = httpClientFactory;
+            _brandService = brandService;
         }
      
            
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync("https://localhost:7070/api/Brands");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var content = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultBrandDto>>(content);
-                return View(values);
-            }
-            return View();
+            var values = await _brandService.BrandListAsync();
+            return View(values);
         }
     }
 }
