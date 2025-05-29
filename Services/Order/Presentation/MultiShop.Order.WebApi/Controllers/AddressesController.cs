@@ -9,14 +9,14 @@ namespace MultiShop.Order.WebApi.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AddressController : ControllerBase
+    public class AddressesController : ControllerBase
     {
         private readonly GetAddressByIdQueryHandler _getAddressByIdQueryHandler;
         private readonly GetAddressQueryHandler _getAddressQueryHandler;
         private readonly CreateAddressCommandHandler _createAddressCommandHandler;
         private readonly UpdateAddressCommandHandler _updateAddressCommandHandler;
         private readonly RemoveAddressCommandHandler _removeAddressCommandHandler;
-        public AddressController(RemoveAddressCommandHandler removeAddressCommandHandler,UpdateAddressCommandHandler updateAddressCommandHandler,CreateAddressCommandHandler createAddressCommandHandler,GetAddressQueryHandler getAddressQueryHandler, GetAddressByIdQueryHandler getAddressByIdQueryHandler)
+        public AddressesController(RemoveAddressCommandHandler removeAddressCommandHandler,UpdateAddressCommandHandler updateAddressCommandHandler,CreateAddressCommandHandler createAddressCommandHandler,GetAddressQueryHandler getAddressQueryHandler, GetAddressByIdQueryHandler getAddressByIdQueryHandler)
         {
             _getAddressQueryHandler = getAddressQueryHandler;
             _getAddressByIdQueryHandler = getAddressByIdQueryHandler;

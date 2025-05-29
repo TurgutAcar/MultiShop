@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MultiShop.Order.Application.Features.CQRS.Commands.AddressCommands;
 using MultiShop.Order.Application.Features.CQRS.Queries.AddressQueries;
 using MultiShop.Order.Application.Features.CQRS.Results.AddressResults;
 using MultiShop.Order.Application.Interfaces;
@@ -25,9 +26,17 @@ namespace MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers
             {
                 AddressId = values.AddressId,
                 City = values.City,
-                Detail= values.Detail,
+                Detail1= values.Detail1,
                 District = values.District,
                 UserId = values.UserId,
+                Country = values.Country,
+                Description = values.Description,
+                Detail2 = values.Detail2,
+                Email = values.Email,
+                Name = values.Name,
+                Phone = values.Phone,
+                Surname = values.Surname,
+                ZipCode = values.ZipCode,
             };
         }
     }

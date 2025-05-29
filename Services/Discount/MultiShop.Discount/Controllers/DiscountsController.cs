@@ -28,6 +28,12 @@ namespace MultiShop.Discount.Controllers
            var value= await _discountService.GetByIdDiscountCouponAsync(id);
             return Ok(value);
         }
+        [HttpGet("GetCodeDetailByCode")]
+        public async Task<IActionResult> GetCodeDetailByCode(string code)
+        {
+            var value = await _discountService.GetCodeDetailByCodeAsync(code);
+            return Ok(value);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateDiscountCoupon(CreateDiscountCouponDto createCouponDto)
         {
@@ -45,6 +51,12 @@ namespace MultiShop.Discount.Controllers
         {
             await _discountService.DeleteDiscountCouponAsync(couponId);
             return Ok("Kupon başarıyla silindi.");
+        }
+        [HttpGet("GetDiscountCouponCountRate")]
+        public async Task<IActionResult> GetDiscountCouponCountRate(string code)
+        {
+            var value = await _discountService.GetDiscountCouponCountRate(code);
+            return Ok(value);
         }
     }
 }
