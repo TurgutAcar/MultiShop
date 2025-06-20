@@ -81,8 +81,8 @@ namespace MultiShop.WebUI.Services.Concrete
             });
             var passwordTokenRequest = new PasswordTokenRequest
             {
-                ClientId = _clientSettings.MultiShopAdminClient.ClientId,
-                ClientSecret = _clientSettings.MultiShopAdminClient.ClientSecret,
+                ClientId = _clientSettings.MultiShopManagerClient.ClientId,
+                ClientSecret = _clientSettings.MultiShopManagerClient.ClientSecret,
                 UserName = signUpDto.UserName,
                 Password = signUpDto.Password,
                 Address = discoveryEndPoint.TokenEndpoint

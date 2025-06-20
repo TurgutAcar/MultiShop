@@ -1,0 +1,7 @@
+﻿namespace MultiShop.SignalRRealTime.Api.Services.SignalRMessageServices
+{
+    public interface ISignalRMessageService
+    {
+        Task<int> GetTotalMessageCountByReceiverId(string id);
+    }
+}

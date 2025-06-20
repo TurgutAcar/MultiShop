@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Razor;
 using MultiShop.WebUI.Handlers;
 using MultiShop.WebUI.Services.AboutServices;
 using MultiShop.WebUI.Services.BasketService;
 using MultiShop.WebUI.Services.BrandServices;
+using MultiShop.WebUI.Services.CargoServices.CargoCompanyServices;
+using MultiShop.WebUI.Services.CargoServices.CargoCustomerServices;
 using MultiShop.WebUI.Services.CatologService.CategoryService;
 using MultiShop.WebUI.Services.CatologService.FeatureSliderServices;
 using MultiShop.WebUI.Services.CatologService.ProductService;
@@ -13,10 +16,18 @@ using MultiShop.WebUI.Services.Concrete;
 using MultiShop.WebUI.Services.DiscountServices;
 using MultiShop.WebUI.Services.FeatureService;
 using MultiShop.WebUI.Services.Interface;
+using MultiShop.WebUI.Services.MessageService;
 using MultiShop.WebUI.Services.OfferDiscountServices;
 using MultiShop.WebUI.Services.OrderServices.OrderAddressServices;
+using MultiShop.WebUI.Services.OrderServices.OrderOrderingServices;
 using MultiShop.WebUI.Services.ProductDetailServices;
 using MultiShop.WebUI.Services.ProductImageServices;
+using MultiShop.WebUI.Services.StatisticServices.CatalogStatisticServices;
+using MultiShop.WebUI.Services.StatisticServices.CommentStatisticServices;
+using MultiShop.WebUI.Services.StatisticServices.DiscountStatisticServices;
+using MultiShop.WebUI.Services.StatisticServices.MessageStatisticService;
+using MultiShop.WebUI.Services.StatisticServices.UserStatisticServices;
+using MultiShop.WebUI.Services.UserIdentityService;
 using MultiShop.WebUI.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +57,14 @@ builder.Services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTo
 var values = builder.Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>();
 
 builder.Services.AddHttpClient<IUserService, UserService>(opt =>
+{
+    opt.BaseAddress = new Uri(values.IdentityServerUrl);
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<IUserIdentityService, UserIdentityService>(opt =>
+{
+    opt.BaseAddress = new Uri(values.IdentityServerUrl);
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<IUserStatisticService, UserStatisticService>(opt =>
 {
     opt.BaseAddress = new Uri(values.IdentityServerUrl);
 }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
@@ -98,6 +117,10 @@ builder.Services.AddHttpClient<ICommentService,CommentService>(opt =>
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Comment.Path}/");
 }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+builder.Services.AddHttpClient<ICommentStatisticService, CommentStatisticService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Comment.Path}/");
+}).AddHttpMessageHandler<ClientCredentialTokenHandler>();
 builder.Services.AddHttpClient<IBasketService, BasketService>(opt =>
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Basket.Path}/");
@@ -112,7 +135,42 @@ builder.Services.AddHttpClient<IOrderAddressService, OrderAddressService>(opt =>
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Order.Path}/");
 }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<ICatalogStatisticService, CatalogStatisticService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Catalog.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
+builder.Services.AddHttpClient<IOrderOrderingService, OrderOrderingService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Order.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<ICargoComanyService, CargoComanyService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Cargo.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<ICargoCustomerService, CargoCustomerService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Cargo.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+builder.Services.AddHttpClient<IMessageService, MessageService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Message.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<IDiscountStatisticService, DiscountStatisticService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Discount.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddHttpClient<IMessageStatisticService, MessageStatisticService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Message.Path}/");
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+builder.Services.AddLocalization(opt =>
+{
+    opt.ResourcesPath = "Resources";
+});
+builder.Services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -129,7 +187,10 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+var supportedCultures = new[] { "en", "fr", "de", "tr" };
+var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[3])
+    .AddSupportedCultures(supportedCultures).AddSupportedUICultures(supportedCultures);
+app.UseRequestLocalization(localizationOptions);
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

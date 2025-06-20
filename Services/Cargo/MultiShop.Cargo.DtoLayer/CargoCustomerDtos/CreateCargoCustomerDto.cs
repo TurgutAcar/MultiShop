@@ -15,5 +15,9 @@ namespace MultiShop.Cargo.DtoLayer.CargoCustomerDtos
         public string District { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
+        public string Title { get; set; }
+
+        public string? UserCustomerId { get; set; }
+
     }
 }

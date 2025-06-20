@@ -4,11 +4,11 @@
 }
 <!DOCTYPE html>
 <html lang="en">
-
 @await Component.InvokeAsync("_HeadLayoutComponentPartial")
 <body>
-    @await Component.InvokeAsync("_TopbarUILayoutComonentPartial")
-    @await Component.InvokeAsync("_NavbarLayoutComponentPartial")
+    @await Html.PartialAsync("~/Views/UILayout/TopbarPartial.cshtml");
+    @await Html.PartialAsync("~/Views/UILayout/NavbarPartial.cshtml");
+
     @await Component.InvokeAsync("_DirectoryAlertComponentPartial")
     @RenderBody()
   

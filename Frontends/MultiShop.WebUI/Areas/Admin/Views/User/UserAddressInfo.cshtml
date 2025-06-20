@@ -1,0 +1,72 @@
+﻿@model List<ResultCargoCustomerDto>
+@{
+    ViewData["Title"] = "UserAddressInfo";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<section class="content container-fluid">
+
+    <div class="row">
+
+        @foreach (var item in Model)
+
+        {
+
+            <div class="col-md-6">
+
+                <div class="chart-box">
+
+
+                   
+
+
+                            <div class="mail-contnet">
+
+                                <h4>@item.Title <span class="desig">- @item.Name @item.Surname</span></h4>
+
+                                <p class="m-bot-2">@item.Address - @item.City - @item.District</p>
+
+                                <h5>Telefon:@item.Phone </h5>
+
+                                <h5>Email:@item.Email </h5>
+
+                              
+
+                            </div>
+
+
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+</section>
+@* <section class="content container-fluid">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="chart-box">
+                <div class="bs-example" data-example-id="bordered-table">
+                    <h3>Kullanıcı Adres ve İletişim Bilgisi</h3>
+                    <div class="alert alert-info">Kullanıcı Id:@Model.CargoCustomerId</div>
+                    <div class="alert alert-warning">Kullanıcı Adı Soyadı:@Model.Name @Model.Surname</div>
+                    <div class="alert alert-info">Email Adresi:@Model.Email</div>
+                    <div class="alert alert-warning">Telefon:@Model.Name @Model.Phone</div>
+                    <div class="alert alert-info">İlçe-Şehir:@Model.Name @Model.District</div>
+                    <div class="alert alert-warning">Adres:@Model.Name @Model.Address</div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</section>
+ *@

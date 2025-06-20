@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MultiShop.WebUI.Services.CargoServices.CargoCustomerServices;
 using MultiShop.WebUI.Services.Interface;
 
 namespace MultiShop.WebUI.Controllers
@@ -19,5 +20,6 @@ namespace MultiShop.WebUI.Controllers
             var values=await _userService.GetUserInfo();  
             return View(values);
         }
+       
     }
 }

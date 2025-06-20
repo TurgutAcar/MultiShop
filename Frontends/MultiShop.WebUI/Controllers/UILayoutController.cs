@@ -8,5 +8,13 @@ namespace MultiShop.WebUI.Controllers
         {
             return View();
         }
+        public PartialViewResult NavbarPartial()
+        {
+            return PartialView();
+        }
+        public PartialViewResult TopbarPartial()
+        {
+            return PartialView();
+        }
     }
 }

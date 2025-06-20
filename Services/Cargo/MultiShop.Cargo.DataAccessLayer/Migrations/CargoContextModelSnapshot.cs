@@ -75,6 +75,13 @@ namespace MultiShop.Cargo.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("CargoCustomerId");
 
                     b.ToTable("CargoCustomers");
@@ -87,6 +94,9 @@ namespace MultiShop.Cargo.DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CargoDetailId"));
+
+                    b.Property<int>("Barcode")
+                        .HasColumnType("int");
 
                     b.Property<int>("CargoCompanyId")
                         .HasColumnType("int");
