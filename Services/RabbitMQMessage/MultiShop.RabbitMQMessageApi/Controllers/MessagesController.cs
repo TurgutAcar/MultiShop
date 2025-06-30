@@ -42,11 +42,15 @@ namespace MultiShop.RabbitMQMessageApi.Controllers
 
             var channel = await connection.CreateChannelAsync();
             var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += (model, response) =>
+            consumer.ReceivedAsync += async (model, response) =>
             {
                 var byteMessage = response.Body.ToArray();
-                message = Encoding.UTF8.GetString(byteMessage);
+                var message = Encoding.UTF8.GetString(byteMessage);
+
+                // varsa: await iþlem
+                await Task.CompletedTask;
             };
+          
             await channel.BasicConsumeAsync(queue: "Kuyruk1", autoAck: false, consumer: consumer);
             if(string.IsNullOrEmpty(message))
             {

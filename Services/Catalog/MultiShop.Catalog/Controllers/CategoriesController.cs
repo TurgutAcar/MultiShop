@@ -15,18 +15,21 @@ namespace MultiShop.Catalog.Controllers
         {
             _categoryService = categoryService;
         }
+        [Authorize(Policy = "CatalogReadOrFullPermission")]
         [HttpGet]
         public async Task<IActionResult> CategoryList()
         {
             var values = await _categoryService.GetAllCategoryAsync();
             return Ok(values);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(string id)
         {
             var values =await  _categoryService.GetByIdCategoryAsync(id);
             return Ok(values);  
         }
+        [Authorize(Policy = "CatalogFullPermission")]
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategoryDto createCategoryDto)
         {

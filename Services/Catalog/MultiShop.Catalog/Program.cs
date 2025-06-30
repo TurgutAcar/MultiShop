@@ -17,8 +17,25 @@ using MultiShop.Catalog.Services.StatisticService;
 using MultiShop.Catalog.settings;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CatalogReadPermission", policy =>
+    {
+        policy.RequireClaim("scope", "CatalogReadPermission");
+    });
+    options.AddPolicy("CatalogFullPermission", policy =>
+    {
+        policy.RequireClaim("scope", "CatalogFullPermission");
+    });
+    options.AddPolicy("CatalogReadOrFullPermission", policy =>
+            policy.RequireAssertion(context =>
+                context.User.HasClaim("scope", "CatalogReadPermission") ||
+                context.User.HasClaim("scope", "CatalogFullPermission")));
+   
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt=>
 {
+    
     opt.Authority = builder.Configuration["IdentityServerUrl"];
     opt.Audience = "ResourceCatalog";
     opt.RequireHttpsMetadata = false;

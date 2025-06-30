@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
 using MultiShop.WebUI.Handlers;
@@ -29,7 +29,12 @@ using MultiShop.WebUI.Services.StatisticServices.MessageStatisticService;
 using MultiShop.WebUI.Services.StatisticServices.UserStatisticServices;
 using MultiShop.WebUI.Services.UserIdentityService;
 using MultiShop.WebUI.Settings;
-
+using FluentValidation;
+using System;
+using MultiShop.WebUI.Validators;
+using FluentValidation.AspNetCore;
+using MultiShop.DtoLayer.IdentityDtos.RegisterDtos;
+using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
@@ -47,7 +52,7 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 // Add services to the container.
 builder.Services.AddHttpClient();
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
 builder.Services.Configure<ServiceApiSettings>(builder.Configuration.GetSection("ServiceApiSettings"));
 builder.Services.AddScoped<ResourceOwnerPasswordTokenHandler>();
@@ -165,6 +170,32 @@ builder.Services.AddHttpClient<IMessageStatisticService, MessageStatisticService
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Message.Path}/");
 }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddFluentValidationAutoValidation(options =>
+{
+    options.DisableDataAnnotationsValidation = true;
+});
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRegisterValidators>();
+ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("tr");
+
+
+// FluentValidation ekleniyor
+//builder.Services.AddValidatorsFromAssemblyContaining<CreateRegisterValidators>();
+
+
+
+//builder.Services.AddFluentValidationClientsideAdapters(); // İsteğe bağlı
+
+//builder.Services.AddControllersWithViews()
+//.AddFluentValidation(opt =>
+//{
+//   opt.RegisterValidatorsFromAssemblyContaining<CreateRegisterValidators>;
+//  opt.DisableDataAnnotationsValidation = true;
+//   opt.ValidatorOptions.LanguageManager.Culture = new System.Globalization.CultureInfo("tr");
+//});
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRegisterValidators>();
 
 builder.Services.AddLocalization(opt =>
 {

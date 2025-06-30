@@ -7,7 +7,7 @@
             "UpstreamScheme": "http",
             "AuthenticationOptions": {
                 "AuthenticationProviderKey": "OcelotAuthenticationScheme",
-                "AllowedScopes": [ "CatalogFullPermission" ]
+                "AllowedScopes": [ "CatalogFullPermission", "CatalogReadPermission" ]
             },
             "DownstreamPathTemplate": "/api/{everything}",
             "DownstreamScheme": "http",

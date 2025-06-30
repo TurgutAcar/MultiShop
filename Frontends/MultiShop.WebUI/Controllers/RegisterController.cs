@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.IdentityDtos.RegisterDtos;
 using Newtonsoft.Json;
@@ -8,10 +12,13 @@ namespace MultiShop.WebUI.Controllers
     public class RegisterController : Controller
     {
         private IHttpClientFactory _httpClientFactory;
+        private IValidator<CreateRegisterDto> _validator;
 
-        public RegisterController(IHttpClientFactory httpClientFactory)
+
+        public RegisterController(IHttpClientFactory httpClientFactory, IValidator<CreateRegisterDto> validator)
         {
             _httpClientFactory = httpClientFactory;
+            _validator = validator;
         }
 
         public IActionResult Index()
@@ -21,17 +28,36 @@ namespace MultiShop.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(CreateRegisterDto createRegisterDto)
         {
-            if(createRegisterDto.Password==createRegisterDto.ConfirmPassword)
+            ValidationResult result = await _validator.ValidateAsync(createRegisterDto);
+
+            if (!result.IsValid)
             {
-                var client=_httpClientFactory.CreateClient();
-                var jsonData=JsonConvert.SerializeObject(createRegisterDto);
-                StringContent content = new StringContent(jsonData,Encoding.UTF8,"application/json");
-                var responseMessage =await client.PostAsync("http://localhost:5001/api/Registers", content);
-                if(responseMessage.IsSuccessStatusCode)
+                result.AddToModelState(this.ModelState);
+                return View(createRegisterDto);
+
+                // Copy the validation results into ModelState.
+                // ASP.NET uses the ModelState collection to populate 
+                // error messages in the View.
+                // result.AddToModelState(this.ModelState);
+
+                // re-render the view when validation failed.
+            }
+            else
+            {
+                if (createRegisterDto.Password == createRegisterDto.ConfirmPassword)
                 {
-                    return RedirectToAction("Index","Login");
+                    var client = _httpClientFactory.CreateClient();
+                    var jsonData = JsonConvert.SerializeObject(createRegisterDto);
+                    StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                    var responseMessage = await client.PostAsync("http://localhost:5001/api/Registers", content);
+                    if (responseMessage.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index", "Login");
+                    }
                 }
             }
+
+          
             return View();
         }
     }
