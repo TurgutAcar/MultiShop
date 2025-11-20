@@ -20,32 +20,33 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> AboutList()
         {
-            var values = await _aboutService.AboutListAsync();
-            return Ok(values);
+            var response = await _aboutService.AboutListAsync();
+            return StatusCode(response.StatusCode, response);
+
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAboutById(string id)
         {
-            var value=await _aboutService.GetByIdAboutAsync(id);
-            return Ok(value);   
+            var response = await _aboutService.GetByIdAboutAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateAbout(CreateAboutDto createAboutDto)
         {
-            await _aboutService.CreateAboutAsync(createAboutDto);
-            return Ok("About olusturuldu");
+            var response=await _aboutService.CreateAboutAsync(createAboutDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateAbout(UpdateAboutDto updateAboutDto)
         {
-            await _aboutService.UpdateAboutAsync(updateAboutDto);
-            return Ok("About güncellendi");
+            var response=await _aboutService.UpdateAboutAsync(updateAboutDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteAbout(string id)
         {
-            await _aboutService.DeleteAboutAsync(id);
-            return Ok("About silindi");
+            var response=await _aboutService.DeleteAboutAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

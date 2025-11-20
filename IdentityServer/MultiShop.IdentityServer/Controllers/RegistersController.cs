@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.IdentityServer.Dto;
 using MultiShop.IdentityServer.Models;
+using MultiShop.IdentityServer.Services;
 
 namespace MultiShop.IdentityServer.Controllers
 {
@@ -13,30 +15,20 @@ namespace MultiShop.IdentityServer.Controllers
     [ApiController]
     public class RegistersController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
 
-        public RegistersController(UserManager<ApplicationUser> userManager)
+        public RegistersController(IUserService userService)
         {
-            _userManager = userManager;
+            _userService = userService;
         }
+
         [HttpPost]
         public async Task<IActionResult> UserRegister(UserRegisterDto userRegisterDto)
         {
-            var values = new ApplicationUser()
-            {
-                UserName = userRegisterDto.UserName,
-                Email = userRegisterDto.Email,
-                Name = userRegisterDto.Name,
-                Surname = userRegisterDto.Surname,
-            };
-            var result = await _userManager.CreateAsync(values, userRegisterDto.Password);
-            if (result.Succeeded) {
-                return Ok("Kullanıcı başarıyla eklendi");
-            }
-            else
-            {
-                return Ok("Bir hata oluştu tekrar deneyiniz.");
-            }
+            var response=await _userService.RegisterAsync(userRegisterDto);
+            return StatusCode(response.StatusCode, response);
+
+          
         }
     }
 }

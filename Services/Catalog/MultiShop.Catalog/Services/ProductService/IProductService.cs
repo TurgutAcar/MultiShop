@@ -1,15 +1,16 @@
 ﻿using MultiShop.Catalog.Dtos.ProductDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Catalog.Services
 {
     public interface IProductService
     {
-        Task<List<ResultProductDto>> GetAllProductAsync();
-        Task CreateProductAsync(CreateProductDto createProductDto);
-        Task UpdateProductAsync(UpdateProductDto updateProductDto);
-        Task DeleteProductAsync(string id);
-        Task<GetByIdProductDto> GetByIdProductAsync(string id);
-        Task<List<ResultProductsWithCategoryDto>> GetProductsWithCategoryAsync();
-        Task<List<ResultProductsWithCategoryDto>> GetProductsWithCategoryByCategoryIdAsync(string CategoryId);
+        Task<Result<List<ResultProductDto>>> GetAllProductAsync();
+        Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto);
+        Task<Result<string>> UpdateProductAsync(UpdateProductDto updateProductDto);
+        Task<Result<string>> DeleteProductAsync(string id);
+        Task<Result<GetByIdProductDto>> GetByIdProductAsync(string id);
+        Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryAsync();
+        Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryByCategoryIdAsync(string CategoryId);
     }
 }

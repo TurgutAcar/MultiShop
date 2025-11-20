@@ -1,38 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using MultiShop.Order.Application.Features.CQRS.Commands.AddressCommands;
 using MultiShop.Order.Application.Interfaces;
-using MultiShop.Order.Domain;
+using MultiShop.Order.Domain.OrderAggregate;
+using MultiShop.Order.Domain.SeedWork;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers
 {
-    public class CreateAddressCommandHandler
+    public sealed class CreateAddressCommandHandler(
+        IRepository<Address> _repository,
+        IMapper _mapper,
+        IUnitOfWork _unitOfWork
+      )
     {
-        private readonly IRepository<Address> _repository;
-        public CreateAddressCommandHandler(IRepository<Address> repository)
+        public async Task<Result<string>> Handle(CreateAddressCommand createAddressCommand )
         {
-            this._repository = repository;
-        }
-        public async Task Handle(CreateAddressCommand createAddressCommand )
-        {
-            await _repository.CreateAsync(new Address
-            {
-                City = createAddressCommand.City,
-                Detail1= createAddressCommand.Detail1,
-                District = createAddressCommand.District,
-                UserId = createAddressCommand.UserId,
-                Country = createAddressCommand.Country,
-                Description = createAddressCommand.Description,
-                Detail2 = createAddressCommand.Detail2,
-                Email = createAddressCommand.Email,
-                Name = createAddressCommand.Name,
-                Phone=createAddressCommand.Phone,
-                Surname = createAddressCommand.Surname,
-                ZipCode = createAddressCommand.ZipCode,
-            });
+            var mapper = _mapper.Map<Address>(createAddressCommand);
+            await _repository.CreateAsync(mapper);
+            await _unitOfWork.SaveChangesAsync();
+            return "Address oluşturuldu";
         }
     }
 }

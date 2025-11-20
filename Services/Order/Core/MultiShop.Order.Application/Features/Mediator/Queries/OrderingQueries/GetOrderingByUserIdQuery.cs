@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using MultiShop.Order.Application.Features.Mediator.Results.OrderingResults;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Order.Application.Features.Mediator.Queries.OrderingQueries
 {
-    public class GetOrderingByUserIdQuery:IRequest<List<GetOrderingByUserIdQueryResult>>
+    public class GetOrderingByUserIdQuery:IRequest<Result<List<GetOrderingByUserIdQueryResult>>>
     {
         public string Id { get; set; }
         public GetOrderingByUserIdQuery(string id)

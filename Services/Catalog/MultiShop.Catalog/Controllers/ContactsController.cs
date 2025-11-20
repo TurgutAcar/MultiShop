@@ -18,32 +18,32 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> ContactList()
         {
-            var values = await _contactService.GetAllContactAsync();
-            return Ok(values);
+            var response = await _contactService.GetAllContactAsync();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetContactById(string id)
         {
-            var values = await _contactService.GetByIdContactAsync(id);
-            return Ok(values);
+            var response = await _contactService.GetByIdContactAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateContact(CreateContactDto createContactDto)
         {
-            await _contactService.CreateContactAsync(createContactDto);
-            return Ok("Contact başarıyla eklendi.");
+            var response = await _contactService.CreateContactAsync(createContactDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory(string id)
         {
-            await _contactService.DeleteContactAsync(id);
-            return Ok("Contact başarıyla silindi.");
+            var response=await _contactService.DeleteContactAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateCategory(UpdateContactDto updateContactDto)
         {
-            await _contactService.UpdateContactAsync(updateContactDto);
-            return Ok("Contact başarıyla güncellendi.");
+            var response = await _contactService.UpdateContactAsync(updateContactDto);
+            return StatusCode(response.StatusCode, response);
         }
 
     }

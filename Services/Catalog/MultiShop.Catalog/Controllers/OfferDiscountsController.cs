@@ -20,35 +20,35 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> OfferDiscountList()
         {
-            var values=await _offerDiscountService.OfferDiscountListAsync();
-            return Ok(values);
+            var response=await _offerDiscountService.OfferDiscountListAsync();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOfferDiscountById(string id)
         {
-            var value = await _offerDiscountService.GetByIdOfferDiscountAsync(id);
-            return Ok(value);
+            var response = await _offerDiscountService.GetByIdOfferDiscountAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateOfferDiscount(UpdateOfferDiscountDto updateOfferDiscountDto)
         {
-            await _offerDiscountService.UpdateOfferDiscountAsync(updateOfferDiscountDto);
-            return Ok("Offer Discount güncellendi.");
+            var response = await _offerDiscountService.UpdateOfferDiscountAsync(updateOfferDiscountDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateOfferDiscount(CreateOfferDiscountDto createOfferDiscountDto)
         {
-            await _offerDiscountService.CreateOfferDiscountAsync(createOfferDiscountDto);
+            var response = await _offerDiscountService.CreateOfferDiscountAsync(createOfferDiscountDto);
 
-            return Ok("Offer Discount oluşturuldu.");
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteOfferDiscount(string id)
         {
-            await _offerDiscountService.DeleteOfferDiscountAsync(id);
+            var response = await _offerDiscountService.DeleteOfferDiscountAsync(id);
 
-            return Ok("Offer Discount silindi.");
+            return StatusCode(response.StatusCode, response);
 
         }
     }

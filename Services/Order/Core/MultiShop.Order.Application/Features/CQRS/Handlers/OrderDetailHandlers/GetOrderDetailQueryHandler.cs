@@ -3,34 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using MultiShop.Order.Application.Features.CQRS.Results.AddressResults;
 using MultiShop.Order.Application.Features.CQRS.Results.OrderDetailResults;
 using MultiShop.Order.Application.Interfaces;
-using MultiShop.Order.Domain;
+using MultiShop.Order.Domain.OrderAggregate;
+using MultiShop.Order.Domain.SeedWork;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Order.Application.Features.CQRS.Handlers.OrderDetailHandlers
 {
-    public class GetOrderDetailQueryHandler
-    {
-        private readonly IRepository<OrderDetail> _repository;
+    public sealed class GetOrderDetailQueryHandler(
+             IRepository<OrderDetail> _repository,
+             IMapper _mapper
 
-        public GetOrderDetailQueryHandler(IRepository<OrderDetail> repository)
-        {
-            _repository = repository;
-        }
-        public async Task<List<GetOrderDetailQueryResult>> Handle()
+        )
+    {
+    
+        public async Task<Result<List<GetOrderDetailQueryResult>>> Handle()
         {
             var values = await _repository.GetAllAsync();
-           return   values.Select(x => new GetOrderDetailQueryResult
-            {
-                OrderDetailId = x.OrderDetailId,
-                OrderingId = x.OrderingId,
-                ProductAmount = x.ProductAmount,
-                ProductId = x.ProductId,
-                ProductName = x.ProductName,
-                ProductPrice = x.ProductPrice,
-                ProductTotalPrice = x.ProductTotalPrice,
+            var mapList = values.Select(x => _mapper.Map<GetOrderDetailQueryResult>(x)).ToList();
+            return mapList;
+            //return   values.Select(x => new GetOrderDetailQueryResult
+            //{
+            //    OrderDetailId = x.OrderDetailId,
+            //    OrderingId = x.OrderingId,
+            //    ProductAmount = x.ProductAmount,
+            //    ProductId = x.ProductId,
+            //    ProductName = x.ProductName,
+            //    ProductPrice = x.ProductPrice,
+            //    ProductTotalPrice = x.ProductTotalPrice,
                 
-            }).ToList();
+            //}).ToList();
             
         }
     }

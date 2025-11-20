@@ -35,7 +35,7 @@ namespace MultiShop.WebUI.Controllers
             var values = await _userService.GetUserInfo();
             createOrderAddressDto.UserId = values.Id;
             createOrderAddressDto.Description = "aaa";
-            await _orderAddressService.CreateAboutAsync(createOrderAddressDto);
+            await _orderAddressService.CreateOrderAddressesAsync(createOrderAddressDto);
             return RedirectToAction("Index","Payment");
         }
     }

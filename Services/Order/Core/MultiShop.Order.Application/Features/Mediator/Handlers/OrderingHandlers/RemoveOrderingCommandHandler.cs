@@ -3,26 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using MultiShop.Order.Application.Features.Mediator.Commands;
 using MultiShop.Order.Application.Interfaces;
-using MultiShop.Order.Domain;
+using MultiShop.Order.Domain.OrderAggregate;
+using MultiShop.Order.Domain.SeedWork;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Order.Application.Features.Mediator.Handlers.OrderingHandlers
 {
-    public class RemoveOrderingCommandHandler : IRequestHandler<RemoveOrderingCommand>
+    internal sealed class RemoveOrderingCommandHandler(
+            IRepository<Ordering> _repository,
+            IUnitOfWork unitOfWork
+
+        ) : IRequestHandler<RemoveOrderingCommand,Result<string>>
     {
-        private readonly IRepository<Ordering> _repository;
 
-        public RemoveOrderingCommandHandler(IRepository<Ordering> repository)
-        {
-            _repository = repository;
-        }
 
-        public async Task Handle(RemoveOrderingCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(RemoveOrderingCommand request, CancellationToken cancellationToken)
         {
+
             var value =await _repository.GetByIdAsync(request.Id);
+
             await _repository.DeleteAsync(value);
+            await unitOfWork.SaveChangesAsync();
+            return "Ordering silindi";
+
         }
     }
 }

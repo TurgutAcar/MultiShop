@@ -15,10 +15,7 @@ namespace MultiShop.Discount.Context
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("DefaultConnection");
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-ET0PT34\\SQLEXPRESS;Initial Catalog=MultiShopDiscountDb;Integrated Security=True;Encrypt=False;TrustServerCertificate=False;");
-        }
+      
         public DbSet<Coupon> Coupons { get; set; }
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
     }

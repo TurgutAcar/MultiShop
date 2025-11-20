@@ -20,33 +20,33 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> SpecialOfferList()
         {
-            var values = await _specialOfferService.GetAllSpecialOfferAsync();
-            return Ok(values);
+            var response = await _specialOfferService.GetAllSpecialOfferAsync();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSpecialOfferById(string id)
         {
-            var value = await _specialOfferService.GetByIdSpecialOfferAsync(id);
-            return Ok(value);
+            var response = await _specialOfferService.GetByIdSpecialOfferAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSpecialOffer(CreateSpecialOfferDto createSpecialOfferDto)
         {
-            await _specialOfferService.CreateSpecialOfferAsync(createSpecialOfferDto);
-            return Ok("SpecialOffer başarıyla oluşturuldu.");
+            var response = await _specialOfferService.CreateSpecialOfferAsync(createSpecialOfferDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateSpecialOffer(UpdateSpecialOfferDto updateSpecialOfferDto)
         {
-            await _specialOfferService.UpdateSpecialOfferAsync(updateSpecialOfferDto);
-            return Ok("SpecialOffer başarıyla güncellendi.");
+            var response = await _specialOfferService.UpdateSpecialOfferAsync(updateSpecialOfferDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteSpecialOffer(string id)
         {
-            await _specialOfferService.DeleteSpecialOfferAsync(id);
-            return Ok("SpecialOffer başarıyla silindi.");
+            var response = await _specialOfferService.DeleteSpecialOfferAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

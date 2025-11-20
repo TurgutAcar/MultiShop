@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Domain;
+using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Persistence.Context;
 
 namespace MultiShop.Order.Persistence.Repositories
@@ -22,6 +23,11 @@ namespace MultiShop.Order.Persistence.Repositories
         {
             var values=_orderContext.Orderings.Where(x => x.UserId == id).ToList();
             return values;
+        }
+
+        List<Ordering> IOrderingRepository.GetOrderingsByUserId(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

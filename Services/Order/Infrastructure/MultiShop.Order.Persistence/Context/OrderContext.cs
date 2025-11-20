@@ -4,17 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MultiShop.Order.Domain;
+using MultiShop.Order.Domain.OrderAggregate;
+using MultiShop.Order.Domain.SeedWork;
 
 namespace MultiShop.Order.Persistence.Context
 {
-    public class OrderContext:DbContext
+    public class OrderContext:DbContext,IUnitOfWork
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public OrderContext(DbContextOptions<OrderContext> options) :base(options)
         {
 
-            optionsBuilder.UseSqlServer(
-                "Server=localhost,1440;Initial Catalog=MultiShopOrderDb;User=sa;Password=123456aA*;Encrypt=False;TrustServerCertificate=False;");
         }
         public DbSet<Address>  Addresses { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }

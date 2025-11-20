@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.IdentityServer.Dto;
 using MultiShop.IdentityServer.Models;
+using MultiShop.IdentityServer.Services;
 using MultiShop.IdentityServer.Tools;
 
 namespace MultiShop.IdentityServer.Controllers
@@ -14,33 +15,20 @@ namespace MultiShop.IdentityServer.Controllers
     [ApiController]
     public class LoginsController : ControllerBase
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
 
-        public LoginsController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public LoginsController(IUserService userService)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
+            _userService = userService;
         }
+
         [HttpPost]
         public async Task<IActionResult> UserLogin(UserLoginDto userLoginDto)
         {
-            var result = await _signInManager.PasswordSignInAsync(
-                userLoginDto.UserName,userLoginDto.Password,false,false
-                );
-            var user=await _userManager.FindByNameAsync(userLoginDto.UserName);
-            if(result.Succeeded)
-            {
-                GetCheckAppUserViewModel model= new GetCheckAppUserViewModel();
-                model.UserName = userLoginDto.UserName;
-                model.Id = user.Id;
-                var token = JwtTokenGenerator.GenerateToken(model);
-                return Ok(token);
-            }
-            else
-            {
-                return Ok("Kullanıcı adı veya şifre hatalı");
-            }
+            var response = await _userService.LoginAsync(userLoginDto);
+            return StatusCode(response.StatusCode, response);
+
+        
         }
     }
 }

@@ -6,49 +6,53 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MultiShop.Order.Application.Interfaces;
+using MultiShop.Order.Domain.SeedWork;
 using MultiShop.Order.Persistence.Context;
 
 namespace MultiShop.Order.Persistence.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
+      
     {
         private readonly OrderContext _context;
+        private readonly DbSet<T> _dbSet;
         public Repository(OrderContext context)
         {
             _context = context;
+            _dbSet= _context.Set<T>();
         }
 
         public async Task CreateAsync(T entity)
         {
-            _context.Set<T>().Add(entity);
-            await _context.SaveChangesAsync();
+            _dbSet.Add(entity);
+           // await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(T entity)
         {
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            _dbSet.Remove(entity);
+            //await _context.SaveChangesAsync();
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public async Task<T> GetByFilterAsync(Expression<Func<T, bool>> filter)
         {
-            return await _context.Set<T>().SingleOrDefaultAsync(filter);
+            return await _dbSet.SingleOrDefaultAsync(filter);
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public async Task UpdateAsync(T entity)
         {
-            _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+            _dbSet.Update(entity);
+           // await _context.SaveChangesAsync();
         }
     }
 }

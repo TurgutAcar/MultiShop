@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Cargo.BusinessLayer.Abstract;
+using MultiShop.Cargo.DtoLayer.CargoCustomerDtos;
 using MultiShop.Cargo.DtoLayer.CargoDetailDtos;
 using MultiShop.Cargo.EntityLayer.Concrete;
 
@@ -13,59 +15,51 @@ namespace MultiShop.Cargo.WebApi.Controllers
     public class CargoDetailsController : ControllerBase
     {
         private readonly ICargoDetailService _cargoDetailService;
+        private readonly IMapper _mapper;
 
-        public CargoDetailsController(ICargoDetailService cargoDetailService)
+        public CargoDetailsController(ICargoDetailService cargoDetailService, IMapper mapper)
         {
             _cargoDetailService = cargoDetailService;
+            _mapper = mapper;
         }
         [HttpGet]
         public IActionResult CargoDetailList()
         {
-            var values = _cargoDetailService.TGetAll();
-            return Ok(values);
+            var response = _cargoDetailService.TGetAll();
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpGet("{id}")]
         public IActionResult GetCargoDetailById(int id)
         {
-            var value = _cargoDetailService.TGetById(id);
-            return Ok(value);   
+            var response = _cargoDetailService.TGetById(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public IActionResult DeleteCargoDetail(int id)
         {
-            _cargoDetailService.TDelete(id);
-            return Ok("CargoDetail başarıyla silindi.");
+            var response = _cargoDetailService.TDelete(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public IActionResult CreateCargoDetail(CreateCargoDetailDto createCargoDetailDto)
         {
-            CargoDetail cargoDetail = new CargoDetail()
-            {
-                Barcode = createCargoDetailDto.Barcode,
-                CargoDetailId=createCargoDetailDto.CargoCompanyId,
-                ReceiverCustomer=createCargoDetailDto.ReceiverCustomer,
-                SenderCustomer=createCargoDetailDto.SenderCustomer,
-                
-            };
-            _cargoDetailService.TInsert(cargoDetail);
+         
+            var map = _mapper.Map<CargoDetail>(createCargoDetailDto);
 
-            return Ok("CargoDetail başarıyla oluşturuldu.");
+            var response = _cargoDetailService.TInsert(map);
+            return StatusCode(response.StatusCode, response);
+
         }
         [HttpPut]
         public IActionResult UpdateCargoDetail(UpdateCargoDetailDto updateCargoDetailDto)
         {
-            CargoDetail cargoDetail = new CargoDetail()
-            {
-                CargoCompanyId =updateCargoDetailDto.
-                Barcode = updateCargoDetailDto.Barcode,
-                CargoDetailId = updateCargoDetailDto.CargoCompanyId,
-                ReceiverCustomer = updateCargoDetailDto.ReceiverCustomer,
-                SenderCustomer = updateCargoDetailDto.SenderCustomer,
+           
+            var map = _mapper.Map<CargoDetail>(updateCargoDetailDto);
 
-            };
-            _cargoDetailService.TUpdate(cargoDetail);
-            return Ok("CargoDetail başarıyla güncellendi.");
+            var response = _cargoDetailService.TUpdate(map);
+            return StatusCode(response.StatusCode, response);
+
         }
     }
 }

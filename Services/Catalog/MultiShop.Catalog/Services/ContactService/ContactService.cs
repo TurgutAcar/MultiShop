@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MultiShop.Catalog.Dtos.ContactDtos;
 using MultiShop.Catalog.Entities;
 using MultiShop.Catalog.settings;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Catalog.Services.ContactService
 {
@@ -19,34 +20,39 @@ namespace MultiShop.Catalog.Services.ContactService
             this._mapper = _mapper;
         }
 
-        public async Task CreateContactAsync(CreateContactDto createContactDto)
+        public async Task<Result<string>> CreateContactAsync(CreateContactDto createContactDto)
         {
             var value=_mapper.Map<Contact>(createContactDto);
             await _contactCollection.InsertOneAsync(value);
+            return "Contact başarıyla oluşturuldu.";
         }
 
-        public async Task DeleteContactAsync(string id)
+        public async Task<Result<string>> DeleteContactAsync(string id)
         {
             await _contactCollection.DeleteOneAsync(x=>x.ContactId==id);
+            return "Contact başarıyla silindi.";
+
         }
 
-        public async Task<List<ResultContactDto>> GetAllContactAsync()
+        public async Task<Result<List<ResultContactDto>>> GetAllContactAsync()
         {
             var values=await _contactCollection.Find(x => true).ToListAsync();
             return _mapper.Map<List<ResultContactDto>>(values); 
 
         }
 
-        public async Task<GetByIdContactDto> GetByIdContactAsync(string id)
+        public async Task<Result<GetByIdContactDto>> GetByIdContactAsync(string id)
         {
             var values = await _contactCollection.Find(x => x.ContactId==id).FirstOrDefaultAsync();
             return _mapper.Map<GetByIdContactDto>(values);
         }
 
-        public async Task UpdateContactAsync(UpdateContactDto updateContactDto)
+        public async Task<Result<string>> UpdateContactAsync(UpdateContactDto updateContactDto)
         {
             var value = _mapper.Map<Contact>(updateContactDto);
             await _contactCollection.FindOneAndReplaceAsync(x=>x.ContactId==updateContactDto.ContactId,value);
+            return "Contact başarıyla kaydedildi.";
+
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using MultiShop.Order.Domain.SeedWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiShop.Order.Domain
+namespace MultiShop.Order.Domain.OrderAggregate
 {
-    public class Address
+    public class Address:ValueObject
     {
         public int AddressId {  get; set; }
         public string UserId { get; set; }
@@ -23,5 +24,9 @@ namespace MultiShop.Order.Domain
         public string Description { get; set; }
         public string ZipCode { get; set; }
 
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

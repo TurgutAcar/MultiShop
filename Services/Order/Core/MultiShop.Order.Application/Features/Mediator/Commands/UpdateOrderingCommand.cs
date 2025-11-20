@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Order.Application.Features.Mediator.Commands
 {
-    public class UpdateOrderingCommand: IRequest
+    public class UpdateOrderingCommand: IRequest<Result<string>>
     {
         public int OrderingId { get; set; }
         public string UserId { get; set; }

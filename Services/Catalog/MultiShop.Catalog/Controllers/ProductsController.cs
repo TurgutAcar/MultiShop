@@ -19,46 +19,46 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> ProductList()
         { 
-            var values=await _productService.GetAllProductAsync();
-            return Ok(values);
-        
+            var response=await _productService.GetAllProductAsync();
+            return StatusCode(response.StatusCode, response);
+
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByProductId(string id)
         {
-            var values= await _productService.GetByIdProductAsync(id);
-            return Ok(values);
+            var response = await _productService.GetByIdProductAsync(id);
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductDto createProductDto)
         {
-            await _productService.CreateProductAsync(createProductDto);
-            return Ok("Product başarıyla eklendi.");
+            var response = await _productService.CreateProductAsync(createProductDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteProduct(string id)
         {
-            await _productService.DeleteProductAsync(id);
-            return Ok("Product başarıyla silindi.");
+            var response = await _productService.DeleteProductAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateProduct(UpdateProductDto updateProductDto)
         {
-            await _productService.UpdateProductAsync(updateProductDto);
-            return Ok("Product başarıyla güncellendi.");
+            var response = await _productService.UpdateProductAsync(updateProductDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("ProductListWithCategory")]
         public async Task<IActionResult> ProductListWithCategory()
         {
-            var values=await _productService.GetProductsWithCategoryAsync();
-            return Ok(values);
+            var response =await _productService.GetProductsWithCategoryAsync();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("ProductListWithCategoryByCategoryId/{id}")]
         public async Task<IActionResult> ProductListWithCategoryByCategoryId(string id)
         {
-            var values = await _productService.GetProductsWithCategoryByCategoryIdAsync(id);
-            return Ok(values);
+            var response = await _productService.GetProductsWithCategoryByCategoryIdAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

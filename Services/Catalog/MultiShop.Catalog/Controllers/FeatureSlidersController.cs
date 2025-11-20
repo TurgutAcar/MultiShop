@@ -20,32 +20,32 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> FeatureSliderList()
         {
-            var values = await _featureSliderService.GetAllFeatureSliderAsync();
-            return Ok(values);
+            var response = await _featureSliderService.GetAllFeatureSliderAsync();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFeatureSliderById(string id)
         {
-            var value = await _featureSliderService.GetByIdFeatureSliderAsync(id);
-            return Ok(value);
+            var response = await _featureSliderService.GetByIdFeatureSliderAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateFeatureSlider(CreateFeatureSliderDto featureSliderDto)
         {
-            await _featureSliderService.CreateFeatureSliderAsync(featureSliderDto);
-            return Ok("FeatureSlider oluşturuldu");
+            var response = await _featureSliderService.CreateFeatureSliderAsync(featureSliderDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateFeatureSlider(UpdateFeatureSliderDto updateFeatureSliderDto)
         {
-            await _featureSliderService.UpdateFeatureSliderAsync(updateFeatureSliderDto);
-            return Ok("FeatureSlider güncellendi");
+            var response = await _featureSliderService.UpdateFeatureSliderAsync(updateFeatureSliderDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> CreateFeatureSlider(string id)
         {
-            await _featureSliderService.DeleteFeatureSliderAsync(id);
-            return Ok("FeatureSlider silindi");
+            var response = await _featureSliderService.DeleteFeatureSliderAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

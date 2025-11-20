@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MultiShop.Catalog.Dtos.ProductDtos;
 using MultiShop.Catalog.Entities;
 using MultiShop.Catalog.settings;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Catalog.Services.ProductService
 {
@@ -21,30 +22,33 @@ namespace MultiShop.Catalog.Services.ProductService
                _mapper = mapper;
               
         }
-        public async Task CreateProductAsync(CreateProductDto createProductDto)
+        public async Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto)
         {
            var values= _mapper.Map<Product>(createProductDto); 
             await _productCollection.InsertOneAsync(values);
+            return "Product olusturuldu.";
         }
 
-        public async Task DeleteProductAsync(string id)
+        public async Task<Result<string>> DeleteProductAsync(string id)
         {
             await _productCollection.DeleteOneAsync(x=>x.ProductId==id);
+            return "Product silindi.";
+
         }
 
-        public async Task<List<ResultProductDto>> GetAllProductAsync()
+        public async Task<Result<List<ResultProductDto>>> GetAllProductAsync()
         {
              var values= await _productCollection.Find(x=>true).ToListAsync();
              return _mapper.Map<List<ResultProductDto>>(values);
         }
 
-        public async Task<GetByIdProductDto> GetByIdProductAsync(string id)
+        public async Task<Result<GetByIdProductDto>> GetByIdProductAsync(string id)
         {
            var value = await _productCollection.Find<Product>(x=>x.ProductId == id).FirstOrDefaultAsync();
             return _mapper.Map<GetByIdProductDto>(value);
         }
 
-        public async Task<List<ResultProductsWithCategoryDto>> GetProductsWithCategoryAsync()
+        public async Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryAsync()
         {
             var values =await _productCollection.Find(x=>true).ToListAsync();
             foreach (var item in values) 
@@ -55,7 +59,7 @@ namespace MultiShop.Catalog.Services.ProductService
             return _mapper.Map<List<ResultProductsWithCategoryDto>>(values);
         }
 
-        public async Task<List<ResultProductsWithCategoryDto>> GetProductsWithCategoryByCategoryIdAsync(string CategoryId)
+        public async Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryByCategoryIdAsync(string CategoryId)
         {
             var values=await _productCollection.Find(x=>x.CategoryId == CategoryId).ToListAsync();
             foreach (var item in values)
@@ -66,10 +70,12 @@ namespace MultiShop.Catalog.Services.ProductService
             return _mapper.Map<List<ResultProductsWithCategoryDto>>(values);
         }
 
-        public async Task UpdateProductAsync(UpdateProductDto updateProductDto)
+        public async Task<Result<string>> UpdateProductAsync(UpdateProductDto updateProductDto)
         {
            var value = _mapper.Map<Product>(updateProductDto);
             await _productCollection.FindOneAndReplaceAsync(x => x.ProductId == updateProductDto.ProductId, value);
+            return "Product kaydedildi.";
+
         }
     }
 }

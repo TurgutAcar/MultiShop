@@ -17,38 +17,38 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet("GetBrandCount")]
         public async Task<IActionResult> GetBrandCount()
         {
-            var count =await _statisticService.GetBrandCount();
-            return Ok(count);
+            var response =await _statisticService.GetBrandCount();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetProductCount")]
         public async Task<IActionResult> GetProductCount()
         {
-            var count = await _statisticService.GetProductCount();
-            return Ok(count);
+            var response = await _statisticService.GetProductCount();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetCategoryCount")]
         public async Task<IActionResult> GetCategoryCount()
         {
-            var count = await _statisticService.GetCategoryCount();
-            return Ok(count);
+            var response = await _statisticService.GetCategoryCount();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetProductAvgPrice")]
         public async Task<IActionResult> GetProductAvgPrice()
         {
-            var count = await _statisticService.GetProductAvgPrice();
-            return Ok(count);
+            var response = await _statisticService.GetProductAvgPrice();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetMaxPriceProductName")]
         public async Task<IActionResult> GetMaxPriceProductName()
         {
-            var value = await _statisticService.GetMaxPriceProductName();
-            return Ok(value);
+            var response = await _statisticService.GetMaxPriceProductName();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetMinPriceProductName")]
         public async Task<IActionResult> GetMinPriceProductName()
         {
-            var value = await _statisticService.GetMinPriceProductName();
-            return Ok(value);
+            var response = await _statisticService.GetMinPriceProductName();
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

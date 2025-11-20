@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiShop.IdentityServer.Models;
+using MultiShop.IdentityServer.Services;
 using static IdentityServer4.IdentityServerConstants;
 
 namespace MultiShop.IdentityServer.Controllers
@@ -16,31 +17,25 @@ namespace MultiShop.IdentityServer.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService userService;
 
-        public UsersController(UserManager<ApplicationUser> userManager)
+        public UsersController(IUserService userService)
         {
-            _userManager = userManager;
+            this.userService = userService;
         }
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetUser()
         {
             var userClaim = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
-            var user =await _userManager.FindByIdAsync(userClaim.Value);
-            return Ok(new
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Surname = user.Surname,
-                Email = user.Email,
-                Username=user.UserName,
-            });
+            var response = await userService.GetUserAsync(userClaim.Value);
+            return StatusCode(response.StatusCode, response);
+           
         }
         [HttpGet("GetAllUserList")]
         public async Task<IActionResult> GetAllUserList()
         {
-            var users= await _userManager.Users.ToListAsync();
-            return Ok(users);
+            var response = await userService.GetUserListAsync();
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

@@ -20,32 +20,32 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> BrandList()
         {
-            var values=await _brandService.BrandListAsync();
-            return Ok(values);
+            var response=await _brandService.BrandListAsync();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBrandById(string id)
         {
-            var value = await _brandService.GetByIdBrandAsync(id);
-            return Ok(value);
+            var response = await _brandService.GetByIdBrandAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateBrand(CreateBrandDto createBrandDto)
         {
-            await _brandService.CreateBrandAsync(createBrandDto);
-            return Ok("Brand oluşturuldu.");
+           var response= await _brandService.CreateBrandAsync(createBrandDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateBrand(UpdateBrandDto updateBrandDto)
         {
-             await _brandService.UpdateBrandAsync(updateBrandDto);
-            return Ok("Brand güncellendi.");
+             var response=await _brandService.UpdateBrandAsync(updateBrandDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteBrand(string id)
         {
-            await _brandService.DeleteBrandAsync(id);
-            return Ok("Brand silindi.");
+            var response=await _brandService.DeleteBrandAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

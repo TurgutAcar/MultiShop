@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MultiShop.Cargo.BusinessLayer.Abstract;
 using MultiShop.Cargo.DataAccessLayer.Abstract;
 using MultiShop.Cargo.EntityLayer.Concrete;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Cargo.BusinessLayer.Concrete
 {
@@ -18,40 +19,46 @@ namespace MultiShop.Cargo.BusinessLayer.Concrete
             this._cargoCustomerDal = _cargoCustomerDal;
         }
 
-        public void TDelete(int id)
+        public Result<string> TDelete(int id)
         {
             _cargoCustomerDal.Delete(id);
+            return "Kargo müşterisi silindi";
+
         }
 
-        public List<CargoCustomer> TGetAll()
+        public Result<List<CargoCustomer>> TGetAll()
         {
             return _cargoCustomerDal.GetAll();
         }
 
-        public CargoCustomer TGetById(int id)
+        public Result<CargoCustomer> TGetById(int id)
         {
             return _cargoCustomerDal.GetById(id);
         }
 
-        public CargoCustomer TGetCargoCustomerById(string id)
+        public Result<CargoCustomer> TGetCargoCustomerById(string id)
         {
             return _cargoCustomerDal.GetCargoCustomerById(id);
         }
 
-        public List<CargoCustomer> TGetCargoCustomerListById(string id)
+        public Result<List<CargoCustomer>> TGetCargoCustomerListById(string id)
         {
             return _cargoCustomerDal.GetCargoCustomerListById(id);
 
         }
 
-        public void TInsert(CargoCustomer entity)
+        public Result<string> TInsert(CargoCustomer entity)
         {
             _cargoCustomerDal.Insert(entity);
+            return "Kargo müşterisi oluşturuldu";
+
         }
 
-        public void TUpdate(CargoCustomer entity)
+        public Result<string> TUpdate(CargoCustomer entity)
         {
             _cargoCustomerDal.Update(entity);
+            return "Kargo müşterisi kaydedildi";
+
         }
     }
 }

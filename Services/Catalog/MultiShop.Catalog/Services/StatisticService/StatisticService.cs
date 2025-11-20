@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using MultiShop.Catalog.Entities;
 using MultiShop.Catalog.settings;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Catalog.Services.StatisticService
 {
@@ -20,17 +21,17 @@ namespace MultiShop.Catalog.Services.StatisticService
             _brandCollection = database.GetCollection<Brand>(_databaseSettings.BrandCollectionName);
         }
 
-        public async Task<long> GetBrandCount()
+        public async Task<Result<long>> GetBrandCount()
         {
             return await _brandCollection.CountDocumentsAsync(FilterDefinition<Brand>.Empty);
         }
 
-        public async Task<long> GetCategoryCount()
+        public async Task<Result<long>> GetCategoryCount()
         {
             return await _categoryCollection.CountDocumentsAsync(FilterDefinition<Category>.Empty);
         }
 
-        public async Task<string> GetMaxPriceProductName()
+        public async Task<Result<string>> GetMaxPriceProductName()
         {
             var filter = Builders<Product>.Filter.Empty;
             var sort = Builders<Product>.Sort.Descending(x => x.ProductPrice);
@@ -39,7 +40,7 @@ namespace MultiShop.Catalog.Services.StatisticService
             return product.GetValue("ProductName").AsString;
         }
 
-        public async Task<string> GetMinPriceProductName()
+        public async Task<Result<string>> GetMinPriceProductName()
         {
             var filter = Builders<Product>.Filter.Empty;
             var sort = Builders<Product>.Sort.Ascending(x => x.ProductPrice);
@@ -48,7 +49,7 @@ namespace MultiShop.Catalog.Services.StatisticService
             return product.GetValue("ProductName").AsString;
         }
 
-        public async Task<decimal> GetProductAvgPrice()
+        public async Task<Result<decimal>> GetProductAvgPrice()
         {
             var pipeline = new BsonDocument[]
             {
@@ -63,7 +64,7 @@ namespace MultiShop.Catalog.Services.StatisticService
             return price;
         }
 
-        public async Task<long> GetProductCount()
+        public async Task<Result<long>> GetProductCount()
         {
             return await _productCollection.CountDocumentsAsync(FilterDefinition<Product>.Empty);
         }

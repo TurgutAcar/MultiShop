@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MultiShop.Catalog.Dtos.AboutDtos;
 using MultiShop.Catalog.Entities;
 using MultiShop.Catalog.settings;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Catalog.Services.AboutServices
 {
@@ -19,33 +20,38 @@ namespace MultiShop.Catalog.Services.AboutServices
             _aboutCollection=database.GetCollection<About>(databaseSettings.AboutCollectionName);
         }
 
-        public async Task<List<ResultAboutDto>> AboutListAsync()
+        public async Task<Result<List<ResultAboutDto>>> AboutListAsync()
         {
             var values =await _aboutCollection.Find(x => true).ToListAsync();
             return _mapper.Map<List<ResultAboutDto>>(values);
         }
 
-        public async Task CreateAboutAsync(CreateAboutDto createAboutDto)
+        public async Task<Result<string>> CreateAboutAsync(CreateAboutDto createAboutDto)
         {
            var map=_mapper.Map<About>(createAboutDto);
             await _aboutCollection.InsertOneAsync(map);
+            return "About oluşturuldu.";
         }
 
-        public async Task DeleteAboutAsync(string id)
+        public async Task<Result<string>> DeleteAboutAsync(string id)
         {
             await _aboutCollection.DeleteOneAsync(x=>x.AboutId==id);
+            return "About silindi.";
+
         }
 
-        public async Task<GetByIdAboutDto> GetByIdAboutAsync(string id)
+        public async Task<Result<GetByIdAboutDto>> GetByIdAboutAsync(string id)
         {
             var values = await _aboutCollection.Find(x => x.AboutId==id).FirstOrDefaultAsync();
             return _mapper.Map<GetByIdAboutDto>(values);
         }
 
-        public async Task UpdateAboutAsync(UpdateAboutDto updateAboutDto)
+        public async Task<Result<string>> UpdateAboutAsync(UpdateAboutDto updateAboutDto)
         {
             var map = _mapper.Map<About>(updateAboutDto);
             await _aboutCollection.FindOneAndReplaceAsync(x=>x.AboutId==updateAboutDto.AboutId,map);
+            return "About kaydedildi.";
+
         }
     }
 }

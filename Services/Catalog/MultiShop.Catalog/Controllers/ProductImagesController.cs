@@ -19,41 +19,41 @@ namespace MultiShop.Catalog.Controllers
         [HttpGet]
         public async Task<IActionResult> ProductImageList()
         {
-            var values = await _productImageService.GetAllProductImageAsync();
-            return Ok(values);
+            var response = await _productImageService.GetAllProductImageAsync();
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByProductImageId(string id)
         {
-            var values = await _productImageService.GetByIdProductImageAsync(id);
-            return Ok(values);
+            var response = await _productImageService.GetByIdProductImageAsync(id);
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpGet("ProductImagesByProductId/{id}")]
         public async Task<IActionResult> ProductImagesByProductId(string id)
         {
-            var values = await _productImageService.GetByProductIdProductImageAsync(id);
-            return Ok(values);
+            var response = await _productImageService.GetByProductIdProductImageAsync(id);
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpPost]
         public async Task<IActionResult> CreateProductImage(CreateProductImageDto createProductImageDto)
         {
-            await _productImageService.CreateProductImageAsync(createProductImageDto);
-            return Ok("Product Image başarıyla eklendi.");
+            var response = await _productImageService.CreateProductImageAsync(createProductImageDto);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteProductImage(string id)
         {
-            await _productImageService.DeleteProductImageAsync(id);
-            return Ok("Product Image başarıyla silindi.");
+            var response = await _productImageService.DeleteProductImageAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateProductImage(UpdateProductImageDto updateProductImageDto)
         {
-            await _productImageService.UpdateProductImageAsync(updateProductImageDto);
-            return Ok("Product Image başarıyla güncellendi.");
+            var response = await _productImageService.UpdateProductImageAsync(updateProductImageDto);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

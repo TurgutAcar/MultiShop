@@ -1,8 +1,10 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.IdentityServer.Models;
+using MultiShop.IdentityServer.Services;
 
 namespace MultiShop.IdentityServer.Controllers
 {
@@ -10,17 +12,18 @@ namespace MultiShop.IdentityServer.Controllers
     [ApiController]
     public class StatisticsController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private IUserService _userService;
 
-        public StatisticsController(UserManager<ApplicationUser> userManager)
+        public StatisticsController(IUserService userService)
         {
-            _userManager = userManager;
+            _userService = userService;
         }
+
         [HttpGet]
-        public IActionResult GetUserCount()
+        public async Task<IActionResult> GetUserCount()
         {
-            int usercount = _userManager.Users.Count();
-            return Ok(usercount);
+            var response=await _userService.GetUserCountAsync();
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

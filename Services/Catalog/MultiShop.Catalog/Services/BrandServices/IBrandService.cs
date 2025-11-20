@@ -1,14 +1,15 @@
 ﻿using MultiShop.Catalog.Dtos.BrandDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Catalog.Services.BrandServices
 {
     public interface IBrandService
     {
-        public Task<List<ResultBrandDto>> BrandListAsync();
-        public Task CreateBrandAsync(CreateBrandDto createBrandDto);
-        public Task UpdateBrandAsync(UpdateBrandDto updateBrandDto);
-        public Task DeleteBrandAsync(string id);    
-        public Task<GetByIdBrandDto> GetByIdBrandAsync(string id);
+        public Task<Result<List<ResultBrandDto>>> BrandListAsync();
+        public Task<Result<string>> CreateBrandAsync(CreateBrandDto createBrandDto);
+        public Task<Result<string>> UpdateBrandAsync(UpdateBrandDto updateBrandDto);
+        public Task<Result<string>> DeleteBrandAsync(string id);    
+        public Task<Result<GetByIdBrandDto>> GetByIdBrandAsync(string id);
        
 
 

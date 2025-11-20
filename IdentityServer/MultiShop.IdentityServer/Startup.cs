@@ -12,6 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MultiShop.IdentityServer.Middlewares;
+using MultiShop.IdentityServer.Services;
+using MultiShop.IdentityServer.Services.Concrete;
+using MultiShop.IdentityServer.Services.Validator;
 
 namespace MultiShop.IdentityServer
 {
@@ -30,6 +34,7 @@ namespace MultiShop.IdentityServer
         {
             services.AddLocalApiAuthentication();
             services.AddControllersWithViews();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -53,9 +58,12 @@ namespace MultiShop.IdentityServer
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>();
+            builder.Services.AddExceptionHandler<ExceptionHandler>();
+            builder.Services.AddProblemDetails();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
+            builder.AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>();
 
             services.AddAuthentication()
                 .AddGoogle(options =>
@@ -84,6 +92,8 @@ namespace MultiShop.IdentityServer
             app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseExceptionHandler();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();

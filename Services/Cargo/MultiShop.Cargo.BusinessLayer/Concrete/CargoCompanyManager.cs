@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MultiShop.Cargo.BusinessLayer.Abstract;
 using MultiShop.Cargo.DataAccessLayer.Abstract;
 using MultiShop.Cargo.EntityLayer.Concrete;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Cargo.BusinessLayer.Concrete
 {
@@ -18,29 +19,34 @@ namespace MultiShop.Cargo.BusinessLayer.Concrete
             _cargoCompanyDal = cargoCompanyDal;
         }
 
-        public void TDelete(int id)
+        public Result<string> TDelete(int id)
         {
             _cargoCompanyDal.Delete(id);
+            return "Kargo şirketi silindi";
         }
 
-        public List<CargoCompany> TGetAll()
+        public Result<List<CargoCompany>> TGetAll()
         {
            return _cargoCompanyDal.GetAll();
         }
 
-        public CargoCompany TGetById(int id)
+        public Result<CargoCompany> TGetById(int id)
         {
             return _cargoCompanyDal.GetById(id);    
         }
 
-        public void TInsert(CargoCompany entity)
+        public Result<string> TInsert(CargoCompany entity)
         {
             _cargoCompanyDal.Insert(entity);
+            return "Kargo şirketi oluşturuldu";
+
         }
 
-        public void TUpdate(CargoCompany entity)
+        public Result<string> TUpdate(CargoCompany entity)
         {
             _cargoCompanyDal.Update(entity);
+            return "Kargo şirketi kaydedildi";
+
         }
     }
 }
