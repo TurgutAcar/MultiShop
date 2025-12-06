@@ -45,7 +45,10 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
          
         }
-        [Route("DeleteComment/{id}")]
+       // [Route("DeleteComment/{id}")]
+        [HttpPost] // 👈 Method POST olmalı
+        [ValidateAntiForgeryToken] // 👈 CSRF KORUMASI eklendi
+        [Route("DeleteComment")] // Route'u düzeltin, ID'yi query'den alın
         public async Task<IActionResult> DeleteComment(string id)
         {
             await _commentService.DeleteCommentAsync(id);

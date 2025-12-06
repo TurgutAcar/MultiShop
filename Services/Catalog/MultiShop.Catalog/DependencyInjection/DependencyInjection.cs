@@ -24,7 +24,12 @@ namespace MultiShop.Catalog.DependencyInjection
             {
                 action
                 .FromAssemblies(Assembly.GetExecutingAssembly())
-                .AddClasses(publicOnly: false)
+
+                .AddClasses(classes =>
+                {
+                    classes.Where(type => type != typeof(MultiShop.Catalog.Middlewares.ExceptionHandler));
+                })
+
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsMatchingInterface()
                 .AsImplementedInterfaces()

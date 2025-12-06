@@ -22,7 +22,7 @@ namespace MultiShop.Order.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MultiShop.Order.Domain.Address", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Address", b =>
                 {
                     b.Property<int>("AddressId")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.OrderDetail", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.OrderDetail", b =>
                 {
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd()
@@ -118,7 +118,7 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.ToTable("OrderDetails");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.Ordering", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Ordering", b =>
                 {
                     b.Property<int>("OrderingId")
                         .ValueGeneratedOnAdd()
@@ -141,9 +141,9 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.ToTable("Orderings");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.OrderDetail", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.OrderDetail", b =>
                 {
-                    b.HasOne("MultiShop.Order.Domain.Ordering", "Ordering")
+                    b.HasOne("MultiShop.Order.Domain.OrderAggregate.Ordering", "Ordering")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -152,7 +152,7 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.Navigation("Ordering");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.Ordering", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Ordering", b =>
                 {
                     b.Navigation("OrderDetails");
                 });

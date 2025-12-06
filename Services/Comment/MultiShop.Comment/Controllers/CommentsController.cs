@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MultiShop.Comment.Context;
+using MultiShop.Comment.BusinessLayer.Abstract;
 using MultiShop.Comment.Entities;
 
 namespace MultiShop.Comment.Controllers
@@ -12,75 +10,76 @@ namespace MultiShop.Comment.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly CommentContext _commentContext;
+        private readonly ICommentService _commentService;
 
-        public CommentsController(CommentContext commentContext)
+        public CommentsController(ICommentService commentService)
         {
-            _commentContext = commentContext;
+            _commentService = commentService;
         }
+
         [HttpGet]
         public  IActionResult GetCommentList()
         {
-            var values =  _commentContext.UserComments.ToList();
-            return Ok(values);
+            var response = _commentService.TGetAll();
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpGet("{id}")]
         public IActionResult GetComment(int id)
         {
-            var value = _commentContext.UserComments.Find(id);
-            return Ok(value);
+            var response = _commentService.TGetById(id);
+            return StatusCode(response.StatusCode, response);
+          
 
         }
         [HttpPost]
+        
         public IActionResult CreateComment(UserComment userComment)
         {
-           _commentContext.UserComments.Add(userComment); 
-            _commentContext.SaveChanges();
-            return Ok("Comment olusturuldu");
+            var response = _commentService.TInsert(userComment);
+            return StatusCode(response.StatusCode, response);
+           
 
         }
         [HttpPut]
         public IActionResult UpdateComment(UserComment userComment)
         {
-            _commentContext.UserComments.Update(userComment);
-            _commentContext.SaveChanges();
-            return Ok("Comment Güncellendi");
+            var response = _commentService.TUpdate(userComment);
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpDelete]
         public IActionResult DeleteComment(int id)
         {
-            var comment=_commentContext.UserComments.Find(id);
-            _commentContext.UserComments.Remove(comment);   
-            _commentContext.SaveChanges();
-            return Ok("Comment silindi");
-
+            var response = _commentService.TDelete(id);
+            return StatusCode(response.StatusCode, response);
+        
         }
         [HttpGet("CommentListByProductId/{id}")]
         public IActionResult CommentListByProductId(string id)
         {
-            var value = _commentContext.UserComments.Where(x=>x.ProductId==id).ToList();
-            return Ok(value);
+
+            var response = _commentService.CommentListByProductId(id);
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpGet("GetActiveCommentCount")]
         public IActionResult GetActiveCommentCount()
         {
-            int value = _commentContext.UserComments.Where(x=>x.Status==true).Count();
-            return Ok(value);
+            var response = _commentService.GetActiveCommentCount();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetPassiveCommentCount")]
         public IActionResult GetPassiveCommentCount()
         {
-            int value = _commentContext.UserComments.Where(x => x.Status == false).Count();
-            return Ok(value);
+            var response = _commentService.GetPassiveCommentCount();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("GetTotalCommentCount")]
         public IActionResult GetTotalCommentCount()
         {
-            int value = _commentContext.UserComments.Count();
-            return Ok(value);
+            var response = _commentService.GetTotalCommentCount();
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

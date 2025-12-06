@@ -16,6 +16,10 @@ using MultiShop.IdentityServer.Middlewares;
 using MultiShop.IdentityServer.Services;
 using MultiShop.IdentityServer.Services.Concrete;
 using MultiShop.IdentityServer.Services.Validator;
+using MultiShop.IdentityServer.Extensions;
+using Microsoft.AspNetCore.RateLimiting;
+using System;
+using System.Threading.RateLimiting;
 
 namespace MultiShop.IdentityServer
 {
@@ -35,6 +39,11 @@ namespace MultiShop.IdentityServer
             services.AddLocalApiAuthentication();
             services.AddControllersWithViews();
             services.AddScoped<IUserService, UserService>();
+            services.AddDefaultCors(Environment);
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -42,7 +51,17 @@ namespace MultiShop.IdentityServer
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
+            services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("fixed", options =>
+                {
+                    options.QueueLimit = 100;
+                    options.PermitLimit = 100;
+                    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    options.Window = TimeSpan.FromSeconds(1);
+                });
+            });
+            
             var builder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
@@ -85,7 +104,10 @@ namespace MultiShop.IdentityServer
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
+            app.UseHttpsRedirection();
+            app.UseResponseCompression();
 
+            app.UseCors();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -96,7 +118,13 @@ namespace MultiShop.IdentityServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+               // endpoints.MapDefaultControllerRoute();
+                // Tüm controller endpoint’lerine rate limiting ve authorization uygula
+                endpoints.MapControllers()
+                         .RequireRateLimiting("fixed")
+                         .RequireAuthorization();
+
+
             });
         }
     }

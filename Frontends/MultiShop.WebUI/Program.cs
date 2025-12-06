@@ -36,6 +36,17 @@ using FluentValidation.AspNetCore;
 using MultiShop.DtoLayer.IdentityDtos.RegisterDtos;
 using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAntiforgery(options =>
+{
+    // Bu isimler, MVC'nin formda ve cookie'de kullanacağı varsayılan isimlerdir.
+    // Explicit olarak tanımlamak karışıklığı önler.
+    options.Cookie.Name = ".AspNetCore.Antiforgery";
+    options.FormFieldName = "__RequestVerificationToken";
+
+    // HeaderName ayarı, bu senaryoda (geleneksel formlar) doğrudan kullanılmasa da, 
+    // iyi bir uygulama olarak tutulabilir.
+    options.HeaderName = "X-CSRF-TOKEN";
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
     AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opt =>

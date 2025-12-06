@@ -19,8 +19,9 @@ namespace MultiShop.Message.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTotalMessageCount()
         {
-            int messageCount = await _userMessageService.GetTotalMessageCount();
-            return Ok(messageCount);
+            var response = await _userMessageService.GetTotalMessageCount();
+            return StatusCode(response.StatusCode, response);
+         
         }
     }
 }

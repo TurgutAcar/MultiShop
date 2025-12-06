@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Azure;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,39 +22,41 @@ namespace MultiShop.Order.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> OrderingList()
         {
-            var values =await _mediator.Send(new GetOrderingQuery());
-            return Ok(values);
+            var response =await _mediator.Send(new GetOrderingQuery());
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderingById(int id)
         {
-            var value =await _mediator.Send(new GetOrderingByIdQuery(id));
-            return Ok(value);
+            var response =await _mediator.Send(new GetOrderingByIdQuery(id));
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
+      
         public async Task<IActionResult> CreateOrdering(CreateOrderingCommand createOrderingCommand)
         {
-            await _mediator.Send(createOrderingCommand);
-            return Ok("Ordering başarıyla oluşturuldu.");
+            var response = await _mediator.Send(createOrderingCommand);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateOrdering(UpdateOrderingCommand updateOrderingCommand)
         {
-            await _mediator.Send(updateOrderingCommand);
-            return Ok("Ordering başarıyla güncellendi.");
+            var response = await _mediator.Send(updateOrderingCommand);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
+        [ValidateAntiForgeryToken] // CSRF Token doğrulamasını zorunlu kılar
         public async Task<IActionResult> RemoveOrdering(int id)
         {
-            await _mediator.Send(new RemoveOrderingCommand(id));
-            return Ok("Ordering başarıyla silindi.");
+            var response = await _mediator.Send(new RemoveOrderingCommand(id));
+            return StatusCode(response.StatusCode, response);
 
         }
         [HttpGet("GetOrderingByUserId/{id}")]
         public async Task<IActionResult> GetOrderingByUserId(string id)
         {
-            var values =await _mediator.Send(new GetOrderingByUserIdQuery(id));
-            return Ok(values);
+            var response = await _mediator.Send(new GetOrderingByUserIdQuery(id));
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace MultiShop.Discount.Context
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
-        public DapperContext(IConfiguration configuration)
+        public DapperContext(DbContextOptions<DapperContext> options,IConfiguration configuration) : base(options)
         {
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("DefaultConnection");

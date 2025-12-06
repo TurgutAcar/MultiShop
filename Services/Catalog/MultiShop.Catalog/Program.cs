@@ -1,4 +1,7 @@
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using MultiShop.Catalog.DependencyInjection;
 using MultiShop.Catalog.Middlewares;
@@ -21,6 +24,15 @@ builder.Services.AddAuthorization(options =>
                 context.User.HasClaim("scope", "CatalogFullPermission")));
    
 });
+// Elasticsearch Ayarý
+var esSettings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
+                    .DefaultIndex("products"); // varsayýlan index
+
+var esClient = new ElasticsearchClient(esSettings);
+
+// DI Container kaydý
+builder.Services.AddSingleton(esClient);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt=>
 {
     
@@ -29,7 +41,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     opt.RequireHttpsMetadata = false;
 });
 builder.Services.AddApplication(builder);
-builder.Services.AddExceptionHandler<ExceptionHandler>();
 
 
 
@@ -41,6 +52,8 @@ builder.Services.AddControllers(opt =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -50,11 +63,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseExceptionHandler();
 
 app.MapControllers();
 

@@ -41,6 +41,8 @@ namespace MultiShop.WebUI.Controllers
             return PartialView();
         }
         [HttpPost]
+        // SADECE POST/DELETE/PUT metotlarına uygulanmalıdır!
+        [ValidateAntiForgeryToken] // CSRF Token doğrulamasını zorunlu kılar
         public async Task<IActionResult> AddComment(CreateCommentDto createCommentDto)
         {
             createCommentDto.ImageUrl = "test";

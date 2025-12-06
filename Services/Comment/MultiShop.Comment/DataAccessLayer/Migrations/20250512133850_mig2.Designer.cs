@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MultiShop.Comment.Context;
+using MultiShop.Comment.DataAccessLayer.Context;
 
 #nullable disable
 
 namespace MultiShop.Comment.Migrations
 {
     [DbContext(typeof(CommentContext))]
-    [Migration("20250512130631_mig1")]
-    partial class mig1
+    [Migration("20250512133850_mig2")]
+    partial class mig2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,9 @@ namespace MultiShop.Comment.Migrations
                     b.Property<string>("NameSurname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");

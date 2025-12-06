@@ -18,56 +18,64 @@ namespace MultiShop.Message.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMessage()
         {
-            var values=await _userMessageService.GetAllMessageAsync();
-            return Ok(values);
+            var response=await _userMessageService.GetAllMessageAsync();
+            return StatusCode(response.StatusCode,response);
         }
         [HttpGet("GetByIdMessage")]
         public async Task<IActionResult> GetByIdMessage(int id)
         {
-            var values = await _userMessageService.GetByIdMessageAsync(id);
-            return Ok();
+            var response = await _userMessageService.GetByIdMessageAsync(id);
+            return StatusCode(response.StatusCode, response);
+          
         }
         [HttpGet("GetMessageSendbox")]
         public async Task<IActionResult> GetMessageSendbox(string id)
         {
-            var values = await _userMessageService.GetSendboxMessageAsync(id);
-            return Ok();
+            var response = await _userMessageService.GetSendboxMessageAsync(id);
+            return StatusCode(response.StatusCode, response);
+          
         }
         [HttpGet("GetMessageInbox")]
         public async Task<IActionResult> GetMessageInbox(string id)
         {
-            var values = await _userMessageService.GetInboxMessageAsync(id);
-            return Ok();
+            var response = await _userMessageService.GetInboxMessageAsync(id);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateMessageAsync(CreateMessageDto createMessageDto)
         {
-             await _userMessageService.CreateMessageAsync(createMessageDto);
-            return Ok("Mesaj başarıyla eklendi.");
+            var response = await _userMessageService.CreateMessageAsync(createMessageDto);
+            return StatusCode(response.StatusCode, response);
+          
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteMessageAsync(int id)
         {
-            await _userMessageService.DeleteMessageAsync(id);
-            return Ok("Mesaj başarıyla silindi.");
+
+            var response = await _userMessageService.DeleteMessageAsync(id);
+            return StatusCode(response.StatusCode, response);
+          
         }
         [HttpPut]
-        public async Task<IActionResult> CreateMessageAsync(UpdateMessageDto updateMessageDto)
+        public async Task<IActionResult> UpdateMessageAsync(UpdateMessageDto updateMessageDto)
         {
-            await _userMessageService.UpdateMessageAsync(updateMessageDto);
-            return Ok("Mesaj başarıyla güncellendi.");
+            var response = await _userMessageService.UpdateMessageAsync(updateMessageDto);
+            return StatusCode(response.StatusCode, response);
+           
         }
         [HttpGet("GetTotalMessageCount")]
         public async Task<IActionResult> GetTotalMessageCount()
         {
-            var value= await _userMessageService.GetTotalMessageCount();
-            return Ok(value);
+            var response = await _userMessageService.GetTotalMessageCount();
+            return StatusCode(response.StatusCode, response);
+          
         }
         [HttpGet("GetTotalMessageCountByReceiverId")]
         public async Task<IActionResult> GetTotalMessageCountByReceiverId(string id)
         {
-            var value = await _userMessageService.GetTotalMessageCountByReceiverId(id);
-            return Ok(value);
+            var response = await _userMessageService.GetTotalMessageCountByReceiverId(id);
+            return StatusCode(response.StatusCode, response);
+         
         }
     }
 }

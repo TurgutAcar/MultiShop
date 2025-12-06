@@ -4,6 +4,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
     int count = 0;
+    @Html.AntiForgeryToken();
 
 }
 
@@ -36,7 +37,25 @@
                                         <td>@item.CreatedDate.ToShortDateString()</td>
                                         <td>@item.Status</td>
 
-                                        <td><a href="/Admin/Comment/DeleteComment/@item.UserCommentId" class="btn btn-danger">Sil</a></td>
+                                        <td>
+                                        @* Her silme işlemi için ayrı bir POST formu oluşturulur *@
+                                                <form method="post" action="/Admin/Comment/DeleteComment">
+                                                    @Html.AntiForgeryToken() @* 👈 CSRF Tokenı Formun içine gömülür *@
+
+                                                    @* Silinecek ID'yi gizli alana koyarız *@
+                                                    <input type="hidden" name="id" value="@item.UserCommentId" />
+
+                                                    @* Tıklanınca formu gönderen düğme *@
+                                                    <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?');">
+                                                        Sil
+                                                    </button>
+                                                </form>
+                                            
+                                            
+                                            
+                                        @* <a href="/Admin/Comment/DeleteComment/@item.UserCommentId" class="btn btn-danger">Sil</a>*@
+                                        </td>
                                             <td><a href="/Admin/Comment/UpdateComment/@item.UserCommentId" class="btn btn-success">Güncelle</a></td>
                                     </tr>
                             }

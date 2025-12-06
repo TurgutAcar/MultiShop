@@ -12,6 +12,7 @@ using MultiShop.Order.Application.Features.CQRS.Commands.AddressCommands;
 using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Domain.SeedWork;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers
 {
@@ -23,13 +24,14 @@ namespace MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers
     {
        
 
-        public async Task Handle(UpdateAddressCommand updateAddressCommand)
+        public async Task<Result<string>> Handle(UpdateAddressCommand updateAddressCommand)
         {
             var value= await _repository.GetByIdAsync(updateAddressCommand.AddressId);
             var mapper = _mapper.Map<Address>(value);
 
             await _repository.UpdateAsync(mapper);
             await unitOfWork.SaveChangesAsync();
+            return "Adres kaydedildi";
         }
     }
 }

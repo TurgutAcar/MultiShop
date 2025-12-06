@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Order.Application.Features.CQRS.Commands.OrderDetailCommands;
@@ -35,28 +36,28 @@ namespace MultiShop.Order.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderDetailById(int id)
         {
-            var values = await _getOrderDetailQueryByIdHandler.Handle(
+            var response = await _getOrderDetailQueryByIdHandler.Handle(
                 new GetOrderDetailByIdQuery(id));
-            return Ok(values);
+            return StatusCode(response.StatusCode,response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateOrderDetail(CreateOrderDetailCommand createOrderDetailCommand)
         {
-            await _createOrderDetailCommandHandler.Handle(createOrderDetailCommand);
-            return Ok("Order Detail başarıyla oluşturuldu.");
+           var response= await _createOrderDetailCommandHandler.Handle(createOrderDetailCommand);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> RemoveOrderDetail(int id)
         {
-            await _removeOrderDetailCommandHandler.Handle(
+            var response=await _removeOrderDetailCommandHandler.Handle(
                 new RemoveOrderDetailCommand(id));
-            return Ok("Order Detail başarıyla silindi.");
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateOrderDetail(UpdateOrderDetailCommand updateOrderDetailCommand)
         {
-            await _updateOrderDetailCommandHandler.Handle(updateOrderDetailCommand);
-            return Ok("Order Detail başarıyla güncellendi.");
+           var response= await _updateOrderDetailCommandHandler.Handle(updateOrderDetailCommand);
+            return StatusCode(response.StatusCode, response);
         }
     }  
 }

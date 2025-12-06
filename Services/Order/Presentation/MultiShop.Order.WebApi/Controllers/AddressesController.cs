@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Order.Application.Features.CQRS.Commands.AddressCommands;
 using MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers;
@@ -28,32 +29,32 @@ namespace MultiShop.Order.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> AddressList()
         {
-            var values = await _getAddressQueryHandler.Handle();
-            return Ok(values);
+            var response = await _getAddressQueryHandler.Handle();
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAddressById(int id)
         {
-            var values = await _getAddressByIdQueryHandler.Handle(new GetAddressByIdQuery(id));
-            return Ok(values);
+            var response = await _getAddressByIdQueryHandler.Handle(new GetAddressByIdQuery(id));
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateAddress(CreateAddressCommand createAddressCommand)
         {
-            await _createAddressCommandHandler.Handle(createAddressCommand);
-            return Ok("Address başarıyla oluşturuldu.");
+            var response=await _createAddressCommandHandler.Handle(createAddressCommand);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
         public async Task<IActionResult> RemoveAddress(int id)
         {
-            await _removeAddressCommandHandler.Handle(new RemoveAddressCommand(id));
-            return Ok("Address başarıyla silindi.");
+            var response=await _removeAddressCommandHandler.Handle(new RemoveAddressCommand(id));
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateAddress(UpdateAddressCommand updateAddressCommand)
         {
-            await _updateAddressCommandHandler.Handle(updateAddressCommand);
-            return Ok("Address başarıyla güncellendi.");
+            var response=await _updateAddressCommandHandler.Handle(updateAddressCommand);
+            return StatusCode(response.StatusCode, response);
         }
     }
 

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MultiShop.Comment.Context;
+using MultiShop.Comment.DataAccessLayer.Context;
 
 namespace MultiShop.Comment.Controllers
 {
