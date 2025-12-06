@@ -21,7 +21,7 @@ namespace MultiShop.Catalog.Controllers
             string sortField = "productPrice",
             string sortOrder = "asc")
         {
-            var response = await _productSearchService.SearchProductsAsync(page, pageSize, sortField, sortOrder);
+            var response =  await _productSearchService.SearchProductsAsync(page, pageSize, sortField, sortOrder);
             return StatusCode(response.StatusCode, response);
 
         }
