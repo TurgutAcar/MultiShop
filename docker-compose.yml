@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  catalogdb:
+    image: mongo
+  basketdb:
+    image: redis
+  discountdb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+  identitydb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+  orderdb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+  catalogapi:
+    image: catalog_api_image
+    build: 
+     context: .
+     dockerfile: Services/Catalog/MultiShop.Catalog/Dockerfile
+  identityserverapi:
+    image: identityserver_api_image
+    build: 
+     context: .
+     dockerfile: IdentityServer/MultiShop.IdentityServer/Dockerfile
+  gatewayapi:
+    image: gateway_api_image
+    build: 
+     context: .
+     dockerfile: ApiGateway/MultiShop.OcelotGateway/Dockerfile
+  
+volumes:
+  catalogdb_volume:
+  discountdb_volume:
+  identitydb_volume:
+  orderdb_volume:
+networks:
+  default:
+    external: true
+    name: multishop-network

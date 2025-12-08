@@ -10,18 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication().AddJwtBearer("OcelotAuthenticationScheme", opt =>
 {
-    opt.Authority = builder.Configuration["IdentityServerUrl"];
+    opt.Authority = "http://identityserverapi";
     opt.Audience = "ResourceOcelot";
     opt.RequireHttpsMetadata = false;
 });
 
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
-IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("ocelot.json").Build();
+builder.Configuration
+    .AddJsonFile($"configuration.{builder.Environment.EnvironmentName.ToLower()}.json", optional: true)
+    .AddEnvironmentVariables();
+builder.Services.AddOcelot(builder.Configuration);
+
 var env = builder.Environment;
 
 
-builder.Services.AddOcelot(configuration);
 builder.Services.AddDefaultCors(env);
 builder.Services.AddResponseCompression(options =>
 {
@@ -51,7 +54,7 @@ var config = new OcelotPipelineConfiguration
         if (isReadMethod && !(hasFullPermission || hasReadPermission))
         {
             ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-            await ctx.Response.WriteAsync("Okuma iþlemleri için CatalogReadPermission veya CatalogFullPermission gerekli.");
+            await ctx.Response.WriteAsync("Okuma iï¿½lemleri iï¿½in CatalogReadPermission veya CatalogFullPermission gerekli.");
             return;
         }
 

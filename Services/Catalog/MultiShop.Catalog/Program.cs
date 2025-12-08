@@ -24,13 +24,13 @@ builder.Services.AddAuthorization(options =>
                 context.User.HasClaim("scope", "CatalogFullPermission")));
    
 });
-// Elasticsearch Ayarý
+// Elasticsearch Ayarï¿½
 var esSettings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
-                    .DefaultIndex("products"); // varsayýlan index
+                    .DefaultIndex("products"); // varsayï¿½lan index
 
 var esClient = new ElasticsearchClient(esSettings);
 
-// DI Container kaydý
+// DI Container kaydï¿½
 builder.Services.AddSingleton(esClient);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt=>

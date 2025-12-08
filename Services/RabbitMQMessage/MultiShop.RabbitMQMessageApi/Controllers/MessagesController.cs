@@ -22,11 +22,11 @@ namespace MultiShop.RabbitMQMessageApi.Controllers
 
             var channel = await connection.CreateChannelAsync();
             await channel.QueueDeclareAsync("Kuyruk1", false, false, false, arguments: null);
-            var messageContent = "Merhaba bu bir RabbitMQ kuyruk mesajýdýr.";
+            var messageContent = "Merhaba bu bir RabbitMQ kuyruk mesajï¿½dï¿½r.";
             var byteMessageContent = Encoding.UTF8.GetBytes(messageContent);
             await channel.BasicPublishAsync(exchange: "", routingKey: "Kuyruk1", body: byteMessageContent);
 
-            return Ok("Mesajýnýz kuyruða alýnmýþtýr.");
+            return Ok("Mesajï¿½nï¿½z kuyruï¿½a alï¿½nmï¿½ï¿½tï¿½r.");
         }
         private static string message;
         [HttpGet]
@@ -47,7 +47,7 @@ namespace MultiShop.RabbitMQMessageApi.Controllers
                 var byteMessage = response.Body.ToArray();
                 var message = Encoding.UTF8.GetString(byteMessage);
 
-                // varsa: await iþlem
+                // varsa: await iï¿½lem
                 await Task.CompletedTask;
             };
           

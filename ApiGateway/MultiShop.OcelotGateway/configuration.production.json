@@ -1,0 +1,230 @@
+{
+    "Routes": [
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/catalog/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "CatalogFullPermission", "CatalogReadPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "catalogapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 3000,
+          "Limit": 5
+        }
+
+
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/discount/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "DiscountFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "discountapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/order/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "OrderFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "orderapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/cargo/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "CargoFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "cargoapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/basket/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "BasketFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "basketapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 30
+        }
+
+
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/message/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "MessageFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "messageapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/comment/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "CommentFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "commentapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/payment/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "PaymentFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "paymentapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      },
+      {
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+        "UpstreamPathTemplate": "/services/images/{everything}",
+        "UpstreamScheme": "http",
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "OcelotAuthenticationScheme",
+          "AllowedScopes": [ "ImageFullPermission" ]
+        },
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "imagesapi",
+            "Port": 80
+          }
+        ],
+        "RateLimitOptions": {
+          "EnableRateLimiting": true,
+          "Period": "1m",
+          "PeriodTimespan": 1,
+          "Limit": 50
+        }
+      }
+
+    ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://identityserverapi:80",
+    "RateLimitOptions": {
+      "ClientIdHeader": "ClientId",
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Too many requests. Please try again later.",
+      "HttpStatusCode": 429,
+      "Period": "1m",
+      "PeriodTimespan": 3000,
+      "Limit": 10
+    }
+
+  }
+    }
+

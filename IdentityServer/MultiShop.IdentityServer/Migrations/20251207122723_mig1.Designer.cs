@@ -12,8 +12,8 @@ using MultiShop.IdentityServer.Data;
 namespace MultiShop.IdentityServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251118081257_mig2")]
-    partial class mig2
+    [Migration("20251207122723_mig1")]
+    partial class mig1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
