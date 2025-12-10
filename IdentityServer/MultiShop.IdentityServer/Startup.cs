@@ -68,7 +68,7 @@ namespace MultiShop.IdentityServer
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-                options.IssuerUri = "http://identityserverapi";
+                options.IssuerUri = "http://localhost:5001";
 
                 // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                 options.EmitStaticAudienceClaim = true;

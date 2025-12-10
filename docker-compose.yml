@@ -1,39 +1,48 @@
 version: '3.8'
 services:
+  # ... Veritabanları (Değişiklik yok)
   catalogdb:
     image: mongo
   basketdb:
     image: redis
   discountdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root # MSSQL için user tanımı gerekli
   identitydb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root
   orderdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root
+    
+  # Mikroservisler ve Gateway (Build tanımları)
   catalogapi:
-    image: catalog_api_image
+    image: multishop/catalogapi:latest # Daha iyi bir imaj ismi
     build: 
-     context: .
-     dockerfile: Services/Catalog/MultiShop.Catalog/Dockerfile
+      context: .
+      dockerfile: Services/Catalog/MultiShop.Catalog/Dockerfile
   identityserverapi:
-    image: identityserver_api_image
+    image: multishop/identityserverapi:latest
     build: 
-     context: .
-     dockerfile: IdentityServer/MultiShop.IdentityServer/Dockerfile
+      context: .
+      dockerfile: IdentityServer/MultiShop.IdentityServer/Dockerfile
   gatewayapi:
-    image: gateway_api_image
+    image: multishop/gatewayapi:latest
     build: 
-     context: .
-     dockerfile: ApiGateway/MultiShop.OcelotGateway/Dockerfile
+      context: .
+      dockerfile: ApiGateway/MultiShop.OcelotGateway/Dockerfile
   
+  
+       
+# Volumes (Değişiklik yok)
 volumes:
   catalogdb_volume:
   discountdb_volume:
   identitydb_volume:
   orderdb_volume:
+
+# Network tanımını kaldırın veya basitleştirin
 networks:
   default:
-    external: true
-    name: multishop-network
+    driver: overlay # Swarm için default olarak overlay kullanılması tavsiye edilir.
+    # Harici ağ tanımını kaldırdık

@@ -1,93 +1,94 @@
 version: '3.8'
 services:
-   catalogdb:
+    # --- Veritabanı Servisleri (Tekil) ---
+    catalogdb:
       container_name: catalogdb
       restart: always
       ports:
         - "27017:27017"
       volumes:
         - catalogdb_volume:/data/db
+      # Veritabanları ölçeklenmediği için deploy ayarı Swarm'da gereklidir
       deploy:
-      placement:
-        constraints: [node.role == manager]
-   basketdb:
-      container_name: basketdb
-      restart: always
-      ports:
-        - "6379:6379"  
-   discountdb:
-      container_name: discountdb
-      restart: always
-      ports:
-        - "1443:1433"
-      volumes:
-        - discountdb_volume:/var/opt/mssql
-      environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=123456aA*
-   identitydb:
+        mode: replicated
+        replicas: 1 # Tek bir veritabanı örneği
+        placement:
+          constraints: [node.role == manager] # Genellikle manager node'da tutulur
+
+    # Diğer DB'ler (basketdb, discountdb, identitydb, orderdb) benzer şekilde deploy: replicas: 1 alır.
+    identitydb:
       container_name: identitydb
       restart: always
       ports:
-        - "1433:1433"
+        - "1433:1433" # 1433 portunu dışarı açıyoruz
       volumes:
         - identitydb_volume:/var/opt/mssql
       environment:
         - ACCEPT_EULA=Y
         - SA_PASSWORD=123456aA*
-   orderdb:
-      container_name: orderdb
-      restart: always
-      ports:
-        - "1440:1433"
-      volumes:
-        - orderdb_volume:/var/opt/mssql
-      environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=123456aA*
-   catalogapi:
-     container_name: catalogapi
-     environment:
-     - ASPNETCORE_ENVIRONMENT=Development
-     - ASPNETCORE_URLS=http://+:80
-     - IdentityServerUrl=http://identityserverapi:80
-     - DatabaseSettings__ConnectionString=mongodb://catalogdb:27017
-     ports:
-      - "7070:80"
-     depends_on:
-      - catalogdb
-      - identityserverapi
-     deploy:
-      replicas: 2
-      restart_policy:
-        condition: any
-   gatewayapi:
-    container_name: gatewayapi
-    environment:
-     - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=http://+:80
-     - IdentityServerUrl=http://identityserverapi:80
-    ports:
-      - "5000:80"
-    depends_on:
-      - identityserverapi
-    deploy:
-      replicas: 3
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints: [node.role == manager]
-   identityserverapi:
-    container_name: identityserverapi
-    restart: on-failure
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Server=identitydb,1433;Database=IdentityDb;User=sa;Password=123456aA*;Encrypt=False;TrustServerCertificate=True;
-    ports:
-      - "5001:80"
-    volumes:
-      - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
-    depends_on:
-      - identitydb
+      deploy:
+        mode: replicated
+        replicas: 1
+        placement:
+          constraints: [node.role == manager]
     
+    # --- Yük Dengelemeli Servisler ---
+    
+    # 1. Katalog API (2 Replica)
+    catalogapi:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+        - IdentityServerUrl=http://identityserverapi:80 # IdentityServer'ın servis adını kullanıyoruz
+        - DatabaseSettings__ConnectionString=mongodb://catalogdb:27017 # DB servis adını kullanıyoruz
+      ports:
+        - "7070:80" # Bu port sadece ilk replica için açılır, Swarm load balancing'i bu port üzerinden yapar.
+      depends_on:
+        - catalogdb
+        - identityserverapi
+      deploy:
+        mode: replicated
+        replicas: 2 # Yük dengeleme için 2 kopya
+        restart_policy:
+          condition: any
+          
+    # 2. IdentityServer API (1 Replica)
+    identityserverapi:
+      restart: on-failure
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+        - ConnectionStrings__DefaultConnection=Server=identitydb,1433;Database=IdentityDb;User=sa;Password=123456aA*;Encrypt=False;TrustServerCertificate=True;
+        - IdentityServer:IssuerUri=http://localhost:5001
+        - IdentityServer__IssuerUri=http://localhost:5001
+      ports:
+        - "5001:80"
+      volumes:
+        - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
+      depends_on:
+        - identitydb
+      deploy:
+        mode: replicated
+        replicas: 1 # Identity Server genellikle tek kopya çalışır
+        restart_policy:
+          condition: on-failure
+          
+    # 3. Gateway API (3 Replica)
+    gatewayapi:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Production
+        - ASPNETCORE_URLS=http://+:80
+        - IdentityServerUrl=http://identityserverapi:80
+      ports:
+        - "5000:80" # Dışarıdan erişim için 5000:80 portunu açıyoruz
+      depends_on:
+        - identityserverapi
+      deploy:
+        mode: replicated
+        replicas: 3 # Yük dengeleme için 3 kopya
+        restart_policy:
+          condition: on-failure
+        placement:
+          constraints: [node.role == manager] # Gateway'i manager node'da tutmak iyi bir uygulamadır.
+          
+    # Diğer mikroservisler (orderapi, discountapi, vb.) de benzer şekilde 'deploy: replicas' ile ölçeklendirilmelidir.
