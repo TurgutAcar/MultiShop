@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using MultiShop.Catalog.Entities;
 using MultiShop.Catalog.settings;
 using MultiShop.Shared.Responses;
@@ -30,38 +31,76 @@ namespace MultiShop.Catalog.Services.StatisticService
         {
             return await _categoryCollection.CountDocumentsAsync(FilterDefinition<Category>.Empty);
         }
-
         public async Task<Result<string>> GetMaxPriceProductName()
         {
             var filter = Builders<Product>.Filter.Empty;
             var sort = Builders<Product>.Sort.Descending(x => x.ProductPrice);
-            var projection = Builders<Product>.Projection.Include(y => y.ProductName).Exclude("ProductId");
-            var product = await _productCollection.Find(filter).Sort(sort).Project(projection).FirstOrDefaultAsync();
-            return product.GetValue("ProductName").AsString;
+
+            // Projection gerekmez, zaten ProductName property’si var
+            var product = await _productCollection
+                .Find(filter)
+                .Sort(sort)
+                .FirstOrDefaultAsync();
+
+            return product != null
+                ? product.ProductName
+                : Result<string>.Failure("Ürün bulunamadı");
         }
+        //public async Task<Result<string>> GetMaxPriceProductName()
+        //{
+        //    var filter = Builders<Product>.Filter.Empty;
+        //    var sort = Builders<Product>.Sort.Descending(x => x.ProductPrice);
+        //    var projection = Builders<Product>.Projection.Include(y => y.ProductName).Exclude("ProductId");
+        //    var product = await _productCollection.Find(filter).Sort(sort).Project<Product>(projection).FirstOrDefaultAsync();
+        //    return product.GetValue("ProductName").AsString;
+        //}
 
         public async Task<Result<string>> GetMinPriceProductName()
         {
+
+       
             var filter = Builders<Product>.Filter.Empty;
             var sort = Builders<Product>.Sort.Ascending(x => x.ProductPrice);
-            var projection = Builders<Product>.Projection.Include(y => y.ProductName).Exclude("ProductId");
-            var product = await _productCollection.Find(filter).Sort(sort).Project(projection).FirstOrDefaultAsync();
-            return product.GetValue("ProductName").AsString;
+
+            var product = await _productCollection
+                .Find(filter)
+                .Sort(sort)
+                .FirstOrDefaultAsync();
+
+            return product != null
+                ? product.ProductName
+                : Result<string>.Failure("Ürün bulunamadı");
+        
+
+
+        //var filter = Builders<Product>.Filter.Empty;
+        //    var sort = Builders<Product>.Sort.Ascending(x => x.ProductPrice);
+        //    var projection = Builders<Product>.Projection.Include(y => y.ProductName).Exclude("ProductId");
+        //    var product = await _productCollection.Find(filter).Sort(sort).Project(projection).FirstOrDefaultAsync();
+        //    return product.GetValue("ProductName").AsString;
         }
 
         public async Task<Result<decimal>> GetProductAvgPrice()
         {
-            var pipeline = new BsonDocument[]
-            {
-                new BsonDocument("$group",new BsonDocument
-                {
-                    {"_id",BsonNull.Value},
-                    {"averagePrice",new BsonDocument("$avg","$ProductPrice")}
-            })
-            };
-            var result = await _productCollection.AggregateAsync<BsonDocument>(pipeline);
-            var price = result.FirstOrDefault().GetValue("averagePrice", decimal.Zero).AsDecimal;
-            return price;
+                var avgPrice = await _productCollection.AsQueryable()
+            .AverageAsync(p => p.ProductPrice);
+
+                return avgPrice;
+
+
+
+
+            //var pipeline = new BsonDocument[]
+            //{
+            //    new BsonDocument("$group",new BsonDocument
+            //    {
+            //        {"_id",BsonNull.Value},
+            //        {"averagePrice",new BsonDocument("$avg","$ProductPrice")}
+            //})
+            //};
+            //var result = await _productCollection.AggregateAsync<BsonDocument>(pipeline);
+            //var price = result.FirstOrDefault().GetValue("averagePrice", decimal.Zero).AsDecimal;
+            //return price;
         }
 
         public async Task<Result<long>> GetProductCount()

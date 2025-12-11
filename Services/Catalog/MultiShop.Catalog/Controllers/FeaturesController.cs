@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Catalog.Dtos.FeatureDtos;
 using MultiShop.Catalog.Services.FeatureService;
-using static MongoDB.Driver.WriteConcern;
 
 namespace MultiShop.Catalog.Controllers
 {
