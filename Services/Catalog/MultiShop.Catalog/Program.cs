@@ -84,11 +84,11 @@ app.MapHealthChecks("/health-check", new HealthCheckOptions
         [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     }
 });
-app.MapHealthChecksUI(options =>
-{
-    options.UIPath = "/health-ui";      
-    options.ApiPath = "/health-ui-api"; 
-});
+//app.MapHealthChecksUI(options =>
+//{
+//    options.UIPath = "/health-ui";      
+//    options.ApiPath = "/health-ui-api"; 
+//});
 
 
 app.Run();

@@ -43,15 +43,15 @@ namespace MultiShop.Catalog.DependencyInjection
             .Get<DatabaseSettings>()!.ConnectionString,
          name: "mongodb",
          timeout: TimeSpan.FromSeconds(5),
-         tags: new[] { "db", "nosql", "mongo" }
+         tags: new[] { "db","mongo","sqlserver" }
      );
-            builder.Services.AddHealthChecksUI(setup =>
-            {
-                setup.SetEvaluationTimeInSeconds(30); // 30 saniyede bir kontrol
-                setup.MaximumHistoryEntriesPerEndpoint(50);
-                setup.AddHealthCheckEndpoint("API Health", "/health-check"); // UI bu endpointi izleyecek
-            })
-.AddInMemoryStorage();
+//            builder.Services.AddHealthChecksUI(setup =>
+//            {
+//                setup.SetEvaluationTimeInSeconds(30); // 30 saniyede bir kontrol
+//                setup.MaximumHistoryEntriesPerEndpoint(50);
+//                setup.AddHealthCheckEndpoint("API Health", "http://localhost/health-check"); // UI bu endpointi izleyecek
+//            })
+//.AddInMemoryStorage();
 
 
 

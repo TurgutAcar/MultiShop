@@ -51,7 +51,7 @@ services:
         replicas: 2 # Yük dengeleme için 2 kopya
         restart_policy:
           condition: any
-          
+     
     # 2. IdentityServer API (1 Replica)
     identityserverapi:
       restart: on-failure
@@ -90,5 +90,20 @@ services:
           condition: on-failure
         placement:
           constraints: [node.role == manager] # Gateway'i manager node'da tutmak iyi bir uygulamadır.
-          
+
+    monitorapi:
+      restart: always
+      environment:
+        - ASPNETCORE_URLS=http://+:80
+      # Health Check UI'ı bir In-Memory DB kullanmak yerine gerçek bir DB'de tutmak HA için iyidir.
+      ports:
+        - "7079:80" # UI'a 5002 portundan erişeceğiz
+      depends_on:
+        - catalogapi # UI'ın monitör edeceği servisler
+        - gatewayapi
+        - identityserverapi
+      # ... diğer API'ler
+      deploy:
+        mode: replicated
+        replicas: 1 # UI genellikle tek kopya çalışır      
     # Diğer mikroservisler (orderapi, discountapi, vb.) de benzer şekilde 'deploy: replicas' ile ölçeklendirilmelidir.
