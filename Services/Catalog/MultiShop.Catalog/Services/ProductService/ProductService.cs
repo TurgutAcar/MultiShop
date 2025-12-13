@@ -36,10 +36,14 @@ namespace MultiShop.Catalog.Services.ProductService
             {
                 Console.WriteLine("ES ERROR:");
                 Console.WriteLine(result.DebugInformation);
+                throw new Exception(result.DebugInformation);
+
             }
             else
             {
-                Console.WriteLine("ES OK — Kaydedildi");
+
+
+               Console.WriteLine("ES OK — Kaydedildi");
             }
 
 

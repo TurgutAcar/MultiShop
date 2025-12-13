@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MultiShop.Catalog.DependencyInjection;
 using MultiShop.Catalog.Middlewares;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,8 +30,8 @@ builder.Services.AddAuthorization(options =>
    
 });
 // Elasticsearch Ayar�
-var esSettings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
-                    .DefaultIndex("products"); // varsay�lan index
+var esSettings = new ElasticsearchClientSettings(new Uri("http://elasticsearch:9200"))
+                    .DefaultIndex("products");
 
 var esClient = new ElasticsearchClient(esSettings);
 
@@ -53,6 +54,13 @@ builder.Services.AddControllers(opt =>
 {
     opt.Filters.Add(new AuthorizeFilter());
 });
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    // ?? Konfigürasyon dosyasından tüm Serilog bloğunu okur
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+// Not: Artık .WriteTo.Console() veya .MinimumLevel.Warning() gibi 
+// ayarları burada tutmanıza gerek yok, hepsi appsettings.json'da!
+);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -69,7 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseExceptionHandler();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
