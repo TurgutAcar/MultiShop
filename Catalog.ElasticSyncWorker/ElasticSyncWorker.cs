@@ -96,7 +96,7 @@ public class ElasticSyncWorker : BackgroundService
                 {
                     await _elasticClient.IndexAsync(@event, idx => idx
                         .Index("products")
-                        .Id(@event.ProductId)
+                        .Id(@event.EventId)
                     );
 
                   

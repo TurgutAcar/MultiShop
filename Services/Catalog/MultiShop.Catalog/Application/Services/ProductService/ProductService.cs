@@ -5,53 +5,81 @@ using MultiShop.Catalog.Application.Dtos.ProductDtos;
 using MultiShop.Catalog.Domain.Entities;
 using MultiShop.Catalog.Infrastructure.Messaging;
 using MultiShop.Catalog.Infrastructure.Settings;
+using MultiShop.Shared.Events.Dtos;
 using MultiShop.Shared.Responses;
+using System.Text.Json;
 
 namespace MultiShop.Catalog.Application.Services.ProductService
 {
     public class ProductService : IProductService
     {
+        private readonly IMongoCollection<OutboxMessage> _outboxMessageCollection;
+
         private readonly IMongoCollection<Product> _productCollection;
         private readonly IMongoCollection<Category> _categoryCollection;
         private readonly IMapper _mapper;
         private readonly ElasticsearchClient _es;
         private readonly IEventBus _eventBus;
+        private readonly MongoClient _client;
 
         public ProductService(IMapper mapper, IDatabaseSettings databaseSettings, ElasticsearchClient es, IEventBus eventBus)
         {
-            var client = new MongoClient(databaseSettings.ConnectionString);
-            var database = client.GetDatabase(databaseSettings.DatabaseName);
+            _client = new MongoClient(databaseSettings.ConnectionString);
+            var database = _client.GetDatabase(databaseSettings.DatabaseName);
             _productCollection = database.GetCollection<Product>(databaseSettings.ProductCollectionName);
             _categoryCollection = database.GetCollection<Category>(databaseSettings.CategoryCollectionName);
+             _outboxMessageCollection= database.GetCollection<OutboxMessage>(databaseSettings.CategoryCollectionName);
             _mapper = mapper;
             _es = es;
             _eventBus = eventBus;
         }
         public async Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto)
         {
-           var value= _mapper.Map<Product>(createProductDto); 
-            await _productCollection.InsertOneAsync(value);
-            var @event = new Shared.Events.Dtos.ProductCreatedEvent
+            using var session = await _client.StartSessionAsync();
+            session.StartTransaction();
+            try
             {
-                ProductId = value.ProductId,
-                ProductName = value.ProductName,
-                ProductPrice = value.ProductPrice,
-                CategoryId=value.CategoryId
-            };
+               
+                var value = _mapper.Map<Product>(createProductDto);
+                await _productCollection.InsertOneAsync(value);
+                var @event = new Shared.Events.Dtos.ProductCreatedEvent
+                {
+                    ProductId = value.ProductId,
+                    ProductName = value.ProductName,
+                    ProductPrice = value.ProductPrice,
+                    CategoryId = value.CategoryId
+                };
+                var outbox = new OutboxMessage
+                {
+                    Type = nameof(ProductCreatedEvent),
+                    Payload = JsonSerializer.Serialize(@event),
+                    OccurredOn = DateTime.UtcNow
+                };
 
-            await _eventBus.PublishAsync(@event);
-//            var result=await _es.IndexAsync(value, idx => idx
-//    .Index("products")
-//    .Id(value.ProductId ?? Guid.NewGuid().ToString())
-//);
-//            if (!result.IsValidResponse)
-//            {
-//                Console.WriteLine(result.DebugInformation);
-//                throw new Exception(result.DebugInformation);
+                await _outboxMessageCollection.InsertOneAsync(outbox);
+                await session.CommitTransactionAsync();
 
-            //            }
+                //   await _eventBus.PublishAsync(@event);
+                //            var result=await _es.IndexAsync(value, idx => idx
+                //    .Index("products")
+                //    .Id(value.ProductId ?? Guid.NewGuid().ToString())
+                //);
+                //            if (!result.IsValidResponse)
+                //            {
+                //                Console.WriteLine(result.DebugInformation);
+                //                throw new Exception(result.DebugInformation);
 
-            return "Product olusturuldu.";
+                //            }
+
+                return "Product olusturuldu.";
+            }
+            catch (Exception ex)
+            {
+                await session.AbortTransactionAsync();
+                throw;
+            }
+
+           
         }
 
         public async Task<Result<string>> DeleteProductAsync(string id)

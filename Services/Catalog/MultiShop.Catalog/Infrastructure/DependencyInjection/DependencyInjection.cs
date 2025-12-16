@@ -14,13 +14,15 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
     {
         public static  IServiceCollection AddApplication(this IServiceCollection services,WebApplicationBuilder builder)
         {
+            builder.Services.AddHostedService<OutboxPublisherWorker>();
+
             services.AddSingleton<IEventBus, RabbitMqEventBus>();
 
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
             services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
-            services.AddScoped<IDatabaseSettings>(sp =>
+            services.AddSingleton<IDatabaseSettings>(sp =>
             {
                 return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
             });
