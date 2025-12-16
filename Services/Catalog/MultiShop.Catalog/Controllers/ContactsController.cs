@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MultiShop.Catalog.Dtos.ContactDtos;
-using MultiShop.Catalog.Services.ContactService;
+using MultiShop.Catalog.Application.Dtos.ContactDtos;
+using MultiShop.Catalog.Application.Services.ContactService;
 
 namespace MultiShop.Catalog.Controllers
 {

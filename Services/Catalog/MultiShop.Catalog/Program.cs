@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using MultiShop.Catalog.DependencyInjection;
-using MultiShop.Catalog.Middlewares;
+using MultiShop.Catalog.Infrastructure.DependencyInjection;
+using MultiShop.Catalog.Infrastructure.Middlewares;
 using Serilog;
 
 
@@ -29,7 +29,7 @@ builder.Services.AddAuthorization(options =>
                 context.User.HasClaim("scope", "CatalogFullPermission")));
    
 });
-// Elasticsearch Ayar�
+// Elasticsearch Ayar
 var esSettings = new ElasticsearchClientSettings(new Uri("http://elasticsearch:9200"))
                     .DefaultIndex("products");
 
@@ -68,7 +68,7 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
-
+app.UseSerilogRequestLogging(); // Gelen her isteği loglar ve log context'ine request bilgilerini ekler.
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

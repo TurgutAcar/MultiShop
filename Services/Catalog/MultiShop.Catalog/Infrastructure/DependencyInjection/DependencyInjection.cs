@@ -1,0 +1,68 @@
+﻿using FluentValidation;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using Scrutor;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MultiShop.Catalog.Infrastructure.Middlewares;
+using MultiShop.Catalog.Infrastructure.Settings;
+using MultiShop.Catalog.Infrastructure.Messaging;
+
+namespace MultiShop.Catalog.Infrastructure.DependencyInjection
+{
+    public static class DependencyInjection
+    {
+        public static  IServiceCollection AddApplication(this IServiceCollection services,WebApplicationBuilder builder)
+        {
+            services.AddSingleton<IEventBus, RabbitMqEventBus>();
+
+            services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+            services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+            services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+            services.AddScoped<IDatabaseSettings>(sp =>
+            {
+                return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
+            });
+
+            services.Scan(action =>
+            {
+                action
+                .FromAssemblies(Assembly.GetExecutingAssembly())
+
+                .AddClasses(classes =>
+                {
+                    classes.Where(type => type != typeof(ExceptionHandler));
+                })
+
+                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                .AsMatchingInterface()
+                .AsImplementedInterfaces()
+                .WithScopedLifetime();
+            });
+            builder.Services.AddHealthChecks()
+     .AddMongoDb(
+         mongodbConnectionString: builder.Configuration
+            .GetSection("DatabaseSettings")
+            .Get<DatabaseSettings>()!.ConnectionString,
+         name: "mongodb",
+         timeout: TimeSpan.FromSeconds(5),
+         tags: new[] { "db","mongo","sqlserver" }
+     );
+//            builder.Services.AddHealthChecksUI(setup =>
+//            {
+//                setup.SetEvaluationTimeInSeconds(30); // 30 saniyede bir kontrol
+//                setup.MaximumHistoryEntriesPerEndpoint(50);
+//                setup.AddHealthCheckEndpoint("API Health", "http://localhost/health-check"); // UI bu endpointi izleyecek
+//            })
+//.AddInMemoryStorage();
+
+
+
+
+
+            return services;
+
+        }
+    }
+}

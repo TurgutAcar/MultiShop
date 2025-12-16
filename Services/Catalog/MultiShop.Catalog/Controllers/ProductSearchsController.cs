@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MultiShop.Catalog.Services.ProductSearch;
+using MultiShop.Catalog.Application.Services.ProductSearch;
 
 namespace MultiShop.Catalog.Controllers
 {

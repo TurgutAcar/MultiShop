@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MultiShop.Catalog.Dtos.FeatureSliderDtos;
-using MultiShop.Catalog.Services.FeatureSliderServices;
+using MultiShop.Catalog.Application.Dtos.FeatureSliderDtos;
+using MultiShop.Catalog.Application.Services.FeatureSliderServices;
 
 namespace MultiShop.Catalog.Controllers
 {

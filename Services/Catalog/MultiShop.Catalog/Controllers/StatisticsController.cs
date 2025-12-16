@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MultiShop.Catalog.Services.StatisticService;
+using MultiShop.Catalog.Application.Services.StatisticService;
 
 namespace MultiShop.Catalog.Controllers
 {

@@ -106,6 +106,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Monitor", "Monitor", "{FA00
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiShop.Monitor", "Services\Monitor\MultiShop.Monitor\MultiShop.Monitor.csproj", "{480FCB33-97F2-48AB-BC37-382289D7DE45}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ElasticSyncWorker", "ElasticSyncWorker", "{C917A4FF-D64B-4941-B0EE-CD0190B60D30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.ElasticSyncWorker", "Catalog.ElasticSyncWorker\Catalog.ElasticSyncWorker.csproj", "{EE430340-327B-0A3E-D1A8-C001374047F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +220,10 @@ Global
 		{480FCB33-97F2-48AB-BC37-382289D7DE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{480FCB33-97F2-48AB-BC37-382289D7DE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{480FCB33-97F2-48AB-BC37-382289D7DE45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE430340-327B-0A3E-D1A8-C001374047F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE430340-327B-0A3E-D1A8-C001374047F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE430340-327B-0A3E-D1A8-C001374047F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE430340-327B-0A3E-D1A8-C001374047F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -263,6 +271,8 @@ Global
 		{593FEA05-E43E-4BD5-9728-EF006D4D2254} = {5FC93A3A-4FD3-4EBC-B92C-830378E07E66}
 		{FA00EF81-D37E-45AE-8D4D-7D934E3E059E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{480FCB33-97F2-48AB-BC37-382289D7DE45} = {FA00EF81-D37E-45AE-8D4D-7D934E3E059E}
+		{C917A4FF-D64B-4941-B0EE-CD0190B60D30} = {2CC53A7B-BB94-4410-BE56-8639CAF1860D}
+		{EE430340-327B-0A3E-D1A8-C001374047F2} = {C917A4FF-D64B-4941-B0EE-CD0190B60D30}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09D9E1A5-684D-455B-AD88-7069EA2CDC8F}
