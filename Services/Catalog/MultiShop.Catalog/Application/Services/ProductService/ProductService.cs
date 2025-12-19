@@ -35,8 +35,8 @@ namespace MultiShop.Catalog.Application.Services.ProductService
         }
         public async Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto)
         {
-            using var session = await _client.StartSessionAsync();
-            session.StartTransaction();
+            //using var session = await _client.StartSessionAsync();
+            //session.StartTransaction();
             try
             {
                
@@ -57,7 +57,7 @@ namespace MultiShop.Catalog.Application.Services.ProductService
                 };
 
                 await _outboxMessageCollection.InsertOneAsync(outbox);
-                await session.CommitTransactionAsync();
+                //await session.CommitTransactionAsync();
 
                 //   await _eventBus.PublishAsync(@event);
                 //            var result=await _es.IndexAsync(value, idx => idx
@@ -75,7 +75,7 @@ namespace MultiShop.Catalog.Application.Services.ProductService
             }
             catch (Exception ex)
             {
-                await session.AbortTransactionAsync();
+              //  await session.AbortTransactionAsync();
                 throw;
             }
 
