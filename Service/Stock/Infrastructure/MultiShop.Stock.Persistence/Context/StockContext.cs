@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MultiShop.Services.Stock.Domain.SeedWork;
 using MultiShop.Services.Stock.Domain.Entities;
+using MultiShop.Services.Stock.Core.Domain.SeedWork;
 namespace MultiShop.Services.Stock.Persistence.Context
 {
     public class StockContext : DbContext,IUnitOfWork

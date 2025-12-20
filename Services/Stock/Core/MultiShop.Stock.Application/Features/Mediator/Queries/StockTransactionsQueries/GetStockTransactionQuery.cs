@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Queries.StockTransactionsQueries
 {
     public sealed record  GetStockTransactionQuery :
-        IRequest<Result<GetStockTransactionQueryResult>>;
+        IRequest<Result<List<GetStockTransactionQueryResult>>>;
 
 
 }

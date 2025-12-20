@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockReservationCommands
 {
-    public sealed record UpdateStockIReservationCommand(
+    public sealed record UpdateStockReservationCommand(
         int Id,
        string ProductId,
        int Quantity,

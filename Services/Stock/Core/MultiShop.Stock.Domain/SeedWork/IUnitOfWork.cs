@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiShop.Services.Stock.Domain.SeedWork
+namespace MultiShop.Services.Stock.Core.Domain.SeedWork
 {
     public interface IUnitOfWork
     {

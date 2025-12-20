@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers;
-using MultiShop.Order.Application.Features.Mediator.Behaviours;
+using MultiShop.Stock.Application.Features.Mediator.Handlers.StockItemHandlers;
 
-namespace MultiShop.Order.Application.Services
+
+namespace MultiShop.Services.Stock.Core.Application.Services
 {
     public static class ServiceRegistiration
     {
@@ -13,21 +13,16 @@ namespace MultiShop.Order.Application.Services
         {
             services.AddAutoMapper(typeof(ServiceRegistiration).Assembly);
 
-          
+
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceRegistiration).Assembly));
             services.Scan(scan => scan
-             .FromAssemblyOf<GetAddressByIdQueryHandler>() 
+             .FromAssemblyOf<GetStockItemByIdQueryHandler>()
              .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Handler")))
              .AsSelf() // Interface yoksa AsSelf kullanılır
              .WithScopedLifetime());
 
-            services.AddScoped<IResourceOwnerService,ResourceOwnerService>();
 
-            // 3. MediatR Davranış Boru Hattını Kaydedin
-            // Generic tipte IPipelineBehavior'ı kaydederek, MediatR bunu tüm isteklere uygular.
-            services.AddScoped(
-                typeof(IPipelineBehavior<,>),
-                typeof(AuthorizationBehavior<,>));
+         
         }
     }
 }

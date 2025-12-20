@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MultiShop.Services.Stock.Persistence.Context;
+using MultiShop.Services.Stock.Core.Domain.SeedWork;
 using System.Reflection;
 namespace MultiShop.Services.Stock.Persistence
 {
@@ -12,7 +13,7 @@ namespace MultiShop.Services.Stock.Persistence
             services.AddDbContext<StockContext>(options =>
             options.UseMySql("server=localhost;database=StockDb;user=root;password=yourpassword",
         new MySqlServerVersion(new Version(8, 0, 36))));
-            services.AddScoped<Domain.SeedWork.IUnitOfWork>(srv => srv.GetRequiredService<StockContext>());
+            services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<StockContext>());
 
             services.Scan(action =>
             {

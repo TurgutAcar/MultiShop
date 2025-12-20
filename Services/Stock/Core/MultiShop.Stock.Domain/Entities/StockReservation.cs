@@ -1,4 +1,4 @@
-﻿using MultiShop.Services.Stock.Domain.ValueObjects.Enums;
+﻿using MultiShop.Services.Stock.Core.Domain.ValueObjects.Enums;
 namespace MultiShop.Services.Stock.Domain.Entities
 {
     public class StockReservation

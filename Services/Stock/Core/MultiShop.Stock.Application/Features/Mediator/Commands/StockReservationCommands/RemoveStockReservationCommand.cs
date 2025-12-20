@@ -8,12 +8,6 @@ using System.Threading.Tasks;
 
 namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockReservationCommands
 {
-    public sealed record CreateStockIReservationCommand(
-       string ProductId,
-       int Quantity,
-     string CartId,
-     DateTime ExpiresAt ,
-     int StatusValue):IRequest<Result<string>>;
-    
-    
+    public sealed record RemoveStockReservationCommand(
+       int Id) : IRequest<Result<string>>;
 }

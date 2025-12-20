@@ -4,7 +4,7 @@ using MultiShop.Services.Stock.Core.Application.Features.Mediator.Results.StockI
 
 namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Queries.StockItemQueries
 {
-    public sealed record GetStockItemQuery():IRequest<Result<GetStockItemQueryResult>>;
+    public sealed record GetStockItemQuery():IRequest<Result<List<GetStockItemQueryResult>>>;
     
     
 }
