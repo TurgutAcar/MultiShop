@@ -17,6 +17,7 @@ namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.S
      int TransactionTypeValue,
 
      int ReferenceId, // OrderId, GoodsReceiptId vs
+          string Description,
 
      DateTime CreatedAt) : IRequest<Result<string>>;
 }

@@ -4,5 +4,5 @@ namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.S
 {
     public sealed record DeactivateStockItemCommand(
 
-        int Id) : IRequest<Result<string>>;
+        int Id,int Type) : IRequest<Result<string>>;
 }

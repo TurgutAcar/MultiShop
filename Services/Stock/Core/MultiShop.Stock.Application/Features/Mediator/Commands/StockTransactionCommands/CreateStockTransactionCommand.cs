@@ -18,7 +18,9 @@ namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.S
 
      int ReferenceId , // OrderId, GoodsReceiptId vs
 
-     DateTime CreatedAt):IRequest<Result<string>>;
+     DateTime CreatedAt,
+     string Description
+):IRequest<Result<string>>;
     
     
 }

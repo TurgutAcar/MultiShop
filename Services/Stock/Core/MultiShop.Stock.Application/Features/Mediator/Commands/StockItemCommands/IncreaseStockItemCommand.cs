@@ -8,8 +8,8 @@ namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.S
      string ProductId,
      int Quantity,
      int Type ,
-     string? ReferenceNo,
-     string? Description) : IRequest<Result<string>>;
+     int ReferenceId,
+     string Description) : IRequest<Result<string>>;
 
 
 }

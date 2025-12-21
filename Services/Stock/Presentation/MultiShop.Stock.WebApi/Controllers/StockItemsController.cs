@@ -54,9 +54,9 @@ namespace MultiShop.Stock.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
-        public async Task<IActionResult> DeactivateStockItem(int id)
+        public async Task<IActionResult> DeactivateStockItem(int id,int type)
         {
-            var response = await _mediator.Send(new DeactivateStockItemCommand(id));
+            var response = await _mediator.Send(new DeactivateStockItemCommand(id,type));
             return StatusCode(response.StatusCode, response);
 
         }
