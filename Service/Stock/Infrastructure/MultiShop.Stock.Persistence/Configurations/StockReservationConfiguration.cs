@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MultiShop.Services.Stock.Core.Domain.ValueObjects.Enums;
 using MultiShop.Services.Stock.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -31,9 +32,9 @@ namespace MultiShop.Services.Stock.Persistence.Configurations
                   .HasColumnType("datetime")
                   .IsRequired();
 
-            entity.Property(e => e.Status)
-                  .HasConversion<int>() // Enum -> int
-                  .IsRequired();
+           
+            entity.Property(p => p.Status)
+                .HasConversion(type => type.Value, value => ReservationStatus.FromValue(value)).IsRequired();
 
 
 

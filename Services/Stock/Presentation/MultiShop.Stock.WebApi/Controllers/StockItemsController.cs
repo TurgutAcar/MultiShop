@@ -1,12 +1,12 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MultiShop.Services.Stock.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Queries.StockItemQueries;
 
 namespace MultiShop.Stock.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StockItemsController : ControllerBase
@@ -29,22 +29,34 @@ namespace MultiShop.Stock.WebApi.Controllers
             var response = await _mediator.Send(new GetStockItemByIdQuery(id));
             return StatusCode(response.StatusCode, response);
         }
+        [HttpPost]
         public async Task<IActionResult> CreateStockItem(CreateStockItemCommand createStockItemCommand)
         {
             var response = await _mediator.Send(createStockItemCommand);
             return StatusCode(response.StatusCode, response);
         }
-        [HttpPut]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateStockItem(UpdateStockItemCommand updateStockItemCommand)
         {
             var response = await _mediator.Send(updateStockItemCommand);
             return StatusCode(response.StatusCode, response);
         }
-        [HttpDelete]
-        [ValidateAntiForgeryToken] // CSRF Token doğrulamasını zorunlu kılar
-        public async Task<IActionResult> RemoveStockItem(int id)
+        [HttpPut("increase")]
+        public async Task<IActionResult> IncreaseStockItem(IncreaseStockItemCommand increaseStockItemCommand)
         {
-            var response = await _mediator.Send(new RemoveStockItemCommand(id));
+            var response = await _mediator.Send(increaseStockItemCommand);
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpPut("decrease")]
+        public async Task<IActionResult> DecreaseStockItem(DecreaseStockItemCommand decreaseStockItemCommand)
+        {
+            var response = await _mediator.Send(decreaseStockItemCommand);
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeactivateStockItem(int id)
+        {
+            var response = await _mediator.Send(new DeactivateStockItemCommand(id));
             return StatusCode(response.StatusCode, response);
 
         }

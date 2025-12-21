@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using MultiShop.Services.Stock.Application.Features.Mediator.Commands.StockItemCommands;
+using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Domain.SeedWork;
 using MultiShop.Services.Stock.Domain.Entities;
 using MultiShop.Services.Stock.Domain.Repositories;

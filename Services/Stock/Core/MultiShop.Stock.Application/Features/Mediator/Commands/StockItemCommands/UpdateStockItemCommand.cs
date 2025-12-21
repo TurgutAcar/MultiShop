@@ -10,6 +10,6 @@ namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.S
 {
     public sealed record UpdateStockItemCommand(
 
-        int Id, string ProductId, int TotalQuantity, int ReservedQuantity,
+        int Id, string ProductId, int TotalQuantity, int ReservedQuantity, bool IsActive,
          DateTime UpdatedAt) : IRequest<Result<string>>;
 }

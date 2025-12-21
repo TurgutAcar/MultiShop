@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockTransactionCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Queries.StockTransactionsQueries;
 
 namespace MultiShop.Services.Stock.Presentation.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StockTransactionsController : ControllerBase
@@ -27,6 +29,7 @@ namespace MultiShop.Services.Stock.Presentation.WebApi.Controllers
             var response = await _mediator.Send(new GetStockTransactionByIdQuery(id));
             return StatusCode(response.StatusCode, response);
         }
+        [HttpPost]
         public async Task<IActionResult> CreateStockTransaction(CreateStockTransactionCommand createStockTransactionCommand)
         {
             var response = await _mediator.Send(createStockTransactionCommand);
@@ -39,7 +42,6 @@ namespace MultiShop.Services.Stock.Presentation.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
-        [ValidateAntiForgeryToken] // CSRF Token doğrulamasını zorunlu kılar
         public async Task<IActionResult> RemoveStockTransaction(int id)
         {
             var response = await _mediator.Send(new RemoveStockTransactionCommand(id));

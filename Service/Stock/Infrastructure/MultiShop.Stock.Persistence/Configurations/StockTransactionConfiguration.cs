@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MultiShop.Services.Stock.Core.Domain.ValueObjects.Enums;
 using MultiShop.Services.Stock.Domain.Entities;
 
 namespace MultiShop.Services.Stock.Persistence.Configurations
@@ -19,10 +20,10 @@ namespace MultiShop.Services.Stock.Persistence.Configurations
             entity.Property(e => e.Quantity)
                   .IsRequired();
 
-            entity.Property(e => e.Type)
-                  .HasConversion<int>() // Enum -> int
-                  .IsRequired();
-
+          
+            entity.Property(p => p.Type)
+                .HasConversion(type => type.Value, value => StockTransactionType.FromValue(value))
+                .IsRequired();
             entity.Property(e => e.ReferenceId)
                   .IsRequired();
 

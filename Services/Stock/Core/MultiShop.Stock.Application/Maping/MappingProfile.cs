@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
-using MultiShop.Services.Stock.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockReservationCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockTransactionCommands;
+using MultiShop.Services.Stock.Core.Application.Features.Mediator.Results.StockItemResults;
 using MultiShop.Services.Stock.Core.Domain.ValueObjects.Enums;
 using MultiShop.Services.Stock.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiShop.Services.Stock.Core.Application.Maping
 {
@@ -17,9 +12,12 @@ namespace MultiShop.Services.Stock.Core.Application.Maping
     {
         public MappingProfile()
         {
+            CreateMap<StockItem, GetStockItemQueryResult>();
+            CreateMap<StockItem, GetStockItemByIdQueryResult>();
+
             CreateMap<UpdateStockItemCommand, StockItem>();
             CreateMap<CreateStockItemCommand, StockItem>();
-            CreateMap<RemoveStockItemCommand, StockItem>();
+            CreateMap<DeactivateStockItemCommand, StockItem>();
 
             CreateMap<CreateStockReservationCommand, StockReservation>()
                 .ForMember(member => member.Status,
@@ -29,10 +27,18 @@ namespace MultiShop.Services.Stock.Core.Application.Maping
                options => options.MapFrom(s => ReservationStatus.FromValue(s.StatusValue)));
             CreateMap<CreateStockTransactionCommand, StockReservation>()
               .ForMember(member => member.Status,
-              options => options.MapFrom(s => ReservationStatus.FromValue(s.TransactionTypeValue)));
+              options => options.MapFrom(s => StockTransactionType.FromValue(s.TransactionTypeValue)));
             CreateMap<UpdateStockTransactionCommand, StockReservation>()
                .ForMember(member => member.Status,
-               options => options.MapFrom(s => ReservationStatus.FromValue(s.TransactionTypeValue)));
+               options => options.MapFrom(s => StockTransactionType.FromValue(s.TransactionTypeValue)));
+
+            CreateMap<IncreaseStockItemCommand, StockTransaction>()
+               .ForMember(member => member.Type,
+               options => options.MapFrom(s => StockTransactionType.FromValue(s.Type)));
+
+            CreateMap<DecreaseStockItemCommand, StockTransaction>()
+               .ForMember(member => member.Type,
+               options => options.MapFrom(s => StockTransactionType.FromValue(s.Type)));
         }
     }
 }

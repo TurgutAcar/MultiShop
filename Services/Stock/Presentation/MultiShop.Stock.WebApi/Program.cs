@@ -20,7 +20,7 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
-    options.Audience = "ResourceOrder";
+    options.Audience = "ResourceStock";
     options.Authority = builder.Configuration["IdentityServerUrl"];
 });
 
@@ -45,7 +45,7 @@ builder.Services.AddRateLimiter(options =>
 });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddApplicationService(builder.Configuration);
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();

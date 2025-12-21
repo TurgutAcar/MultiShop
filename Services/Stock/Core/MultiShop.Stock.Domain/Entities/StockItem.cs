@@ -10,6 +10,8 @@ namespace MultiShop.Services.Stock.Domain.Entities
         public int TotalQuantity { get; set; }  // Anlık stok
 
         public int ReservedQuantity { get; set; } // (Opsiyonel ama öneririm)
+        public bool IsActive { get; set; } = true;
+
 
         public DateTime UpdatedAt { get; set; }
     }

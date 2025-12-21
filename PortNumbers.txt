@@ -10,3 +10,4 @@ Payment --->7076
 Images --->7077
 Messages --->7078
 Monitor --->7079
+Stock --->7080

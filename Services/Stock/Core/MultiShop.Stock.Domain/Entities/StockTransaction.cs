@@ -12,6 +12,7 @@ namespace MultiShop.Services.Stock.Domain.Entities
         public StockTransactionType Type { get; set; }
 
         public int ReferenceId { get; set; } // OrderId, GoodsReceiptId vs
+        public string? Description { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockReservationCommands;
@@ -6,6 +7,7 @@ using MultiShop.Services.Stock.Core.Application.Features.Mediator.Queries.StockR
 
 namespace MultiShop.Stock.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StockReservationsController : ControllerBase
@@ -28,6 +30,7 @@ namespace MultiShop.Stock.WebApi.Controllers
             var response = await _mediator.Send(new GetStockReservationByIdQuery(id));
             return StatusCode(response.StatusCode, response);
         }
+        [HttpPost]
         public async Task<IActionResult> CreateStockReservation(CreateStockReservationCommand createStockReservationCommand)
         {
             var response = await _mediator.Send(createStockReservationCommand);
@@ -40,7 +43,6 @@ namespace MultiShop.Stock.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
         [HttpDelete]
-        [ValidateAntiForgeryToken] // CSRF Token doğrulamasını zorunlu kılar
         public async Task<IActionResult> RemoveStockReservation(int id)
         {
             var response = await _mediator.Send(new RemoveStockReservationCommand(id));

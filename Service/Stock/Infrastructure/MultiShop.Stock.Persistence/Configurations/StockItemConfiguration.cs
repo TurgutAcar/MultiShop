@@ -17,8 +17,11 @@ namespace MultiShop.Services.Stock.Persistence.Configurations
             entity.Property(e => e.TotalQuantity)
                   .IsRequired();
 
+
             entity.Property(e => e.ReservedQuantity)
                   .HasDefaultValue(0);
+            entity.Property(e => e.IsActive)
+                  .HasDefaultValue(true).IsRequired();
 
             entity.Property(e => e.UpdatedAt)
                   .HasColumnType("datetime")

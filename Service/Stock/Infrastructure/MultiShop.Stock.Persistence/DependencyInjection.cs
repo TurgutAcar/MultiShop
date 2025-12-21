@@ -4,14 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 using MultiShop.Services.Stock.Persistence.Context;
 using MultiShop.Services.Stock.Core.Domain.SeedWork;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 namespace MultiShop.Services.Stock.Persistence
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddDbContext<StockContext>(options =>
-            options.UseMySql("server=localhost;database=StockDb;user=root;password=yourpassword",
+            options.UseMySql(configuration.GetConnectionString("MySQL"),
         new MySqlServerVersion(new Version(8, 0, 36))));
             services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<StockContext>());
 
