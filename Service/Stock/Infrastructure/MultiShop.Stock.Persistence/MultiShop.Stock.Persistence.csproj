@@ -12,12 +12,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Services\Stock\Core\MultiShop.Stock.Application\MultiShop.Stock.Application.csproj" />
     <ProjectReference Include="..\..\..\..\Services\Stock\Core\MultiShop.Stock.Domain\MultiShop.Stock.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\MultiShop.Shared\MultiShop.Shared.csproj" />
   </ItemGroup>
 
 </Project>

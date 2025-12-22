@@ -28,9 +28,8 @@ namespace MultiShop.Services.Stock.Core.Application.Maping
             CreateMap<CreateStockItemCommand, StockItem>();
             CreateMap<DeactivateStockItemCommand, StockItem>();
 
-            CreateMap<CreateStockReservationCommand, StockReservation>()
-                .ForMember(member => member.Status,
-                options => options.MapFrom(s => ReservationStatus.FromValue(s.StatusValue)));
+            CreateMap<CreateStockReservationCommand, StockReservation>();
+               
            
                 CreateMap<UpdateStockReservationCommand, StockReservation>()
                .ForMember(member => member.Status,

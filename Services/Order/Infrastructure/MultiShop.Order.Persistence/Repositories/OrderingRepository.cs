@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Domain;
+using MultiShop.Order.Domain.Interfaces;
 using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Persistence.Context;
 

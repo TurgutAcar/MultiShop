@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
-using MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers;
-using MultiShop.Order.Application.Features.CQRS.Handlers.OrderDetailHandlers;
-using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Application.Services;
-using MultiShop.Order.Persistence.Context;
-using MultiShop.Order.Persistence.DependencyInjection;
-using MultiShop.Order.Persistence.Repositories;
 using MultiShop.Order.WebApi.Middlewares;
+using MultiShop.Order.Persistence.DependencyInjection;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.RateLimiting;

@@ -30,12 +30,12 @@ namespace MultiShop.Stock.WebApi.Controllers
             var response = await _mediator.Send(new GetStockReservationByIdQuery(id));
             return StatusCode(response.StatusCode, response);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateStockReservation(CreateStockReservationCommand createStockReservationCommand)
-        {
-            var response = await _mediator.Send(createStockReservationCommand);
-            return StatusCode(response.StatusCode, response);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateStockReservation(CreateStockReservationCommand createStockReservationCommand)
+        //{
+        //    await _mediator.Send(createStockReservationCommand);
+        //    return StatusCode(response.StatusCode, response);
+        //}
         [HttpPut]
         public async Task<IActionResult> UpdateStockReservation(UpdateStockReservationCommand updateStockReservationCommand)
         {

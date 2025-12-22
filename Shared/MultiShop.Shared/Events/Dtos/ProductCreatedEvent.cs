@@ -1,6 +1,6 @@
 ﻿namespace MultiShop.Shared.Events.Dtos
 {
-    public class ProductCreatedEvent
+    public sealed class ProductCreatedEvent : IntegrationEvent
     {
         public string EventId { get; set; } = Guid.NewGuid().ToString();
         public string ProductId { get; init; }

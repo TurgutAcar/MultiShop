@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Domain.SeedWork;
 using MultiShop.Order.Persistence.Context;
 

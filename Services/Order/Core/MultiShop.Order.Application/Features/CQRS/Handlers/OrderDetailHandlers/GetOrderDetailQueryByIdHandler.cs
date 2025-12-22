@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
 using MultiShop.Order.Application.Features.CQRS.Queries.OrderDetailByIdQuery;
 using MultiShop.Order.Application.Features.CQRS.Results.OrderDetailResults;
-using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Domain.SeedWork;
 using MultiShop.Shared.Responses;

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
 using MultiShop.Order.Application.Features.CQRS.Commands.AddressCommands;
-using MultiShop.Order.Application.Interfaces;
 using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Domain.SeedWork;
 using MultiShop.Shared.Responses;

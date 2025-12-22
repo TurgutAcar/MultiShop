@@ -1,14 +1,13 @@
 ﻿using MediatR;
-using MultiShop.Shared.Responses;
 
 namespace MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockReservationCommands
 {
     public sealed record CreateStockReservationCommand(
+        int SagaId,
+        int OrderId,
        string ProductId,
-       int Quantity,
-     string CartId,
-     DateTime ExpiresAt ,
-     int StatusValue):IRequest<Result<string>>;
+       int Quantity
+     ):IRequest;
     
     
 }

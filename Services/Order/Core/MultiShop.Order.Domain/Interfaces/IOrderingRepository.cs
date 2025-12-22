@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MultiShop.Order.Domain.OrderAggregate;
 
-namespace MultiShop.Order.Application.Interfaces
+namespace MultiShop.Order.Domain.Interfaces
 {
     public interface IOrderingRepository
     {
