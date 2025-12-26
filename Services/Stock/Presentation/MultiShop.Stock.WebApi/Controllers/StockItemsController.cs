@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Queries.StockItemQueries;
+using MultiShop.Stock.Application.Features.Mediator.Commands.StockItemCommands;
 
 namespace MultiShop.Stock.WebApi.Controllers
 {
@@ -47,12 +48,12 @@ namespace MultiShop.Stock.WebApi.Controllers
             var response = await _mediator.Send(increaseStockItemCommand);
             return StatusCode(response.StatusCode, response);
         }
-        [HttpPut("decrease")]
-        public async Task<IActionResult> DecreaseStockItem(DecreaseStockItemCommand decreaseStockItemCommand)
-        {
-            var response = await _mediator.Send(decreaseStockItemCommand);
-            return StatusCode(response.StatusCode, response);
-        }
+        //[HttpPut("decrease")]
+        //public async Task<IActionResult> DecreaseStockItem(RollbackStockItemCommand decreaseStockItemCommand)
+        //{
+        //    var response = await _mediator.Send(decreaseStockItemCommand);
+        //    return StatusCode(response.StatusCode, response);
+        //}
         [HttpDelete]
         public async Task<IActionResult> DeactivateStockItem(int id,int type)
         {

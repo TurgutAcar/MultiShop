@@ -16,5 +16,15 @@ namespace MultiShop.Order.Domain.OrderAggregate
         public decimal ProductTotalPrice { get; set;}
         public int OrderingId { get; set;}
         public Ordering Ordering { get; set;}
+
+        public OrderDetail() { }
+        public OrderDetail(string productId, string productName, decimal productPrice, int productAmount, decimal productTotalPrice)
+        {
+            ProductId = productId;
+            ProductName = productName;
+            ProductPrice = productPrice;
+            ProductAmount = productAmount;
+            ProductTotalPrice = productTotalPrice;
+        }
     }
 }

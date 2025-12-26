@@ -5,8 +5,8 @@ using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Domain.OrderSagaAggregate;
 using MultiShop.Order.Domain.SeedWork;
 using MultiShop.Services.Order.Core.Application.Messaging;
-using MultiShop.Shared.Events.Dtos;
-using MultiShop.Shared.Responses;
+using MultiShop.Shared.Events;
+using MultiShop.Shared.Events.EventInterface;
 
 namespace MultiShop.Order.Application.Features.Mediator.Handlers.OrderingHandlers
 {
@@ -18,11 +18,12 @@ namespace MultiShop.Order.Application.Features.Mediator.Handlers.OrderingHandler
          IUnitOfWork unitOfWork,
          IEventBus _eventBus
 
-        ) : IRequestHandler<CreateOrderingCommand,Result<string>>
+        ) : IRequestHandler<CreateOrderingCommand>
     {
       
-        public async Task<Result<string>> Handle(CreateOrderingCommand request, CancellationToken cancellationToken)
+        public async Task Handle(CreateOrderingCommand request, CancellationToken cancellationToken)
         {
+            
             var map=_mapper.Map<Ordering>(request);     
             await _repository.CreateAsync(map);
             await unitOfWork.SaveChangesAsync();
@@ -33,18 +34,15 @@ namespace MultiShop.Order.Application.Features.Mediator.Handlers.OrderingHandler
 
             await unitOfWork.SaveChangesAsync();
 
-            foreach (var item in map.OrderDetails)
+            var orderCompletedEvent = new OrderCompletedEvent
             {
-                await _eventBus.PublishAsync(new StockReserveRequestedEvent
-                {
-                    SagaId = saga.SagaId,
-                    OrderId = map.OrderingId,
-                    ProductId = item.ProductId,
-                    Quantity = item.ProductAmount,
-                    RequestedAt = DateTime.UtcNow
-                });
-            }
-            return "Ordering olusturuldu";
+                CorrelationId = request.CorrelationId,
+
+            };
+            await _eventBus.PublishAsync<IOrderCompletedEvent>(orderCompletedEvent);
+
+
+          
         }
     }
 }

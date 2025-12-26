@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using MultiShop.Shared.Events;
 namespace Catalog.ElasticSyncWorker;
 
 public class ElasticSyncWorker : BackgroundService
@@ -90,7 +91,7 @@ public class ElasticSyncWorker : BackgroundService
            
                 var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                var @event = JsonSerializer.Deserialize<MultiShop.Shared.Events.Dtos.ProductCreatedEvent>(message);
+                var @event = JsonSerializer.Deserialize<ProductCreatedEvent>(message);
 
                 if (@event != null)
                 {

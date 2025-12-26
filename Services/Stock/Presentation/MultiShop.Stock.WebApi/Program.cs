@@ -5,6 +5,8 @@ using MultiShop.Services.Stock.Presentation.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using MultiShop.Services.Stock.Persistence;
+using MassTransit;
+using MultiShop.Stock.Persistence.Messaging.Consumers;
 
 // Add services to the container.
 const string CspPolicy = "default-src 'self'; " +
@@ -23,7 +25,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Audience = "ResourceStock";
     options.Authority = builder.Configuration["IdentityServerUrl"];
 });
+builder.Services.AddMassTransit(x =>
+{
+    // O servise ait Consumer'ý ekle
+    x.AddConsumer<StockReserveRequestedConsumer>();
+    x.AddConsumer<RollbackStockConsumer>();
 
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost");
+        cfg.ConfigureEndpoints(context);
+    });
+});
 builder.Services.AddRateLimiter(options =>
 {
     // Mevcut Fixed Window Limiter

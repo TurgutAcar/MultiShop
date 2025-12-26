@@ -7,6 +7,7 @@ using MultiShop.Services.Stock.Core.Domain.ValueObjects.Enums;
 using MultiShop.Services.Stock.Domain.Entities;
 using MultiShop.Services.Stock.Domain.Repositories;
 using MultiShop.Shared.Responses;
+using MultiShop.Stock.Application.Features.Mediator.Commands.StockItemCommands;
 
 
 namespace MultiShop.Stock.Core.Application.Features.Mediator.Handlers.StockItemHandlers
@@ -34,7 +35,7 @@ namespace MultiShop.Stock.Core.Application.Features.Mediator.Handlers.StockItemH
                request.ProductId,
                request.Quantity,
                request.Type,
-               request.ReferenceId,
+               0,
                DateTime.UtcNow,
                request.Description
            ),

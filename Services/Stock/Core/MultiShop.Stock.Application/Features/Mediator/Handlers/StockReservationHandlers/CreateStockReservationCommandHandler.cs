@@ -1,13 +1,9 @@
-﻿using AutoMapper;
+﻿using MassTransit;
 using MediatR;
-using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockItemCommands;
 using MultiShop.Services.Stock.Core.Application.Features.Mediator.Commands.StockReservationCommands;
-using MultiShop.Services.Stock.Core.Application.Messaging;
 using MultiShop.Services.Stock.Core.Domain.SeedWork;
-using MultiShop.Services.Stock.Domain.Entities;
 using MultiShop.Services.Stock.Domain.Repositories;
-using MultiShop.Shared.Events.Dtos;
-using MultiShop.Shared.Responses;
+using MultiShop.Shared.Events;
 using MultiShop.Stock.Domain.Repositories;
 
 
@@ -17,38 +13,55 @@ namespace MultiShop.Stock.Application.Features.Mediator.Handlers.StockReservatio
         IStockReservationRepository stockReservationRepository,
         IStockItemRepository stockItemRepository,
         IUnitOfWork unitOfWork,
-        IEventBus eventBus) : IRequestHandler<CreateStockReservationCommand>
+        IPublishEndpoint _publishEndpoint) : IRequestHandler<CreateStockReservationCommand>
     {
         public async Task Handle(CreateStockReservationCommand request, CancellationToken cancellationToken)
         {
-            var stock= await stockItemRepository.GetByExpressionAsync(p => p.ProductId == request.ProductId, cancellationToken);
-            if(stock is null ||stock.AvailableQuantity < request.Quantity)
+            var failedItems = new List<FailedStockItem>();
+            var stockItems = request.Items;
+            foreach (var item in stockItems)
             {
-                await eventBus.PublishAsync(new StockReservationFailedEvent
+                var productStock = await stockItemRepository.GetByExpressionAsync(p => p.ProductId == item.ProductId, cancellationToken);
+                var availableStock = productStock != null ? productStock.AvailableQuantity : 0;
+                if(availableStock < item.ProductAmount)
                 {
-                    SagaId = request.SagaId,
-                    OrderId = request.OrderId,
-                    ProductId = request.ProductId,
-                    Reason = "Yetersiz stok"
-                });
-                return;
-               
+                    failedItems.Add(new FailedStockItem
+                    {
+                        ProductId = item.ProductId,
+                        Message = $"Yetersiz stok. Mevcut: {availableStock}, Talep: {item.ProductAmount}"
+                    });
+                }
             }
-            stock.TotalQuantity -= request.Quantity;
-            stock.ReservedQuantity += request.Quantity;
-            await unitOfWork.SaveChangesAsync();
-
-            await eventBus.PublishAsync(new StockReservedEvent
+            if(!failedItems.Any())
             {
-                SagaId = request.SagaId,
-                OrderId = request.OrderId,
-                ProductId = request.ProductId,
-                ReservedQuantity = request.Quantity
-            });
-            // var mapValue = mapper.Map<StockReservation>(request);
-            //  await stockReservationRepository.AddAsync(mapValue);
-            //  await unitOfWork.SaveChangesAsync();
-            //return "StockReservation olusturuldu";
+                foreach (var item in stockItems)
+                {
+                    var productStock = await stockItemRepository.GetByExpressionAsync(p => p.ProductId == item.ProductId, cancellationToken);
+                    //productStock.TotalQuantity -= item.ProductAmount;
+                    productStock.ReservedQuantity += item.ProductAmount;
+                    
+                }
+                await unitOfWork.SaveChangesAsync();
+                var stockReservedEvent = new StockReservedEvent
+                {
+                    CorrelationId = request.CorrelationId,
+
+                };
+                 await _publishEndpoint.Publish<IStockReservedEvent>(stockReservedEvent);
+
+
+            }
+            else
+            {
+                var stockReservationFailedEvent = new StockReservationFailedEvent
+                {
+                    CorrelationId = request.CorrelationId,
+                    Reason = "Bazı ürünlerin stoğu yetersiz.",
+                    FailedItems = failedItems
+                };
+                await _publishEndpoint.Publish<IStockReservationFailedEvent>(stockReservationFailedEvent);
+            }
+            
         }
     }
 }

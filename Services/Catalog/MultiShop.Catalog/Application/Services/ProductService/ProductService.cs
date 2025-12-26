@@ -5,7 +5,7 @@ using MultiShop.Catalog.Application.Dtos.ProductDtos;
 using MultiShop.Catalog.Domain.Entities;
 using MultiShop.Catalog.Infrastructure.Messaging;
 using MultiShop.Catalog.Infrastructure.Settings;
-using MultiShop.Shared.Events.Dtos;
+using MultiShop.Shared.Events;
 using MultiShop.Shared.Responses;
 using System.Text.Json;
 
@@ -42,7 +42,7 @@ namespace MultiShop.Catalog.Application.Services.ProductService
                
                 var value = _mapper.Map<Product>(createProductDto);
                 await _productCollection.InsertOneAsync(value);
-                var @event = new Shared.Events.Dtos.ProductCreatedEvent
+                var @event = new ProductCreatedEvent
                 {
                     ProductId = value.ProductId,
                     ProductName = value.ProductName,

@@ -1,4 +1,4 @@
-﻿namespace MultiShop.Shared.Events.Dtos
+﻿namespace MultiShop.Shared.Events
 {
     public sealed class ProductCreatedEvent : IntegrationEvent
     {

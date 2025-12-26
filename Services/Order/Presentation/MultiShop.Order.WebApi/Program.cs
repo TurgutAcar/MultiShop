@@ -6,6 +6,8 @@ using MultiShop.Order.Persistence.DependencyInjection;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.RateLimiting;
+using MassTransit;
+using MultiShop.Order.Infrastructure.Messaging;
 const string CspPolicy = "default-src 'self'; " +
                          "script-src 'self' 'unsafe-inline'; " + // unsafe-inline'ý kaçýnmak için nonce/hash kullanmak daha iyidir
                          "style-src 'self'; " +
@@ -21,6 +23,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.RequireHttpsMetadata = false;
     options.Audience = "ResourceOrder";
     options.Authority = builder.Configuration["IdentityServerUrl"];
+});
+builder.Services.AddMassTransit(x =>
+{
+    // O servise ait Consumer'ý ekle
+    x.AddConsumer<OrderRequestedEventConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost");
+        cfg.ConfigureEndpoints(context);
+    });
 });
 
 builder.Services.AddRateLimiter(options =>
