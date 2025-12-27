@@ -36,7 +36,7 @@ namespace MultiShop.Stock.Application.Features.Mediator.Handlers.StockReservatio
             {
                 foreach (var item in stockItems)
                 {
-                    var productStock = await stockItemRepository.GetByExpressionAsync(p => p.ProductId == item.ProductId, cancellationToken);
+                    var productStock = await stockItemRepository.GetByExpressionWithTrackingAsync(p => p.ProductId == item.ProductId, cancellationToken);
                     //productStock.TotalQuantity -= item.ProductAmount;
                     productStock.ReservedQuantity += item.ProductAmount;
                     

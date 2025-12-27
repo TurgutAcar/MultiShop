@@ -5,6 +5,7 @@ using MultiShop.Checkout.Dto;
 using MultiShop.Checkout.Event;
 using MultiShop.Checkout.Messaging;
 using MultiShop.Checkout.Services;
+using MultiShop.Shared.Events;
 
 namespace MultiShop.Checkout.Controllers
 {
@@ -19,9 +20,7 @@ namespace MultiShop.Checkout.Controllers
             _publishEndpoint = publishEndpoint;
         }
 
-        public CheckoutsController()
-        {
-        }
+       
 
         [HttpPost("pay")]
         public async Task<IActionResult> Pay(CheckoutRequestDto request)
@@ -36,6 +35,20 @@ namespace MultiShop.Checkout.Controllers
             await _publishEndpoint.Publish<ICheckoutStarted>(message);
 
             return Ok();
+        }
+        [HttpPost("confirm")]
+        public async Task<IActionResult> ConfirmCheckout([FromBody] ConfirmCheckoutRequest request)
+        {
+            var message = new PaymentServiceRequestedEvent
+            {
+                CorrelationId = request.CorrelationId, // Saga ile eşleşir
+                CardNumber = request.CardNumber,
+                TotalAmount = request.TotalAmount
+            };
+
+            await _publishEndpoint.Publish<IPaymentServiceRequestedEvent>(message);
+
+            return Ok("Payment requested!");
         }
     }
 }
