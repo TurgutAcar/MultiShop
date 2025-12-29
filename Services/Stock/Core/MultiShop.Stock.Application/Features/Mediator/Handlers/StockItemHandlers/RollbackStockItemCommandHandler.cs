@@ -25,7 +25,7 @@ namespace MultiShop.Stock.Application.Features.Mediator.Handlers.StockItemHandle
         {
             foreach (var item  in request.Items)
             {
-                var stock = await stockItemRepository.GetByExpressionAsync(x => x.ProductId == item.ProductId);
+                var stock = await stockItemRepository.GetByExpressionWithTrackingAsync(x => x.ProductId == item.ProductId);
                 if (stock != null)
                 {
                     // REZERVASYONU GERİ ÇEK:

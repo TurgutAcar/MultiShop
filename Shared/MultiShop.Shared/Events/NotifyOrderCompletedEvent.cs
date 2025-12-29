@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace MultiShop.Shared.Events
 {
-    public class OrderCompletedEvent : IOrderCompletedEvent
+    public class NotifyOrderCompletedEvent : INotifyOrderCompletedEvent
     {
-        public Guid CorrelationId{ get; set; }
+        public Guid CorrelationId { get; set; }
 
+        public string UserId { get; set; }
+
+        public string Reason { get; set; }
     }
 }

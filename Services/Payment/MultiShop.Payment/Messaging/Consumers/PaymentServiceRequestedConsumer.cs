@@ -10,7 +10,7 @@ namespace MultiShop.Services.Messaging
     {
         public async Task Consume(ConsumeContext<PaymentServiceRequestedEvent> context)
         {
-            bool isPaymentSuccessful = context.Message.TotalAmount < 10000; // Örn: 10.000 TL üzeri limit yetersiz olsun
+            bool isPaymentSuccessful = context.Message.TotalAmount < 1000000; // Örn: 10.000 TL üzeri limit yetersiz olsun
 
             if (isPaymentSuccessful)
             {

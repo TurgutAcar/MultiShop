@@ -37,7 +37,7 @@ namespace MultiShop.Checkout.Controllers
             return Ok();
         }
         [HttpPost("confirm")]
-        public async Task<IActionResult> ConfirmCheckout([FromBody] ConfirmCheckoutRequest request)
+        public async Task<IActionResult> ConfirmCheckout(ConfirmCheckoutRequest request)
         {
             var message = new PaymentServiceRequestedEvent
             {

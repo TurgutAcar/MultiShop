@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiShop.Shared.Events
+namespace MultiShop.Shared.Events.EventInterface
 {
-    public interface IPaymentFailedEvent
+    public interface IPaymentExpiredEvent
     {
         Guid CorrelationId { get; }
-        string Reason { get; }
 
     }
 }

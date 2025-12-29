@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiShop.Shared.Events
+namespace MultiShop.Shared.Events.EventInterface
 {
-    public interface IPaymentFailedEvent
+    public interface INotifyStockReservationFailedEvent
     {
         Guid CorrelationId { get; }
+        string UserId { get; } // Saga bunu kendi state'inden dolduracak
         string Reason { get; }
-
     }
 }

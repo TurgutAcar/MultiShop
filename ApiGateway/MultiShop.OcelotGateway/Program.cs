@@ -11,16 +11,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication().AddJwtBearer("OcelotAuthenticationScheme", opt =>
 {
     opt.Authority = "http://identityserverapi";
+    //opt.Authority = "http://localhost:5001";
     opt.Audience = "ResourceOcelot";
     opt.RequireHttpsMetadata = false;
 });
-
+// YARP'ý ekliyoruz
+//builder.Services.AddReverseProxy()
+  //  .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 builder.Configuration
     .AddJsonFile($"configuration.{builder.Environment.EnvironmentName.ToLower()}.json", optional: true)
     .AddEnvironmentVariables();
 builder.Services.AddOcelot(builder.Configuration);
+
 
 var env = builder.Environment;
 
@@ -35,6 +39,13 @@ var config = new OcelotPipelineConfiguration
 {
     PreAuthorizationMiddleware = async (ctx, next) =>
     {
+        // Notification Hub isteklerini yetkilendirme kontrolünden muaf tut
+        if (ctx.Request.Path.StartsWithSegments("/notifications/hubs/checkout"))
+        {
+            await next.Invoke();
+            return;
+        }
+
         var method = ctx.Request.Method;
         var user = ctx.User;
         var scopes = user.FindAll("scope").Select(s => s.Value).ToList();
@@ -54,7 +65,7 @@ var config = new OcelotPipelineConfiguration
         if (isReadMethod && !(hasFullPermission || hasReadPermission))
         {
             ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-            await ctx.Response.WriteAsync("Okuma iï¿½lemleri iï¿½in CatalogReadPermission veya CatalogFullPermission gerekli.");
+            await ctx.Response.WriteAsync("Okuma islemleri icin CatalogReadPermission veya CatalogFullPermission gerekli.");
             return;
         }
 
@@ -67,12 +78,15 @@ var config = new OcelotPipelineConfiguration
 
 
 
-await app.UseOcelot(config);
 app.UseHttpsRedirection();
 app.UseResponseCompression();
+app.UseWebSockets(); // <--- BU SATIRI EKLE (Ocelot'un üstünde olmalý)
 app.UseCors();
+
 app.UseMiddleware<ClientIdDelegateHandler>();
 
 app.MapGet("/", () => "Hello World!");
+await app.UseOcelot(config);
+//app.MapReverseProxy();
 
 app.Run();

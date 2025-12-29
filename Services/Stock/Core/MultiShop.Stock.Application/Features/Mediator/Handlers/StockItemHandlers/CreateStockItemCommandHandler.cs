@@ -37,7 +37,7 @@ namespace MultiShop.Stock.Core.Application.Features.Mediator.Handlers.StockItemH
             ),
             cancellationToken
         );
-            //var transactionMapValue = mapper.Map<StockTransaction>(request);
+            var transactionMapValue = mapper.Map<StockTransaction>(request);
             //StockTransaction stockTransaction = new StockTransaction
             //{
             //    ProductId = request.ProductId,

@@ -14,4 +14,4 @@ namespace MultiShop.Order.Domain.Enums
         {
         }
     }
-}
+} 

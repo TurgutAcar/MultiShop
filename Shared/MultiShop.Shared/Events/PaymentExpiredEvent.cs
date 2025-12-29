@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace MultiShop.Shared.Events
 {
-    public class OrderCompletedEvent : IOrderCompletedEvent
+    public class PaymentExpiredEvent : IPaymentExpiredEvent
     {
-        public Guid CorrelationId{ get; set; }
-
+        public Guid CorrelationId { get; set; }
     }
 }

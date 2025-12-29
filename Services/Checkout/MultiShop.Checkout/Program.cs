@@ -1,7 +1,8 @@
 using MassTransit;
 using MultiShop.Checkout.Messaging;
 using StackExchange.Redis;
-
+using MassTransit.QuartzIntegration;
+using Quartz;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +12,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Program.cs (Checkout Service)
+builder.Services.AddQuartz(q =>
+{
+    // Basit bir thread pool ile scheduler kur
+    q.UseMicrosoftDependencyInjectionJobFactory();
+});
+
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
 builder.Services.AddMassTransit(x =>
 {
     x.AddSagaStateMachine<CheckoutStateMachine, CheckoutState>()
@@ -21,13 +32,15 @@ builder.Services.AddMassTransit(x =>
 
             r.KeyPrefix = "checkout-saga";
         });
-
+    x.AddMessageScheduler(new Uri("queue:quartz"));
+    x.AddQuartzConsumers();
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("localhost", 5673, "/", h => {
             h.Username("guest");
             h.Password("guest");
         });
+        cfg.UseMessageScheduler(new Uri("queue:quartz"));
 
         cfg.ConfigureEndpoints(context);
     });

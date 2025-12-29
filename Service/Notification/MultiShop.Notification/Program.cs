@@ -1,5 +1,6 @@
 using MassTransit;
-using MultiShop.Services.Messaging;
+using MultiShop.Notification.Consumers;
+using MultiShop.Notification.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +10,22 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
+builder.Services.AddCors(options => {
+    options.AddPolicy("GatewayPolicy", policy => {
+        policy.SetIsOriginAllowed(origin => true)
+        //policy.WithOrigins("http://localhost:5000") // API Gateway URL'in
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // SignalR için bu þart!
+    });
+});
+
 builder.Services.AddMassTransit(x =>
 {
-    // O servise ait Consumer'ý ekle
-    x.AddConsumer<PaymentServiceRequestedConsumer>();
+    x.AddConsumer<OrderCompletedConsumer>();
+    x.AddConsumer<StockReservationFailedConsumer>();
+    x.AddConsumer<PaymentFailedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -37,6 +50,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseCors("GatewayPolicy");
 app.MapControllers();
-
+app.MapHub<CheckoutHub>("/hubs/checkout");
 app.Run();

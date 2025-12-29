@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using MassTransit.SagaStateMachine;
 using MultiShop.Checkout.Event;
 using MultiShop.Checkout.Services;
 using MultiShop.Shared.Events;
@@ -8,6 +9,7 @@ namespace MultiShop.Checkout.Messaging
 {
     public class CheckoutStateMachine : MassTransitStateMachine<CheckoutState>
     {
+
         public CheckoutStateMachine()
         {
             // 1. Durumun nerede tutulacağını belirtiyoruz
@@ -21,23 +23,33 @@ namespace MultiShop.Checkout.Messaging
             Event(() => PaymentCompletedEvent, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
             Event(() => PaymentFailedEvent, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
             Event(() => OrderCompletedEvent, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
-
+            //Schedule(() => PaymentTimeout, x => x.ExpirationId);
+            // Constructor içinde:
+            Schedule(() => PaymentTimeout, x => x.ExpirationId, x =>
+            {
+                x.Delay = TimeSpan.FromMinutes(3);
+                x.Received = e => e.CorrelateById(context => context.Message.CorrelationId);
+            });
             // 3. Akış Tanımı
             Initially(
-                When(CheckoutStartedEvent)
-                    .Then(ctx =>
-                    {
-                        ctx.Saga.UserId = ctx.Message.UserId;
-                        ctx.Saga.Items = ctx.Message.Items;
-                        ctx.Saga.CreatedAt = DateTime.UtcNow;
-                    })
-                    .Publish(ctx => new StockReserveRequestedEvent
-                    {
-                        CorrelationId = ctx.Saga.CorrelationId,
-                        Items = ctx.Saga.Items
-                    })
-                    .TransitionTo(StockReservedState)
-            );
+            When(CheckoutStartedEvent)
+                .Then(ctx =>
+                {
+                    ctx.Saga.UserId = ctx.Message.UserId;
+                    ctx.Saga.Items = ctx.Message.Items;
+                    ctx.Saga.CreatedAt = DateTime.UtcNow;
+                })
+                .Publish(ctx => new StockReserveRequestedEvent
+                {
+                    CorrelationId = ctx.Saga.CorrelationId,
+                    Items = ctx.Saga.Items
+                })
+                .Schedule(PaymentTimeout, ctx => ctx.Init<IPaymentExpiredEvent>(new
+                {
+                    CorrelationId = ctx.Saga.CorrelationId
+                }))
+                 .TransitionTo(StockReservedState)
+        );
 
             // STOK BEKLERKEN GELEN CEVAPLAR
             During(StockReservedState,
@@ -51,7 +63,31 @@ namespace MultiShop.Checkout.Messaging
                         ctx.Saga.FailureReason = ctx.Message.Reason;
                         ctx.Saga.FailedItems = ctx.Message.FailedItems;
                     })
-                    .TransitionTo(CancelledState)
+                    .Publish(ctx => new NotifyStockReservationFailedEvent
+                    {
+                        CorrelationId = ctx.Saga.CorrelationId,
+                        UserId = ctx.Saga.UserId, // Saga state içindeki userId
+                        Reason = ctx.Message.Reason
+                    })
+                    .TransitionTo(CancelledState),
+                When(PaymentTimeout.Received)
+                    .Then(ctx =>
+                    {
+                        Console.WriteLine($"Sipariş {ctx.Saga.CorrelationId} için ödeme süresi doldu, rezervasyon iptal ediliyor.");
+                    })
+                    .Publish(ctx => new RollbackStockRequestedEvent
+                    {
+                        CorrelationId = ctx.Saga.CorrelationId,
+                        Items = ctx.Saga.Items
+                    })
+                    .Publish(ctx => new NotifyStockReservationFailedEvent
+                    {
+                        CorrelationId = ctx.Saga.CorrelationId,
+                        UserId = ctx.Saga.UserId, // Saga state içindeki userId
+                        Reason = " Ödeme süresi doldu, sipariş iptal edildi."
+                    })
+
+
             );
 
             // Kullanıcı ödeme/adres bilgilerini girip "Siparişi Onayla" dediğinde PaymentRequestedEvent gelir
@@ -88,7 +124,17 @@ namespace MultiShop.Checkout.Messaging
                     .TransitionTo(OrderCreatingState),
 
                 When(PaymentFailedEvent)
-                    .Publish(ctx => new RollbackStockRequestedEvent { CorrelationId = ctx.Saga.CorrelationId })
+                    .Publish(ctx => new RollbackStockRequestedEvent 
+                    { CorrelationId = ctx.Saga.CorrelationId ,
+                        Items = ctx.Saga.Items
+                    })
+        // 2. Kullanıcıya bildirim gitmesi için yeni bir event fırlat (Zenginleştirme)
+                    .Publish(ctx => new NotifyPaymentFailedEvent
+                    {
+                        CorrelationId = ctx.Saga.CorrelationId,
+                        UserId = ctx.Saga.UserId, // Saga state içindeki userId
+                        Reason = ctx.Message.Reason
+                    })
                     .TransitionTo(CancelledState)
             );
 
@@ -115,5 +161,7 @@ namespace MultiShop.Checkout.Messaging
         public State PaymentPendingState { get; private set; }
         public State CancelledState { get; private set; }
         public State OrderCreatingState { get; private set; }
+        public Schedule<CheckoutState, IPaymentExpiredEvent> PaymentTimeout { get; private set; }
+
     }
 }

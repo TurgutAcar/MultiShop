@@ -21,5 +21,6 @@ namespace MultiShop.Checkout.Messaging
         public AddressDto Address { get; set; }
         public string OrderNumber { get; set; }
         public int Version { get; set; }
+        public Guid? ExpirationId { get; set; }
     }
 }

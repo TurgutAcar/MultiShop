@@ -31,10 +31,15 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost");
+        cfg.Host("localhost", 5673, "/", h => {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
         cfg.ConfigureEndpoints(context);
     });
 });
+
 
 builder.Services.AddRateLimiter(options =>
 {
