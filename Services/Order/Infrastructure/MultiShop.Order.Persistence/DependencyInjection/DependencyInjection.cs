@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MultiShop.Order.Domain.SeedWork;
@@ -7,7 +6,7 @@ using MultiShop.Order.Persistence.Context;
 using Scrutor;
 using System.Reflection;
 
-namespace MultiShop.Order.Persistence.DependencyInjection
+namespace MultiShop.Order.Infrastructure.DependencyInjection
 {
     public static class DependencyInjection
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MultiShop.Order.Domain.OrderAggregate
@@ -15,6 +16,7 @@ namespace MultiShop.Order.Domain.OrderAggregate
         public int ProductAmount { get; set;}
         public decimal ProductTotalPrice { get; set;}
         public int OrderingId { get; set;}
+        [JsonIgnore]
         public Ordering Ordering { get; set;}
 
         public OrderDetail() { }

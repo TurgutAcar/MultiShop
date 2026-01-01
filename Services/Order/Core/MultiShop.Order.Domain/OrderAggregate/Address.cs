@@ -24,6 +24,23 @@ namespace MultiShop.Order.Domain.OrderAggregate
         public string Description { get; set; }
         public string ZipCode { get; set; }
 
+        public Address(int addressId, string userId, string name, string surname, string email, string phone, string country, string district, string city, string detail1, string detail2, string description, string zipCode)
+        {
+            AddressId = addressId;
+            UserId = userId;
+            Name = name;
+            Surname = surname;
+            Email = email;
+            Phone = phone;
+            Country = country;
+            District = district;
+            City = city;
+            Detail1 = detail1;
+            Detail2 = detail2;
+            Description = description;
+            ZipCode = zipCode;
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             throw new NotImplementedException();

@@ -43,7 +43,11 @@ namespace MultiShop.Checkout.Controllers
             {
                 CorrelationId = request.CorrelationId, // Saga ile eşleşir
                 CardNumber = request.CardNumber,
-                TotalAmount = request.TotalAmount
+                TotalAmount = request.TotalAmount,
+                Address=request.Address,
+                UserId=request.UserId
+
+
             };
 
             await _publishEndpoint.Publish<IPaymentServiceRequestedEvent>(message);

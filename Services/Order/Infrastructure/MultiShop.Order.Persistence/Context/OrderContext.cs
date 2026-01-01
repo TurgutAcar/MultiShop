@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using MultiShop.Order.Domain.OrderAggregate;
-using MultiShop.Order.Domain.OrderSagaAggregate;
 using MultiShop.Order.Domain.SeedWork;
 
 namespace MultiShop.Order.Persistence.Context
@@ -15,7 +14,6 @@ namespace MultiShop.Order.Persistence.Context
         public DbSet<Address>  Addresses { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Ordering>Orderings { get; set; }
-        public DbSet<OrderSaga> OrderSagas { get; set; }
 
     }
 }

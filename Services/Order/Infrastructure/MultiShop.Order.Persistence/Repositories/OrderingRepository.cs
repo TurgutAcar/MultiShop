@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MultiShop.Order.Domain;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MultiShop.Order.Domain.Interfaces;
 using MultiShop.Order.Domain.OrderAggregate;
 using MultiShop.Order.Persistence.Context;
@@ -21,13 +17,17 @@ namespace MultiShop.Order.Persistence.Repositories
 
         public List<Ordering> GetOrderingsByUserId(string id)
         {
-            var values=_orderContext.Orderings.Where(x => x.UserId == id).ToList();
-            return values;
+            // var values=_orderContext.Orderings.Where(x => x.UserId == id).ToList();
+            // return values;
+                    return  _orderContext.Orderings
+                 .Include(x => x.OrderDetails)
+                 .Where(x => x.UserId == id)
+                 .Include(x => x.Address)
+                 .Where(x => x.UserId == id)
+                 .ToList();
+
         }
 
-        List<Ordering> IOrderingRepository.GetOrderingsByUserId(string id)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

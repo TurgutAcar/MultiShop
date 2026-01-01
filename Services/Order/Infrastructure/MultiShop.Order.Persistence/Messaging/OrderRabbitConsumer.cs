@@ -1,16 +1,4 @@
-﻿using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using MultiShop.Order.Infrastructure.Messaging.Consumer;
-using MultiShop.Order.Infrastructure.Messaging;
-using System.Text.Json;
-using Microsoft.Extensions.Hosting;
-using MultiShop.Shared.Events;
+﻿
 
 namespace MultiShop.Order.Persistence.Messaging
 {

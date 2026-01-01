@@ -1,9 +1,6 @@
 ﻿using MassTransit;
 using MediatR;
 using MultiShop.Order.Application.Features.Mediator.Commands;
-using MultiShop.Order.Application.Features.Mediator.Commands.StockCommands;
-using MultiShop.Order.Application.Features.Mediator.Dtos;
-using MultiShop.Shared.Dtos;
 using MultiShop.Shared.Events;
 
 namespace MultiShop.Order.Infrastructure.Messaging

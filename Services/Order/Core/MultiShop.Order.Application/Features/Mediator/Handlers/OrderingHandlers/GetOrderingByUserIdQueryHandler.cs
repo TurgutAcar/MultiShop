@@ -19,6 +19,8 @@ namespace MultiShop.Order.Application.Features.Mediator.Handlers.OrderingHandler
         public async Task<Result<List<GetOrderingByUserIdQueryResult>>>Handle(GetOrderingByUserIdQuery request, CancellationToken cancellationToken)
         {
             var values =_orderingRepository.GetOrderingsByUserId(request.Id);
+     
+
             var mapList = values.Select(x => _mapper.Map<GetOrderingByUserIdQueryResult>(x)).ToList();
             return mapList;
             //return values.Select(x => new GetOrderingByUserIdQueryResult

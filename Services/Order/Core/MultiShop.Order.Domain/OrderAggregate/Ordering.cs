@@ -13,7 +13,7 @@ namespace MultiShop.Order.Domain.OrderAggregate
         public int OrderingId { get; set; }
         public string UserId { get; set; }
         public decimal TotalPrice { get; set; }
-        public OrderStatus Status { get; set; }
+        //public OrderStatus Status { get; set; }
 
         public DateTime OrderDate { get; set; }
         public Address Address { get; set; }
@@ -26,7 +26,7 @@ namespace MultiShop.Order.Domain.OrderAggregate
         {
             UserId = userId;
             TotalPrice = totalPrice;
-            Status = OrderStatus.FromValue(1);
+           // Status = OrderStatus.FromValue(1);
             OrderDate = DateTime.Now;
             Address = address;
             _orderDetails = new List<OrderDetail>();

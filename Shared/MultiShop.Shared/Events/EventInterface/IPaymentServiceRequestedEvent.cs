@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiShop.Order.Application.Features.Mediator.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace MultiShop.Shared.Events
         string UserId { get; }
         decimal TotalAmount { get; }
          string CardNumber { get; }
+        public AddressDto Address { get; }
+
 
     }
 }

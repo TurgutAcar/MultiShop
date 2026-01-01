@@ -30,13 +30,13 @@ namespace MultiShop.Order.WebApi.Controllers
             var response =await _mediator.Send(new GetOrderingByIdQuery(id));
             return StatusCode(response.StatusCode, response);
         }
-        //[HttpPost]
-      
-        //public async Task<IActionResult> CreateOrdering(CreateOrderingCommand createOrderingCommand)
-        //{
-        //    var response = await _mediator.Send(createOrderingCommand);
-        //    return StatusCode(response.StatusCode, response);
-        //}
+        [HttpPost]
+
+        public async Task<IActionResult> CreateOrdering(CreateOrderingCommand createOrderingCommand)
+        {
+            await _mediator.Send(createOrderingCommand);
+            return StatusCode(200, "OK");
+        }
         [HttpPut]
         public async Task<IActionResult> UpdateOrdering(UpdateOrderingCommand updateOrderingCommand)
         {

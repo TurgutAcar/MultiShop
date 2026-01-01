@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using MultiShop.Discount.Context;
 using MultiShop.Discount.Middlewares;
 using MultiShop.Discount.Services;
-using MultiShop.Order.Persistence.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 

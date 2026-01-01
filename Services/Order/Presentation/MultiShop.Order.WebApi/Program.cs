@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using MultiShop.Order.Application.Services;
 using MultiShop.Order.WebApi.Middlewares;
-using MultiShop.Order.Persistence.DependencyInjection;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.RateLimiting;
 using MassTransit;
 using MultiShop.Order.Infrastructure.Messaging;
+using MultiShop.Order.Infrastructure.DependencyInjection;
 const string CspPolicy = "default-src 'self'; " +
                          "script-src 'self' 'unsafe-inline'; " + // unsafe-inline'ý kaçýnmak için nonce/hash kullanmak daha iyidir
                          "style-src 'self'; " +

@@ -97,6 +97,7 @@ namespace MultiShop.Checkout.Messaging
                     {
                         ctx.Saga.CardNumber = ctx.Message.CardNumber;
                         ctx.Saga.TotalAmount = ctx.Message.TotalAmount;
+                        ctx.Saga.Address = ctx.Message.Address;
                     })
                     .Publish(ctx => new PaymentServiceRequestedEvent
                     {
@@ -141,6 +142,12 @@ namespace MultiShop.Checkout.Messaging
             During(OrderCreatingState,
                 When(OrderCompletedEvent)
                     .Then(ctx => Console.WriteLine($"TEBRİKLER! Sipariş {ctx.Saga.CorrelationId} başarıyla tamamlandı."))
+                    .Publish(ctx => new NotifyOrderCompletedEvent
+                    {
+                        CorrelationId = ctx.Saga.CorrelationId,
+                        UserId = ctx.Saga.UserId, // Saga state içindeki userId
+                        Reason = $"TEBRİKLER! Sipariş {ctx.Saga.CorrelationId} başarıyla tamamlandı."
+                    })
                     .Finalize()
             );
 
