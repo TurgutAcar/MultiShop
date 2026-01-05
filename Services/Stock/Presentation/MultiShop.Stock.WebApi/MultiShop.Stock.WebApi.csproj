@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.7" />
     <PackageReference Include="MediatR" Version="12.5.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -21,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Service\Stock\Infrastructure\MultiShop.Stock.Persistence\MultiShop.Stock.Persistence.csproj" />
     <ProjectReference Include="..\..\Core\MultiShop.Stock.Application\MultiShop.Stock.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\MultiShop.Stock.Persistence\MultiShop.Stock.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

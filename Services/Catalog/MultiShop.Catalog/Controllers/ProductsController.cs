@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Catalog.Application.Dtos.ProductDtos;
 using MultiShop.Catalog.Application.Services.ProductService;
+using MultiShop.Shared.Events;
 
 namespace MultiShop.Catalog.Controllers
 {
@@ -12,9 +14,12 @@ namespace MultiShop.Catalog.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductsController(IProductService productService)
-        { 
+        private readonly IBus _bus;
+
+        public ProductsController(IProductService productService, IBus bus)
+        {
             _productService = productService;
+            _bus = bus;
         }
         [HttpGet]
         public async Task<IActionResult> ProductList()
@@ -60,5 +65,17 @@ namespace MultiShop.Catalog.Controllers
             var response = await _productService.GetProductsWithCategoryByCategoryIdAsync(id);
             return StatusCode(response.StatusCode, response);
         }
+        [HttpPost("test-publish")]
+        public async Task<IActionResult> Test()
+        {
+            await _bus.Publish(new ProductCreatedEvent
+            {
+                ProductId = "1",
+                ProductName = "Test"
+            });
+
+            return Ok("tamam");
+        }
+
     }
 }

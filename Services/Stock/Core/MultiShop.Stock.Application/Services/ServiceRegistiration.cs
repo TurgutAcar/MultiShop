@@ -12,7 +12,7 @@ namespace MultiShop.Services.Stock.Core.Application.Services
             IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(ServiceRegistiration).Assembly);
-
+        
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceRegistiration).Assembly));
             services.Scan(scan => scan

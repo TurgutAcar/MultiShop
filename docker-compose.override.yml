@@ -32,7 +32,13 @@ services:
         replicas: 1
         placement:
           constraints: [node.role == manager]
-    
+    rabbitmq:
+      container_name: rabbitmq
+      restart: always
+      image: rabbitmq:3-management
+      ports:
+       - "5672:5672"
+       - "15672:15672"
     # --- Yük Dengelemeli Servisler ---
     
     # 1. Katalog API (2 Replica)
@@ -41,18 +47,29 @@ services:
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=http://+:80
         - IdentityServerUrl=http://identityserverapi:80 # IdentityServer'ın servis adını kullanıyoruz
-        - DatabaseSettings__ConnectionString=mongodb://catalogdb:27017 # DB servis adını kullanıyoruz
+        - DatabaseSettings__ConnectionString=mongodb://catalogdb:27017/?replicaSet=rs0 # DB servis adını kullanıyoruz
       ports:
         - "7070:80" # Bu port sadece ilk replica için açılır, Swarm load balancing'i bu port üzerinden yapar.
       depends_on:
         - catalogdb
+        - rabbitmq
         - identityserverapi
+      deploy:
+        mode: replicated
+        replicas: 1 # Yük dengeleme için 2 kopya
+        restart_policy:
+          condition: any
+    elasticsyncworker:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+      depends_on:
+        - rabbitmq
+        - elasticsearch
       deploy:
         mode: replicated
         replicas: 2 # Yük dengeleme için 2 kopya
         restart_policy:
           condition: any
-     
     # 2. IdentityServer API (1 Replica)
     identityserverapi:
       restart: on-failure

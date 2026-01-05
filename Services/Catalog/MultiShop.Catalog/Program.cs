@@ -1,12 +1,9 @@
 using Elastic.Clients.Elasticsearch;
-using Elastic.Transport;
 using HealthChecks.UI.Client;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MultiShop.Catalog.Infrastructure.DependencyInjection;
 using MultiShop.Catalog.Infrastructure.Middlewares;
 using Serilog;
@@ -29,6 +26,29 @@ builder.Services.AddAuthorization(options =>
                 context.User.HasClaim("scope", "CatalogFullPermission")));
    
 });
+builder.Services.AddMassTransit(x =>
+{
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq", 5672, "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        cfg.ConfigureEndpoints(context);
+    });
+
+    //// MONGO OUTBOX
+    //x.AddMongoDbOutbox(o =>
+    //{
+    //    o.Connection = "mongodb://catalogdb:27017/?replicaSet=rs0";
+    //    o.DatabaseName = "MultiShopCatalogDb";
+
+    //    o.UseBusOutbox();
+    //});
+});
+
 // Elasticsearch Ayar
 var esSettings = new ElasticsearchClientSettings(new Uri("http://elasticsearch:9200"))
                     .DefaultIndex("products");
@@ -82,16 +102,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHealthChecks("/health-check", new HealthCheckOptions
-{
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
-    ResultStatusCodes =
-    {
-        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
-    }
-});
+//app.MapHealthChecks("/health-check", new HealthCheckOptions //ACILACAK
+//{
+//    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+//    ResultStatusCodes =
+//    {
+//        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
+//        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
+//        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+//    }
+//});
 //app.MapHealthChecksUI(options =>
 //{
 //    options.UIPath = "/health-ui";      

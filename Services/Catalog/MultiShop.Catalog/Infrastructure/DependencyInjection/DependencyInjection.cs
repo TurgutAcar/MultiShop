@@ -16,7 +16,7 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
         {
             builder.Services.AddHostedService<OutboxPublisherWorker>();
 
-            services.AddSingleton<IEventBus, RabbitMqEventBus>();
+            //services.AddSingleton<IEventBus, RabbitMqEventBus>();
 
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);

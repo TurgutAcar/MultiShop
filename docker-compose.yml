@@ -21,6 +21,11 @@ services:
     build: 
       context: .
       dockerfile: Services/Catalog/MultiShop.Catalog/Dockerfile
+  elasticsyncworker:
+    image: multishop/elasticsyncworker:latest # Daha iyi bir imaj ismi
+    build: 
+      context: .
+      dockerfile: Services/Catalog/Catalog.ElasticSyncWorker/Dockerfile
   identityserverapi:
     image: multishop/identityserverapi:latest
     build: 
@@ -41,6 +46,8 @@ services:
     
   kibana:
     image: docker.elastic.co/kibana/kibana:8.15.0
+  rabbitmq:
+    image: rabbitmq:3-management
    
 
 

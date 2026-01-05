@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Elastic.Clients.Elasticsearch;
+using MassTransit;
 using MongoDB.Driver;
 using MultiShop.Catalog.Application.Dtos.ProductDtos;
 using MultiShop.Catalog.Domain.Entities;
@@ -18,36 +19,38 @@ namespace MultiShop.Catalog.Application.Services.ProductService
         private readonly IMongoCollection<Product> _productCollection;
         private readonly IMongoCollection<Category> _categoryCollection;
         private readonly IMapper _mapper;
-        private readonly ElasticsearchClient _es;
-        private readonly IEventBus _eventBus;
+        //private readonly ElasticsearchClient _es;
+        //private readonly IEventBus _eventBus;
         private readonly MongoClient _client;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ProductService(IMapper mapper, IDatabaseSettings databaseSettings, ElasticsearchClient es, IEventBus eventBus)
+        public ProductService(IMapper mapper, IDatabaseSettings databaseSettings,IPublishEndpoint publishEndpoint)
         {
             _client = new MongoClient(databaseSettings.ConnectionString);
             var database = _client.GetDatabase(databaseSettings.DatabaseName);
             _productCollection = database.GetCollection<Product>(databaseSettings.ProductCollectionName);
             _categoryCollection = database.GetCollection<Category>(databaseSettings.CategoryCollectionName);
-             _outboxMessageCollection= database.GetCollection<OutboxMessage>(databaseSettings.CategoryCollectionName);
+            _outboxMessageCollection = database.GetCollection<OutboxMessage>(databaseSettings.CategoryCollectionName);
             _mapper = mapper;
-            _es = es;
-            _eventBus = eventBus;
+          //  _es = es;
+           // _eventBus = eventBus;
+            _publishEndpoint = publishEndpoint;
         }
         public async Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto)
         {
-            //using var session = await _client.StartSessionAsync();
-            //session.StartTransaction();
+            using var session = await _client.StartSessionAsync();
+            session.StartTransaction();
             try
             {
                
-                var value = _mapper.Map<Product>(createProductDto);
-                await _productCollection.InsertOneAsync(value);
+                var product = _mapper.Map<Product>(createProductDto);
+                await _productCollection.InsertOneAsync(session, product);
                 var @event = new ProductCreatedEvent
                 {
-                    ProductId = value.ProductId,
-                    ProductName = value.ProductName,
-                    ProductPrice = value.ProductPrice,
-                    CategoryId = value.CategoryId
+                    ProductId = product.ProductId,
+                    ProductName = product.ProductName,
+                    ProductPrice = product.ProductPrice,
+                    CategoryId = product.CategoryId
                 };
                 var outbox = new OutboxMessage
                 {
@@ -55,8 +58,8 @@ namespace MultiShop.Catalog.Application.Services.ProductService
                     Payload = JsonSerializer.Serialize(@event),
                     OccurredOn = DateTime.UtcNow
                 };
-
-                await _outboxMessageCollection.InsertOneAsync(outbox);
+                // await _publishEndpoint.Publish(@event);
+                await _outboxMessageCollection.InsertOneAsync(session, outbox);
                 //await session.CommitTransactionAsync();
 
                 //   await _eventBus.PublishAsync(@event);
@@ -70,12 +73,13 @@ namespace MultiShop.Catalog.Application.Services.ProductService
                 //                throw new Exception(result.DebugInformation);
 
                 //            }
+                await session.CommitTransactionAsync();
 
                 return "Product olusturuldu.";
             }
             catch (Exception ex)
             {
-              //  await session.AbortTransactionAsync();
+                await session.AbortTransactionAsync();
                 throw;
             }
 

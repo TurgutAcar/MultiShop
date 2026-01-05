@@ -4,9 +4,9 @@ using Serilog;
 using MultiShop.Services.Stock.Presentation.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
-using MultiShop.Services.Stock.Persistence;
 using MassTransit;
 using MultiShop.Stock.Persistence.Messaging.Consumers;
+using MultiShop.Services.Stock.Persistence;
 
 // Add services to the container.
 const string CspPolicy = "default-src 'self'; " +
