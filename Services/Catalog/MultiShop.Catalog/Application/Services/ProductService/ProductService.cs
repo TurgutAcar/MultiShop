@@ -4,7 +4,6 @@ using MassTransit;
 using MongoDB.Driver;
 using MultiShop.Catalog.Application.Dtos.ProductDtos;
 using MultiShop.Catalog.Domain.Entities;
-using MultiShop.Catalog.Infrastructure.Messaging;
 using MultiShop.Catalog.Infrastructure.Settings;
 using MultiShop.Shared.Events;
 using MultiShop.Shared.Responses;

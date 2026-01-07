@@ -32,6 +32,43 @@ services:
         replicas: 1
         placement:
           constraints: [node.role == manager]
+    orderdb:
+      container_name: orderdb
+      restart: always
+      ports:
+        - "1440:1433" # 1433 portunu dışarı açıyoruz
+      volumes:
+        - orderdb_volume:/var/opt/mssql
+      environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=123456aA*
+      deploy:
+        mode: replicated
+        replicas: 1
+        placement:
+          constraints: [node.role == manager]
+    stockdb:
+      container_name: stockdb
+      restart: always
+      ports:
+        - "3306:3306" 
+      volumes:
+        - stockdb_volume:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=123456aA* 
+        - MYSQL_DATABASE=StockDb 
+        - MYSQL_USER=stockuser 
+        - MYSQL_PASSWORD=123456aA*
+      deploy:
+        mode: replicated
+        replicas: 1
+        placement:
+          constraints: [node.role == manager]
+    checkoutdb:
+      container_name: checkoutdb
+      restart: always
+      ports:
+        - "6379:6379"  
     rabbitmq:
       container_name: rabbitmq
       restart: always
@@ -71,6 +108,104 @@ services:
         restart_policy:
           condition: any
     # 2. IdentityServer API (1 Replica)
+    outboxworker:
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+      depends_on:
+        - rabbitmq
+      deploy:
+        mode: replicated
+        replicas: 2 # Yük dengeleme için 2 kopya
+        restart_policy:
+          condition: any
+    orderapi:
+      restart: on-failure
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+        - ConnectionStrings__SqlServer=Server=orderdb;Database=MultiShopOrderDb;User=sa;Password=123456aA*;Encrypt=False;TrustServerCertificate=True
+        - IdentityServerUrl=http://identityserverapi:80
+      ports:
+        - "7072:80"
+      volumes:
+        - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
+      depends_on:
+        - orderdb
+        - rabbitmq
+        - identityserverapi
+      deploy:
+        mode: replicated
+        replicas: 1 
+        restart_policy:
+          condition: on-failure
+    stockapi:
+      restart: on-failure
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+        - ConnectionStrings__MySQL=Server=stockdb;Port=3306;Database=StockDb;Uid=stockuser;Pwd=123456aA*;SslMode=none;AllowPublicKeyRetrieval=True
+        - IdentityServerUrl=http://identityserverapi:80
+      ports:
+        - "7080:80"
+      volumes:
+        - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
+      depends_on:
+        - stockdb
+        - rabbitmq
+        - identityserverapi
+      deploy:
+        mode: replicated
+        replicas: 1 
+        restart_policy:
+          condition: on-failure
+    paymentapi:
+      restart: on-failure
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+      ports:
+        - "7076:80"
+      volumes:
+        - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
+      depends_on:
+        - rabbitmq
+      deploy:
+        mode: replicated
+        replicas: 1 
+        restart_policy:
+          condition: on-failure
+    checkoutapi:
+      restart: on-failure
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+      ports:
+        - "7081:80"
+      volumes:
+        - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
+      depends_on:
+        - rabbitmq
+      deploy:
+        mode: replicated
+        replicas: 1 
+        restart_policy:
+          condition: on-failure
+    notificationapi:
+      restart: on-failure
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+      ports:
+        - "7082:80"
+      volumes:
+        - ./data-protection-keys:/root/.aspnet/DataProtection-Keys
+      depends_on:
+        - rabbitmq
+      deploy:
+        mode: replicated
+        replicas: 1 
+        restart_policy:
+          condition: on-failure
     identityserverapi:
       restart: on-failure
       environment:

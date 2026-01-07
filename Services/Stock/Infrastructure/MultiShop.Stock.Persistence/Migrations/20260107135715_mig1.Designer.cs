@@ -11,8 +11,8 @@ using MultiShop.Services.Stock.Persistence.Context;
 namespace MultiShop.Stock.Persistence.Migrations
 {
     [DbContext(typeof(StockContext))]
-    [Migration("20251227124227_mig2")]
-    partial class mig2
+    [Migration("20260107135715_mig1")]
+    partial class mig1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

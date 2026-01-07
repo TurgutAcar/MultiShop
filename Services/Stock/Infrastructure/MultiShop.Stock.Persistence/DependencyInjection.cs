@@ -13,7 +13,12 @@ namespace MultiShop.Services.Stock.Persistence
         {
             services.AddDbContext<StockContext>(options =>
             options.UseMySql(configuration.GetConnectionString("MySQL"),
-        new MySqlServerVersion(new Version(8, 0, 36))));
+        new MySqlServerVersion(new Version(8, 0, 36)),
+        mySqlOptions => {
+            mySqlOptions.EnableRetryOnFailure(maxRetryCount: 5, // Kaç kez denesin
+            maxRetryDelay: TimeSpan.FromSeconds(10), // Denemeler arası bekleme
+            errorNumbersToAdd: null // Özel hata kodları eklenebilir
+            ); }));
             services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<StockContext>());
 
             services.Scan(action =>

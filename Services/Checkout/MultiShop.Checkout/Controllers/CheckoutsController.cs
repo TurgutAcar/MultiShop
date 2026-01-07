@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Checkout.Dto;
@@ -9,6 +10,7 @@ using MultiShop.Shared.Events;
 
 namespace MultiShop.Checkout.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CheckoutsController : ControllerBase

@@ -6,7 +6,6 @@ using Scrutor;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MultiShop.Catalog.Infrastructure.Middlewares;
 using MultiShop.Catalog.Infrastructure.Settings;
-using MultiShop.Catalog.Infrastructure.Messaging;
 
 namespace MultiShop.Catalog.Infrastructure.DependencyInjection
 {
@@ -14,7 +13,7 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
     {
         public static  IServiceCollection AddApplication(this IServiceCollection services,WebApplicationBuilder builder)
         {
-            builder.Services.AddHostedService<OutboxPublisherWorker>();
+          //  builder.Services.AddHostedService<OutboxPublisherWorker>();
 
             //services.AddSingleton<IEventBus, RabbitMqEventBus>();
 

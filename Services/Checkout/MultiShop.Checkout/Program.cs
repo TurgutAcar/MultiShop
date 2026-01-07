@@ -3,10 +3,16 @@ using MultiShop.Checkout.Messaging;
 using StackExchange.Redis;
 using MassTransit.QuartzIntegration;
 using Quartz;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.Audience = "ResourceCheckout";
+    options.Authority = builder.Configuration["IdentityServerUrl"];
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +34,7 @@ builder.Services.AddMassTransit(x =>
         .RedisRepository(r =>
         {
             // ConnectionFactory bir metot, çaðrý þeklinde kullanýlýr
-            r.ConnectionFactory(() => ConnectionMultiplexer.Connect("localhost:6379"));
+            r.ConnectionFactory(() => ConnectionMultiplexer.Connect("checkoutdb:6379"));
 
             r.KeyPrefix = "checkout-saga";
         });
@@ -36,7 +42,7 @@ builder.Services.AddMassTransit(x =>
     x.AddQuartzConsumers();
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", 5673, "/", h => {
+        cfg.Host("rabbitmq", 5672, "/", h => {
             h.Username("guest");
             h.Password("guest");
         });
@@ -60,7 +66,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

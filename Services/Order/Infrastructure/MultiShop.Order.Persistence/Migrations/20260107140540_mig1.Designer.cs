@@ -12,8 +12,8 @@ using MultiShop.Order.Persistence.Context;
 namespace MultiShop.Order.Persistence.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20250528141920_mig2")]
-    partial class mig2
+    [Migration("20260107140540_mig1")]
+    partial class mig1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace MultiShop.Order.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MultiShop.Order.Domain.Address", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Address", b =>
                 {
                     b.Property<int>("AddressId")
                         .ValueGeneratedOnAdd()
@@ -86,7 +86,7 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.OrderDetail", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.OrderDetail", b =>
                 {
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd()
@@ -121,13 +121,16 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.ToTable("OrderDetails");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.Ordering", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Ordering", b =>
                 {
                     b.Property<int>("OrderingId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderingId"));
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -141,12 +144,14 @@ namespace MultiShop.Order.Persistence.Migrations
 
                     b.HasKey("OrderingId");
 
+                    b.HasIndex("AddressId");
+
                     b.ToTable("Orderings");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.OrderDetail", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.OrderDetail", b =>
                 {
-                    b.HasOne("MultiShop.Order.Domain.Ordering", "Ordering")
+                    b.HasOne("MultiShop.Order.Domain.OrderAggregate.Ordering", "Ordering")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -155,7 +160,18 @@ namespace MultiShop.Order.Persistence.Migrations
                     b.Navigation("Ordering");
                 });
 
-            modelBuilder.Entity("MultiShop.Order.Domain.Ordering", b =>
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Ordering", b =>
+                {
+                    b.HasOne("MultiShop.Order.Domain.OrderAggregate.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("MultiShop.Order.Domain.OrderAggregate.Ordering", b =>
                 {
                     b.Navigation("OrderDetails");
                 });

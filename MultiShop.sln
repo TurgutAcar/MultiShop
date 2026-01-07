@@ -139,6 +139,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çöz
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OutboxWorker", "OutboxWorker", "{9ABB2DC2-69A6-4BD6-BA47-549B8C714F80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiShop.Catalog.OutboxWorker", "Services\Catalog\OutboxWorker\MultiShop.Catalog.OutboxWorker\MultiShop.Catalog.OutboxWorker.csproj", "{1A4EEE68-B4D2-4B71-9A04-EDAAD786E40E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -277,6 +281,10 @@ Global
 		{E72E5366-DA1D-3DB6-A18C-DF78FFECEFAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E72E5366-DA1D-3DB6-A18C-DF78FFECEFAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E72E5366-DA1D-3DB6-A18C-DF78FFECEFAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4EEE68-B4D2-4B71-9A04-EDAAD786E40E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4EEE68-B4D2-4B71-9A04-EDAAD786E40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4EEE68-B4D2-4B71-9A04-EDAAD786E40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4EEE68-B4D2-4B71-9A04-EDAAD786E40E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -338,6 +346,8 @@ Global
 		{B2E70039-30AA-583B-8811-8D9F2A0BBA58} = {1574D886-03DB-42CB-9FA4-AA095E7EF2B0}
 		{2E486933-B7F6-2539-880A-15CB0F359D95} = {CA060A47-00FB-4BCA-943F-9D62132E1784}
 		{E72E5366-DA1D-3DB6-A18C-DF78FFECEFAB} = {C917A4FF-D64B-4941-B0EE-CD0190B60D30}
+		{9ABB2DC2-69A6-4BD6-BA47-549B8C714F80} = {2CC53A7B-BB94-4410-BE56-8639CAF1860D}
+		{1A4EEE68-B4D2-4B71-9A04-EDAAD786E40E} = {9ABB2DC2-69A6-4BD6-BA47-549B8C714F80}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09D9E1A5-684D-455B-AD88-7069EA2CDC8F}

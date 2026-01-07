@@ -5,6 +5,8 @@ services:
     image: mongo
   basketdb:
     image: redis
+  checkoutdb:
+    image: redis
   discountdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root # MSSQL için user tanımı gerekli
@@ -13,6 +15,9 @@ services:
     user: root
   orderdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+  stockdb:
+    image: mysql:8.0
     user: root
     
   # Mikroservisler ve Gateway (Build tanımları)
@@ -26,11 +31,41 @@ services:
     build: 
       context: .
       dockerfile: Services/Catalog/Catalog.ElasticSyncWorker/Dockerfile
+  outboxworker:
+    image: multishop/outboxworker:latest 
+    build: 
+      context: .
+      dockerfile: Services/Catalog/OutboxWorker/MultiShop.Catalog.OutboxWorker/Dockerfile
   identityserverapi:
     image: multishop/identityserverapi:latest
     build: 
       context: .
       dockerfile: IdentityServer/MultiShop.IdentityServer/Dockerfile
+  orderapi:
+    image: multishop/orderapi:latest
+    build: 
+      context: .
+      dockerfile: Services/Order/Presentation/MultiShop.Order.WebApi/Dockerfile
+  stockapi:
+    image: multishop/stockapi:latest
+    build: 
+      context: .
+      dockerfile: Services/Stock/Presentation/MultiShop.Stock.WebApi/Dockerfile
+  paymentapi:
+    image: multishop/paymentapi:latest
+    build: 
+      context: .
+      dockerfile: Services/Payment/MultiShop.Payment/Dockerfile
+  checkoutapi:
+    image: multishop/checkoutapi:latest
+    build: 
+      context: .
+      dockerfile: Services/Checkout/MultiShop.Checkout/Dockerfile
+  notificationapi:
+    image: multishop/notificationapi:latest
+    build: 
+      context: .
+      dockerfile: Services/Notification/MultiShop.Notification/Dockerfile
   gatewayapi:
     image: multishop/gatewayapi:latest
     build: 
@@ -59,6 +94,8 @@ volumes:
   discountdb_volume:
   identitydb_volume:
   orderdb_volume:
+  stockdb_volume:
+
   esdata:
 # Network tanımını kaldırın veya basitleştirin
 networks:
