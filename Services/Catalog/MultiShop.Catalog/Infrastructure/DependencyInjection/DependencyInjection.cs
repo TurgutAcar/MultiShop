@@ -41,6 +41,7 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
                 .AsImplementedInterfaces()
                 .WithScopedLifetime();
             });
+
             builder.Services.AddHealthChecks()
      .AddMongoDb(
          mongodbConnectionString: builder.Configuration
@@ -48,15 +49,19 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
             .Get<DatabaseSettings>()!.ConnectionString,
          name: "mongodb",
          timeout: TimeSpan.FromSeconds(5),
-         tags: new[] { "db","mongo","sqlserver" }
-     );
-//            builder.Services.AddHealthChecksUI(setup =>
-//            {
-//                setup.SetEvaluationTimeInSeconds(30); // 30 saniyede bir kontrol
-//                setup.MaximumHistoryEntriesPerEndpoint(50);
-//                setup.AddHealthCheckEndpoint("API Health", "http://localhost/health-check"); // UI bu endpointi izleyecek
-//            })
-//.AddInMemoryStorage();
+         tags: new[] { "db", "mongo", "sqlserver" }
+     ).AddRabbitMQ(
+        "rabbitmq:5672",
+        name: "rabbitmq",
+        tags: new[] { "cache", "rabbitmq" }
+    ); 
+            //            builder.Services.AddHealthChecksUI(setup =>
+            //            {
+            //                setup.SetEvaluationTimeInSeconds(30); // 30 saniyede bir kontrol
+            //                setup.MaximumHistoryEntriesPerEndpoint(50);
+            //                setup.AddHealthCheckEndpoint("API Health", "http://localhost/health-check"); // UI bu endpointi izleyecek
+            //            })
+            //.AddInMemoryStorage();
 
 
 

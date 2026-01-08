@@ -62,7 +62,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "stockapi",
+          "Host": "checkoutapi",
           "Port": 80
         }
       ],
@@ -260,6 +260,18 @@
         "PeriodTimespan": 1,
         "Limit": 50
       }
+    },
+    {
+      "DownstreamPathTemplate": "/hubs/checkout/{everything}",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/notifications/hubs/checkout/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     }
 
   ],

@@ -8,6 +8,9 @@ using System.Threading.RateLimiting;
 using MassTransit;
 using MultiShop.Order.Infrastructure.Messaging;
 using MultiShop.Order.Infrastructure.DependencyInjection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 const string CspPolicy = "default-src 'self'; " +
                          "script-src 'self' 'unsafe-inline'; " + // unsafe-inline'ý kaçýnmak için nonce/hash kullanmak daha iyidir
                          "style-src 'self'; " +
@@ -161,6 +164,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseExceptionHandler();
-
+app.MapHealthChecks("/health-check", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+    }
+});
 app.MapControllers().RequireRateLimiting("sliding").RequireAuthorization();
 app.Run();

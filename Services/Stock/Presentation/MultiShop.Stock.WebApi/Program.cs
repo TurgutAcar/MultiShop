@@ -7,6 +7,9 @@ using System.IdentityModel.Tokens.Jwt;
 using MassTransit;
 using MultiShop.Stock.Persistence.Messaging.Consumers;
 using MultiShop.Services.Stock.Persistence;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 // Add services to the container.
 const string CspPolicy = "default-src 'self'; " +
@@ -146,6 +149,15 @@ app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseExceptionHandler();
-
+app.MapHealthChecks("/health-check", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+    }
+});
 app.MapControllers().RequireRateLimiting("sliding").RequireAuthorization();
 app.Run();

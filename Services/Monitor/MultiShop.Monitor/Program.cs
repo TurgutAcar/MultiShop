@@ -16,6 +16,12 @@ builder.Services.AddHealthChecksUI(setup =>
     setup.AddHealthCheckEndpoint("Catalog API", "http://catalogapi/health-check");
     setup.AddHealthCheckEndpoint("Identity API", "http://identityserverapi/health-check");
     setup.AddHealthCheckEndpoint("Gateway API", "http://gatewayapi/health-check");
+    setup.AddHealthCheckEndpoint("Stock API", "http://stockapi/health-check");
+    setup.AddHealthCheckEndpoint("Order API", "http://orderapi/health-check");
+    setup.AddHealthCheckEndpoint("Notification API", "http://notificationapi/health-check");
+    setup.AddHealthCheckEndpoint("Checkout API", "http://checkoutapi/health-check");
+    setup.AddHealthCheckEndpoint("Payment API", "http://paymentapi/health-check");
+
 })
 .AddInMemoryStorage(); 
 

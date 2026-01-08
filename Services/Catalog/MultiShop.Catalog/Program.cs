@@ -102,16 +102,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.MapHealthChecks("/health-check", new HealthCheckOptions //ACILACAK
-//{
-//    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
-//    ResultStatusCodes =
-//    {
-//        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-//        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-//        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
-//    }
-//});
+app.MapHealthChecks("/health-check", new HealthCheckOptions //ACILACAK
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    ResultStatusCodes =
+    {
+        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+    }
+});
 //app.MapHealthChecksUI(options =>
 //{
 //    options.UIPath = "/health-ui";      

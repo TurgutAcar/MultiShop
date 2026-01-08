@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Elasticsearch" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.0" />
     <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.15.0" />
     <PackageReference Include="MassTransit" Version="8.5.7" />
     <PackageReference Include="MassTransit.MongoDb" Version="8.5.7" />

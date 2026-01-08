@@ -4,6 +4,9 @@ using StackExchange.Redis;
 using MassTransit.QuartzIntegration;
 using Quartz;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +16,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Audience = "ResourceCheckout";
     options.Authority = builder.Configuration["IdentityServerUrl"];
 });
+builder.Services.AddHealthChecks()
+    .AddRedis(
+        "checkoutdb:6379",
+        name: "redis",
+        tags: new[] { "cache", "redis" }
+    )
+ .AddRabbitMQ(
+        "rabbitmq:5672",
+        name: "rabbitmq",
+        tags: new[] { "cache", "rabbitmq" }
+    );
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -68,7 +83,16 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapHealthChecks("/health-check", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+    }
+});
 app.MapControllers();
 
 app.Run();

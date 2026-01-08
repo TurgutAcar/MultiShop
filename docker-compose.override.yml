@@ -179,6 +179,7 @@ services:
       environment:
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=http://+:80
+        - IdentityServerUrl=http://identityserverapi:80
       ports:
         - "7081:80"
       volumes:
@@ -255,6 +256,11 @@ services:
         - catalogapi # UI'ın monitör edeceği servisler
         - gatewayapi
         - identityserverapi
+        - stockapi
+        - orderapi
+        - notificationapi
+        - checkoutapi
+        - paymentapi
      
       deploy:
         mode: replicated

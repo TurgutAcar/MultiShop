@@ -20,6 +20,9 @@ using MultiShop.IdentityServer.Extensions;
 using Microsoft.AspNetCore.RateLimiting;
 using System;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
+using HealthChecks.UI.Client;
 
 namespace MultiShop.IdentityServer
 {
@@ -40,6 +43,14 @@ namespace MultiShop.IdentityServer
             services.AddControllersWithViews();
             services.AddScoped<IUserService, UserService>();
             services.AddDefaultCors(Environment);
+            services.AddHealthChecks()
+    .AddSqlServer(
+        connectionString: Configuration.GetConnectionString("DefaultConnection"),
+        name: "sqlserver",
+        timeout: TimeSpan.FromSeconds(5),
+        tags: new[] { "db", "sql", "sqlserver" }
+    );
+
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -127,17 +138,29 @@ namespace MultiShop.IdentityServer
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseExceptionHandler();
-
+        
+          
             app.UseEndpoints(endpoints =>
             {
-               // endpoints.MapDefaultControllerRoute();
+                // endpoints.MapDefaultControllerRoute();
                 // Tüm controller endpoint’lerine rate limiting ve authorization uygula
+                endpoints.MapHealthChecks("/health-check", new HealthCheckOptions
+                {
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+                    ResultStatusCodes =
+    {
+        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+    }
+                });
                 endpoints.MapControllers()
                          .RequireRateLimiting("fixed")
                          .RequireAuthorization();
 
 
             });
+
         }
     }
 }

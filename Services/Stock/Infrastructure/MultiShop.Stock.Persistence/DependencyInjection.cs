@@ -20,7 +20,17 @@ namespace MultiShop.Services.Stock.Persistence
             errorNumbersToAdd: null // Özel hata kodları eklenebilir
             ); }));
             services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<StockContext>());
-
+            services.AddHealthChecks()
+    .AddMySql(
+        connectionString: configuration.GetConnectionString("MySQL")!,
+        name: "mysql",
+        timeout: TimeSpan.FromSeconds(5),
+        tags: new[] { "db", "mysql" }
+    ).AddRabbitMQ(
+        "rabbitmq:5672",
+        name: "rabbitmq",
+        tags: new[] { "cache", "rabbitmq" }
+    ); ;
             services.Scan(action =>
             {
                 action

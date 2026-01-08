@@ -3,6 +3,16 @@ using MassTransit;
 using MultiShop.Catalog.ElasticSyncWorker.Consumers;
 
 var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddHealthChecks()
+  .AddRabbitMQ(
+      "rabbitmq:5672",
+      name: "rabbitmq",
+      tags: new[] { "cache", "rabbitmq" }
+  ).AddElasticsearch(
+      "http://elasticsearch:9200",
+      name: "rabbitmq",
+      tags: new[] { "cache", "elasticsearch" }
+  );
 builder.Services.AddMassTransit(x =>
 {
     // Consumer'ý ekle

@@ -1,4 +1,9 @@
-﻿using MassTransit;
+﻿using HealthChecks.UI.Client;
+using MassTransit;
+using MassTransit.Configuration;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -20,7 +25,12 @@ builder.Services.AddSingleton<IDatabaseSettings>(sp =>
 
 builder.Services.Configure<OutboxOptions>(
     builder.Configuration.GetSection("Outbox"));
-
+builder.Services.AddHealthChecks()
+  .AddRabbitMQ(
+      "rabbitmq:5672",
+      name: "rabbitmq",
+      tags: new[] { "cache", "rabbitmq" }
+  );
 //// MONGO CLIENT
 //builder.Services.AddSingleton<IMongoClient>(sp =>
 //{

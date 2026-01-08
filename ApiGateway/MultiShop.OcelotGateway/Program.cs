@@ -6,7 +6,39 @@ using MultiShop.OcelotGateway.DelegateHanders;
 using System.IdentityModel.Tokens.Jwt;
 using MultiShop.OcelotGateway.Extensions;
 using Ocelot.Values;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddUrlGroup(
+        new Uri("http://catalogapi/health-check"),
+        name: "catalog-service",
+        failureStatus: HealthStatus.Unhealthy)
+    .AddUrlGroup(
+        new Uri("http://stockapi/health-check"),
+        name: "stock-service",
+        failureStatus: HealthStatus.Unhealthy)
+    .AddUrlGroup(
+        new Uri("http://orderapi/health-check"),
+        name: "order-service",
+        failureStatus: HealthStatus.Unhealthy)
+    .AddUrlGroup(
+        new Uri("http://checkoutapi/health-check"),
+        name: "checkout-service",
+        failureStatus: HealthStatus.Unhealthy)
+    .AddUrlGroup(
+        new Uri("http://notificationapi/health-check"),
+        name: "notification-service",
+        failureStatus: HealthStatus.Unhealthy)
+      .AddUrlGroup(
+        new Uri("http://paymentapi/health-check"),
+        name: "payment-service",
+        failureStatus: HealthStatus.Unhealthy)
+    .AddUrlGroup(
+        new Uri("http://identityserverapi/health-check"),
+        name: "identity-service",
+        failureStatus: HealthStatus.Unhealthy);
 
 builder.Services.AddAuthentication().AddJwtBearer("OcelotAuthenticationScheme", opt =>
 {
@@ -82,6 +114,16 @@ app.UseHttpsRedirection();
 app.UseResponseCompression();
 app.UseWebSockets(); // <--- BU SATIRI EKLE (Ocelot'un üstünde olmalý)
 app.UseCors();
+app.MapHealthChecks("/health-check", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+    }
+});
 
 app.UseMiddleware<ClientIdDelegateHandler>();
 
