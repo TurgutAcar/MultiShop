@@ -17,8 +17,12 @@ namespace MultiShop.WebUI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var values=await _userService.GetUserInfo();  
-            return View(values);
+            var result=await _userService.GetUserInfo();
+            if (!result.IsSuccessful && result.StatusCode == 401)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            return View(result.Data);
         }
        
     }

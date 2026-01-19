@@ -35,6 +35,7 @@ using MultiShop.WebUI.Validators;
 using FluentValidation.AspNetCore;
 using MultiShop.DtoLayer.IdentityDtos.RegisterDtos;
 using System.Globalization;
+using MultiShop.WebUI.Filters;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAntiforgery(options =>
 {
@@ -181,7 +182,11 @@ builder.Services.AddHttpClient<IMessageStatisticService, MessageStatisticService
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Message.Path}/");
 }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<AuthRedirectFilter>();
+});
 
 builder.Services.AddFluentValidationAutoValidation(options =>
 {

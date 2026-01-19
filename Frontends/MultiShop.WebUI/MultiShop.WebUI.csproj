@@ -12726,6 +12726,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Cargo\MultiShop.Cargo.DtoLayer\MultiShop.Cargo.DtoLayer.csproj" />
+    <ProjectReference Include="..\..\Shared\MultiShop.Shared\MultiShop.Shared.csproj" />
     <ProjectReference Include="..\MultiShop.DtoLayer\MultiShop.DtoLayer.csproj" />
   </ItemGroup>
 

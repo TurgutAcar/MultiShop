@@ -33,7 +33,7 @@ namespace MultiShop.WebUI.Controllers
             ViewBag.directory2 = "Sipariş İşlemleri";
 
             var values = await _userService.GetUserInfo();
-            createOrderAddressDto.UserId = values.Id;
+            createOrderAddressDto.UserId = values.Data.Id;
             createOrderAddressDto.Description = "aaa";
             await _orderAddressService.CreateOrderAddressesAsync(createOrderAddressDto);
             return RedirectToAction("Index","Payment");

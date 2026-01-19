@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.IdentityDtos.LoginDtos;
 using MultiShop.WebUI.Models;
@@ -11,6 +12,8 @@ using MultiShop.WebUI.Services.Interface;
 
 namespace MultiShop.WebUI.Controllers
 {
+    [AllowAnonymous]
+
     public class LoginController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

@@ -21,12 +21,12 @@ builder.Services.AddHealthChecks()
         "checkoutdb:6379",
         name: "redis",
         tags: new[] { "cache", "redis" }
-    )
- .AddRabbitMQ(
-        "rabbitmq:5672",
-        name: "rabbitmq",
-        tags: new[] { "cache", "rabbitmq" }
     );
+ //.AddRabbitMQ(
+ //       "rabbitmq:5672",
+ //       name: "rabbitmq",
+ //       tags: new[] { "cache", "rabbitmq" }
+ //   );
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

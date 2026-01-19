@@ -49,12 +49,12 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
             .Get<DatabaseSettings>()!.ConnectionString,
          name: "mongodb",
          timeout: TimeSpan.FromSeconds(5),
-         tags: new[] { "db", "mongo", "sqlserver" }
-     ).AddRabbitMQ(
-        "rabbitmq:5672",
-        name: "rabbitmq",
-        tags: new[] { "cache", "rabbitmq" }
-    ); 
+         tags: new[] { "db", "mongo", "sqlserver" });
+    // ).AddRabbitMQ(
+    //    "rabbitmq:5672",
+    //    name: "rabbitmq",
+    //    tags: new[] { "cache", "rabbitmq" }
+    //); 
             //            builder.Services.AddHealthChecksUI(setup =>
             //            {
             //                setup.SetEvaluationTimeInSeconds(30); // 30 saniyede bir kontrol

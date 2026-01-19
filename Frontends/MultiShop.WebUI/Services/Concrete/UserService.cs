@@ -1,5 +1,7 @@
-﻿using MultiShop.WebUI.Models;
+﻿using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.Interface;
+using System.Net;
 
 namespace MultiShop.WebUI.Services.Concrete
 {
@@ -12,9 +14,25 @@ namespace MultiShop.WebUI.Services.Concrete
             _httpClient = httpClient;
         }
 
-        public async Task<UserDetailViewModel> GetUserInfo()
+        public async Task<Result<UserDetailViewModel>> GetUserInfo()
         {
-            return await _httpClient.GetFromJsonAsync<UserDetailViewModel>("/api/users/getuser");
+            var response = await _httpClient.GetAsync("/api/users/getuser");
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return (StatusCodes.Status401Unauthorized, "Oturum süreniz doldu");
+             
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return (StatusCodes.Status401Unauthorized, "Beklenmeyen bir hata oluştu");
+               
+            }
+            var result = await response.Content.ReadFromJsonAsync<Result<UserDetailViewModel>>();
+            return result;
+
+
+            //return await _httpClient.GetFromJsonAsync<UserDetailViewModel>("/api/users/getuser");
         }
     }
 }

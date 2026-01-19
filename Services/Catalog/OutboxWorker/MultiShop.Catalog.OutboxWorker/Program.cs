@@ -25,12 +25,12 @@ builder.Services.AddSingleton<IDatabaseSettings>(sp =>
 
 builder.Services.Configure<OutboxOptions>(
     builder.Configuration.GetSection("Outbox"));
-builder.Services.AddHealthChecks()
-  .AddRabbitMQ(
-      "rabbitmq:5672",
-      name: "rabbitmq",
-      tags: new[] { "cache", "rabbitmq" }
-  );
+builder.Services.AddHealthChecks();
+//  .AddRabbitMQ(
+//      "rabbitmq:5672",
+//      name: "rabbitmq",
+//      tags: new[] { "cache", "rabbitmq" }
+//  );
 //// MONGO CLIENT
 //builder.Services.AddSingleton<IMongoClient>(sp =>
 //{

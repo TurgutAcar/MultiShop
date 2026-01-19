@@ -272,6 +272,18 @@
       ],
       "UpstreamPathTemplate": "/notifications/hubs/checkout/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/health-check",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "gatewayapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/health-check",
+      "UpstreamHttpMethod": [ "Get" ]
     }
 
   ],

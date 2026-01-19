@@ -47,9 +47,20 @@ builder.Services.AddAuthentication().AddJwtBearer("OcelotAuthenticationScheme", 
     opt.Audience = "ResourceOcelot";
     opt.RequireHttpsMetadata = false;
 });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AllowAnonymousHealthCheck", policy =>
+    {
+        policy.RequireAssertion(context => true); // Herkese izin verir
+    });
+});
+
+
+
 // YARP'ý ekliyoruz
 //builder.Services.AddReverseProxy()
-  //  .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+//  .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 builder.Configuration
@@ -123,7 +134,7 @@ app.MapHealthChecks("/health-check", new HealthCheckOptions
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
         [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     }
-});
+}).RequireAuthorization("AllowAnonymousHealthCheck");
 
 app.UseMiddleware<ClientIdDelegateHandler>();
 

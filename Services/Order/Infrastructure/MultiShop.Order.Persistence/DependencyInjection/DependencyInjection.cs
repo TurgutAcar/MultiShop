@@ -22,12 +22,12 @@ namespace MultiShop.Order.Infrastructure.DependencyInjection
         connectionString: configuration.GetConnectionString("SqlServer")!,
         name: "sqlserver",
         timeout: TimeSpan.FromSeconds(5),
-        tags: new[] { "db", "sql", "sqlserver" }
-    ).AddRabbitMQ(
-        "rabbitmq:5672",
-        name: "rabbitmq",
-        tags: new[] { "cache", "rabbitmq" }
-    ); ;
+        tags: new[] { "db", "sql", "sqlserver" });
+    //).AddRabbitMQ(
+    //    "rabbitmq:5672",
+    //    name: "rabbitmq",
+    //    tags: new[] { "cache", "rabbitmq" }
+    //); ;
 
             services.Scan(action =>
             {

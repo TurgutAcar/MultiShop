@@ -21,7 +21,7 @@ namespace MultiShop.WebUI.Areas.Admin.ViewComponents.AdminLayoutViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var user=await _userService.GetUserInfo();
-            int messageCount = await _messageStatisticService.GetTotalMessageCountByReceiverId(user.Id);
+            int messageCount = await _messageStatisticService.GetTotalMessageCountByReceiverId(user.Data.Id);
             int totalCommentCount = await _commentStatisticService.GetTotalCommentCount();
             ViewBag.messageCount = messageCount;
             ViewBag.totalCommentCount = totalCommentCount;

@@ -19,13 +19,13 @@ namespace MultiShop.WebUI.Areas.User.Controllers
         public async Task<IActionResult> Inbox()
         {
             var user = await _userService.GetUserInfo();
-            var values = await _messageService.GetInboxMessageAsync(user.Id);
+            var values = await _messageService.GetInboxMessageAsync(user.Data.Id);
             return View(values);
         }
         public async Task<IActionResult> Sendbox()
         {
             var user = await _userService.GetUserInfo();
-            var values = await _messageService.GetSendboxMessageAsync(user.Id);
+            var values = await _messageService.GetSendboxMessageAsync(user.Data.Id);
             return View(values);
         }
     }

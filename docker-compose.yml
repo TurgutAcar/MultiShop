@@ -3,6 +3,14 @@ services:
   # ... Veritabanları (Değişiklik yok)
   catalogdb:
     image: mongo
+  configsvr:
+    image: mongo
+  catalogdb_shard1:
+    image: mongo
+  catalogdb_shard2:
+    image: mongo
+  mongos:
+    image: mongo
   basketdb:
     image: redis
   checkoutdb:
@@ -95,6 +103,9 @@ volumes:
   identitydb_volume:
   orderdb_volume:
   stockdb_volume:
+  configdb_volume:
+  catalogdb_shard1_volume:
+  catalogdb_shard2_volume:
 
   esdata:
 # Network tanımını kaldırın veya basitleştirin

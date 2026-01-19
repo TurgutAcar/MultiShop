@@ -26,6 +26,10 @@ namespace MultiShop.WebUI.Services.Concrete
         }
         public async Task<bool> GetRefreshToken()
         {
+            var refreshToken = await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return false;
             var discoveryEndPoint = await _httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
             {
                 Address=_serviceApiSettings.IdentityServerUrl,
@@ -34,11 +38,10 @@ namespace MultiShop.WebUI.Services.Concrete
                     RequireHttps=false
                 }
             });
-            var refreshToken = await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
             RefreshTokenRequest refreshTokenRequest = new()
             {
-                ClientId = _clientSettings.MultiShopManagerClient.ClientId,
-                ClientSecret=_clientSettings.MultiShopManagerClient.ClientSecret,
+                ClientId = _clientSettings.MultiShopAdminClient.ClientId,
+                ClientSecret=_clientSettings.MultiShopAdminClient.ClientSecret,
                 RefreshToken=refreshToken,
                 Address=discoveryEndPoint.TokenEndpoint
             };
@@ -81,8 +84,8 @@ namespace MultiShop.WebUI.Services.Concrete
             });
             var passwordTokenRequest = new PasswordTokenRequest
             {
-                ClientId = _clientSettings.MultiShopManagerClient.ClientId,
-                ClientSecret = _clientSettings.MultiShopManagerClient.ClientSecret,
+                ClientId = _clientSettings.MultiShopAdminClient.ClientId,
+                ClientSecret = _clientSettings.MultiShopAdminClient.ClientSecret,
                 UserName = signUpDto.UserName,
                 Password = signUpDto.Password,
                 Address = discoveryEndPoint.TokenEndpoint
@@ -99,7 +102,12 @@ namespace MultiShop.WebUI.Services.Concrete
                 ,CookieAuthenticationDefaults.AuthenticationScheme,"name","role");
 
             ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var authenticationProperties = new AuthenticationProperties();
+            // var authenticationProperties = new AuthenticationProperties();
+            var authenticationProperties = new AuthenticationProperties
+            {
+                IsPersistent = false,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(token.ExpiresIn) 
+            };
             authenticationProperties.StoreTokens(new List<AuthenticationToken>()
             {
                 new AuthenticationToken

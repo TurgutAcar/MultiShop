@@ -1,20 +1,66 @@
 version: '3.8'
 services:
+    configsvr:
+       container_name: configsvr
+       command: >
+         mongod --configsvr
+                --replSet rs-config
+                --port 27019
+                --bind_ip_all
+       volumes:
+         - configdb_volume:/data/db
+       deploy:
+         placement:
+           constraints: [node.role == manager]
     # --- Veritabanı Servisleri (Tekil) ---
-    catalogdb:
-      container_name: catalogdb
-      restart: always
+    catalogdb_shard1:
+       container_name: catalogdb_shard1
+       command: >
+         mongod --shardsvr
+                --replSet rs-shard1
+                --port 27018
+                --bind_ip_all
+       volumes:
+         - catalogdb_shard1_volume:/data/db
+
+  # ---------------- SHARD 2 ----------------
+    catalogdb_shard2:
+      container_name: catalogdb_shard2
+      command: >
+        mongod --shardsvr
+              --replSet rs-shard2
+              --port 27018
+              --bind_ip_all
+      volumes:
+        - catalogdb_shard2_volume:/data/db
+
+  # ---------------- MONGOS ----------------
+    mongos:
+      container_name: mongos
+      depends_on:
+        - configsvr
+        - catalogdb_shard1
+        - catalogdb_shard2
+      command: >
+        mongos --configdb rs-config/configsvr:27019
+               --bind_ip_all
+               --port 27017
       ports:
         - "27017:27017"
-      command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
-      volumes:
-        - catalogdb_volume:/data/db
-      # Veritabanları ölçeklenmediği için deploy ayarı Swarm'da gereklidir
-      deploy:
-        mode: replicated
-        replicas: 1 # Tek bir veritabanı örneği
-        placement:
-          constraints: [node.role == manager] # Genellikle manager node'da tutulur
+    # catalogdb:
+    #   container_name: catalogdb
+    #   restart: always
+    #   ports:
+    #     - "27017:27017"
+    #   command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    #   volumes:
+    #     - catalogdb_volume:/data/db
+    #   # Veritabanları ölçeklenmediği için deploy ayarı Swarm'da gereklidir
+    #   deploy:
+    #     mode: replicated
+    #     replicas: 1 # Tek bir veritabanı örneği
+    #     placement:
+    #       constraints: [node.role == manager] # Genellikle manager node'da tutulur
 
     # Diğer DB'ler (basketdb, discountdb, identitydb, orderdb) benzer şekilde deploy: replicas: 1 alır.
     identitydb:
@@ -84,11 +130,13 @@ services:
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=http://+:80
         - IdentityServerUrl=http://identityserverapi:80 # IdentityServer'ın servis adını kullanıyoruz
-        - DatabaseSettings__ConnectionString=mongodb://catalogdb:27017/?replicaSet=rs0 # DB servis adını kullanıyoruz
+        - DatabaseSettings__ConnectionString=mongodb://mongos:27017 # DB servis adını kullanıyoruz
+
+        # - DatabaseSettings__ConnectionString=mongodb://mongos:27017/?replicaSet=rs0 # DB servis adını kullanıyoruz
       ports:
         - "7070:80" # Bu port sadece ilk replica için açılır, Swarm load balancing'i bu port üzerinden yapar.
       depends_on:
-        - catalogdb
+        - mongos
         - rabbitmq
         - identityserverapi
       deploy:
