@@ -1,4 +1,5 @@
 ﻿using MultiShop.DtoLayer.CatalogDtos.ProductDtos;
+using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Services.CatologService.ProductService
@@ -6,7 +7,7 @@ namespace MultiShop.WebUI.Services.CatologService.ProductService
     public class ProductService : IProductService
     {
         private readonly HttpClient _httpClient;
-
+        //private readonly IUiNotifier _uiNotifier;
         public ProductService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -27,6 +28,11 @@ namespace MultiShop.WebUI.Services.CatologService.ProductService
         public async Task<List<ResultProductDto>> GetAllProductAsync()
         {
             var responseMessage = await _httpClient.GetAsync("products");
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+               // _uiNotifier.Warning("Bazı içerikler şu anda yüklenemiyor");
+                return new List<ResultProductDto>();
+            }
             var jsonData = await responseMessage.Content.ReadAsStringAsync();
             var values = JsonConvert.DeserializeObject<List<ResultProductDto>>(jsonData);
             return values;

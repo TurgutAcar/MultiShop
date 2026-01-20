@@ -1,8 +1,10 @@
 ﻿using IdentityModel.AspNetCore.AccessTokenManagement;
 using IdentityModel.Client;
 using Microsoft.Extensions.Options;
+using MultiShop.WebUI.GlobalException;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Settings;
+using static IdentityModel.OidcConstants;
 
 namespace MultiShop.WebUI.Services.Concrete
 {
@@ -22,6 +24,12 @@ namespace MultiShop.WebUI.Services.Concrete
             _serviceApiSettings = serviceApiSettings.Value;
         }
 
+        public async Task ClearToken()
+        {
+            await _clientAccessTokenCache.DeleteAsync("multishoptoken");
+
+        }
+
         public async Task<string?> GetToken()
         {
             var currentToken = await _clientAccessTokenCache.GetAsync("multishoptoken");
@@ -37,15 +45,19 @@ namespace MultiShop.WebUI.Services.Concrete
                     RequireHttps = false
                 }
             });
+            if (discoveryEndPoint.IsError)
+                throw new UiCriticalException("Discovery endpoint erişilemedi.");
             var clientCredentialTokenRequest = new ClientCredentialsTokenRequest
             {
                 ClientId = _clientSettings.MultiShopVisitorClient.ClientId,
                 ClientSecret = _clientSettings.MultiShopVisitorClient.ClientSecret,
                 Address = discoveryEndPoint.TokenEndpoint
             };
-            var newToken=await _httpClient.RequestClientCredentialsTokenAsync(clientCredentialTokenRequest);
-            await _clientAccessTokenCache.SetAsync("multishoptoken", newToken.AccessToken, newToken.ExpiresIn);
-            return newToken.AccessToken;
+            var tokenResponse = await _httpClient.RequestClientCredentialsTokenAsync(clientCredentialTokenRequest);
+            if (tokenResponse.IsError)
+                throw new UiCriticalException("Client token alınamadı.");
+            await _clientAccessTokenCache.SetAsync("multishoptoken", tokenResponse.AccessToken, tokenResponse.ExpiresIn);
+            return tokenResponse.AccessToken;
         }
     }
 }

@@ -42,8 +42,8 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddAuthentication().AddJwtBearer("OcelotAuthenticationScheme", opt =>
 {
-    opt.Authority = "http://identityserverapi";
-    //opt.Authority = "http://localhost:5001";
+    //opt.Authority = "http://identityserverapi";
+    opt.Authority = "http://localhost:5001";
     opt.Audience = "ResourceOcelot";
     opt.RequireHttpsMetadata = false;
 });

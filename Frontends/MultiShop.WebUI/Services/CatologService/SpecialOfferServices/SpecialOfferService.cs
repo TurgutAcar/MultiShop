@@ -27,6 +27,10 @@ namespace MultiShop.WebUI.Services.CatologService.SpecialOfferServices
         public async Task<List<ResultSpecialOfferDto>> GetAllSpecialOfferAsync()
         {
             var responseMessage=await _httpClient.GetAsync("SpecialOffers");
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return new List<ResultSpecialOfferDto>();
+            }
             var content=await responseMessage.Content.ReadAsStringAsync();
             var values=JsonConvert.DeserializeObject<List<ResultSpecialOfferDto>>(content);
             return values;

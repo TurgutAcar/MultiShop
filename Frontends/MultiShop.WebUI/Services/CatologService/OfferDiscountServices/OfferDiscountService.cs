@@ -35,6 +35,10 @@ namespace MultiShop.WebUI.Services.OfferDiscountServices
         public async Task<List<ResultOfferDiscountDto>> OfferDiscountListAsync()
         {
             var responseMessage = await _httpClient.GetAsync("OfferDiscounts");
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return new List<ResultOfferDiscountDto>();
+            }
             var contentValue=await responseMessage.Content.ReadAsStringAsync();
             var values = JsonConvert.DeserializeObject<List<ResultOfferDiscountDto>>(contentValue);
             return values;

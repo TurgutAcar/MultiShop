@@ -6,6 +6,7 @@ using Scrutor;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MultiShop.Catalog.Infrastructure.Middlewares;
 using MultiShop.Catalog.Infrastructure.Settings;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace MultiShop.Catalog.Infrastructure.DependencyInjection
 {
@@ -19,7 +20,8 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
 
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-
+            services.AddExceptionHandler<ExceptionHandler>();
+            builder.Services.AddProblemDetails();
             services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
             services.AddSingleton<IDatabaseSettings>(sp =>
             {
@@ -30,11 +32,18 @@ namespace MultiShop.Catalog.Infrastructure.DependencyInjection
             {
                 action
                 .FromAssemblies(Assembly.GetExecutingAssembly())
+                            .AddClasses(classes => classes
+                .Where(type =>
+                    //type != typeof(ExceptionHandler)&&
+                    !typeof(IExceptionHandler).IsAssignableFrom(type) &&
+                    type.Name.EndsWith("Service") ||
+                    type.Name.EndsWith("Repository") ||
+                    type.Name.EndsWith("Handler")))
 
-                .AddClasses(classes =>
-                {
-                    classes.Where(type => type != typeof(ExceptionHandler));
-                })
+                //.AddClasses(classes =>
+                //{
+                //    classes.Where(type => type != typeof(ExceptionHandler));
+                //})
 
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsMatchingInterface()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiShop.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ namespace MultiShop.Shared.Responses
 
         [JsonIgnore]
         public int StatusCode { get; set; } = 200;
+        public UiCriticality Criticality { get; set; } = UiCriticality.None;
+
+        public Result() { }
 
         public Result(T data)
         {

@@ -16,6 +16,10 @@ namespace MultiShop.WebUI.Services.BrandServices
         public async Task<List<ResultBrandDto>> BrandListAsync()
         {
             var responseMessage = await _httpClient.GetAsync("Brands");
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return new List<ResultBrandDto>();
+            }
             var contentValue=await responseMessage.Content.ReadAsStringAsync(); 
             var values=JsonConvert.DeserializeObject<List<ResultBrandDto>>(contentValue);
             return values;

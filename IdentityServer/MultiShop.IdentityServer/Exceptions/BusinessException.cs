@@ -1,0 +1,30 @@
+﻿using Microsoft.AspNetCore.Http;
+using MultiShop.Shared.Enums;
+using System.Collections.Generic;
+
+namespace MultiShop.IdentityServer.Exceptions
+{
+    public sealed class BusinessException : DomainException
+    {
+        public List<string> Errors { get; }
+
+        public BusinessException(
+            string message,
+            int statusCode = StatusCodes.Status400BadRequest,
+            UiCriticality criticality = UiCriticality.Medium)
+            : base(message, statusCode, criticality)
+        {
+            Errors = new List<string> { message };
+        }
+
+        public BusinessException(
+            List<string> errors,
+            int statusCode = StatusCodes.Status400BadRequest,
+            UiCriticality criticality = UiCriticality.Medium)
+            : base("İş kuralı ihlali.", statusCode, criticality)
+        {
+            Errors = errors;
+        }
+    }
+
+}

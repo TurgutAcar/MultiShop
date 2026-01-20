@@ -1,0 +1,15 @@
+﻿@inject UiHealthState UiHealthState
+
+@{
+    ViewData["Title"] = "Critical";
+    Layout = "~/Views/UILayout/_UILayout.cshtml";
+}
+<ul>
+    @foreach (var warning in UiHealthState.Warnings)
+    {
+        <li>@warning</li>
+    }
+</ul>
+<h2>Bir şeyler ters gitti</h2>
+<p>Sistem şu anda bazı kritik servislerle iletişim kuramıyor.</p>
+

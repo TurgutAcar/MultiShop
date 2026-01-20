@@ -36,6 +36,10 @@ using FluentValidation.AspNetCore;
 using MultiShop.DtoLayer.IdentityDtos.RegisterDtos;
 using System.Globalization;
 using MultiShop.WebUI.Filters;
+using MultiShop.WebUI.GlobalException;
+using MultiShop.WebUI.Models;
+using MultiShop.WebUI.Services.NotifierServices;
+using Microsoft.AspNetCore.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAntiforgery(options =>
 {
@@ -72,11 +76,15 @@ builder.Services.AddScoped<ClientCredentialTokenHandler>();
 builder.Services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
 
 var values = builder.Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>();
+builder.Services.AddScoped<UiHealthState>();
+builder.Services.AddScoped<IUiNotifierService, UiNotifierService>();
 
 builder.Services.AddHttpClient<IUserService, UserService>(opt =>
 {
     opt.BaseAddress = new Uri(values.IdentityServerUrl);
-}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>()
+ .AddHttpMessageHandler<UiAwareHttpHandler>();
+
 builder.Services.AddHttpClient<IUserIdentityService, UserIdentityService>(opt =>
 {
     opt.BaseAddress = new Uri(values.IdentityServerUrl);
@@ -120,7 +128,8 @@ builder.Services.AddHttpClient<ISpecialOfferService, SpecialOfferService>(opt =>
 builder.Services.AddHttpClient<IFeatureSliderService, FeatureSliderService>(opt =>
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Catalog.Path}/");
-}).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+}).AddHttpMessageHandler<ClientCredentialTokenHandler>()
+ .AddHttpMessageHandler<UiAwareHttpHandler>();
 builder.Services.AddHttpClient<IProductImageService, ProductImageService>(opt =>
 {
     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Catalog.Path}/");
@@ -219,6 +228,20 @@ builder.Services.AddLocalization(opt =>
 });
 builder.Services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 var app = builder.Build();
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (UiCriticalException ex)
+    {
+        await context.SignOutAsync();
+        context.Response.Redirect("/Login/Index");
+        //context.Response.Redirect("/Error/Critical");
+    }
+});
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

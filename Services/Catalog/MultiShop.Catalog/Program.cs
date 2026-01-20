@@ -55,7 +55,6 @@ var esSettings = new ElasticsearchClientSettings(new Uri("http://elasticsearch:9
 
 var esClient = new ElasticsearchClient(esSettings);
 
-// DI Container kayd�
 builder.Services.AddSingleton(esClient);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt=>
@@ -84,8 +83,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddExceptionHandler<ExceptionHandler>();
-builder.Services.AddProblemDetails();
+//builder.Services.AddExceptionHandler<ExceptionHandler>();
+//builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 app.UseSerilogRequestLogging(); // Gelen her isteği loglar ve log context'ine request bilgilerini ekler.

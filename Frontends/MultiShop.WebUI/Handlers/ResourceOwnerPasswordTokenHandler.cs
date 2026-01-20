@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using MultiShop.WebUI.GlobalException;
 using MultiShop.WebUI.Services.Interface;
 
 namespace MultiShop.WebUI.Handlers
@@ -20,14 +21,11 @@ namespace MultiShop.WebUI.Handlers
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            if (string.IsNullOrEmpty(accessToken))
+                throw new UiCriticalException("Oturum bulunamadı.");
             request.Headers.Authorization=new AuthenticationHeaderValue("Bearer",accessToken);
 
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                await _httpContextAccessor.HttpContext.SignOutAsync();
-                return new HttpResponseMessage(HttpStatusCode.Unauthorized);
-
-            }
+           
             var response= await base.SendAsync(request, cancellationToken);
             if(response.StatusCode==HttpStatusCode.Unauthorized)
             {
@@ -36,18 +34,17 @@ namespace MultiShop.WebUI.Handlers
                 {
                     var newAccessToken = await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
                     if (string.IsNullOrEmpty(newAccessToken))
-                        return new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                        throw new UiCriticalException("Yeni token alınamadı.");
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newAccessToken);
                     response = await base.SendAsync(request, cancellationToken);
                 }
-                await _httpContextAccessor.HttpContext.SignOutAsync();
+                    throw new UiCriticalException("Oturum süresi doldu.");
 
-                return new HttpResponseMessage(HttpStatusCode.Unauthorized);
 
             }
             if (response.StatusCode==HttpStatusCode.Forbidden)
             {
-
+                throw new UiCriticalException("Bu işlem için yetkiniz yok.");
             }
             return response;
         }

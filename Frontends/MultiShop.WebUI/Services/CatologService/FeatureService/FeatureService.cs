@@ -28,6 +28,10 @@ namespace MultiShop.WebUI.Services.FeatureService
         public async Task<List<ResultFeatureDto>> FeatureListAsync()
         {
             var responseMessage = await _httpClient.GetAsync("features");
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return new List<ResultFeatureDto>();
+            }
             var contentValue=await responseMessage.Content.ReadAsStringAsync();
             var values=JsonConvert.DeserializeObject<List<ResultFeatureDto>>(contentValue);
             return values;

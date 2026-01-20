@@ -13,6 +13,7 @@ namespace MultiShop.OcelotGateway.DelegateHanders
 
         public async Task Invoke(HttpContext context)
         {
+            string? clientId;
             if (context.User.Identity.IsAuthenticated)
             {
                 // ResourceOwnerPassword → sub
@@ -21,8 +22,10 @@ namespace MultiShop.OcelotGateway.DelegateHanders
 
                 // ClientCredentials → client_id
                 var appId = context.User.FindFirst("client_id")?.Value;
+                if (userId != null)
+                    clientId= userId.Value ?? appId;
 
-                var clientId = userId.Value ?? appId; // hangisi varsa onu kullan
+                clientId= appId; // hangisi varsa onu kullan
 
                 if (!string.IsNullOrEmpty(clientId))
                 {
