@@ -57,8 +57,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opt =>
     {
         opt.LoginPath = "/Login/Index/";
+        opt.LogoutPath = "/Login/Logout";
+        opt.AccessDeniedPath = "/Login/AccessDenied";
         opt.ExpireTimeSpan = TimeSpan.FromDays(5);
         opt.Cookie.Name = "MultiShopCookie";
+        opt.ExpireTimeSpan = TimeSpan.FromHours(2);
         opt.SlidingExpiration = true;
     });
 builder.Services.AddAccessTokenManagement();
@@ -73,6 +76,8 @@ builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("Cli
 builder.Services.Configure<ServiceApiSettings>(builder.Configuration.GetSection("ServiceApiSettings"));
 builder.Services.AddScoped<ResourceOwnerPasswordTokenHandler>();
 builder.Services.AddScoped<ClientCredentialTokenHandler>();
+builder.Services.AddScoped<UiAwareHttpHandler>();
+
 builder.Services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
 
 var values = builder.Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>();
@@ -88,7 +93,8 @@ builder.Services.AddHttpClient<IUserService, UserService>(opt =>
 builder.Services.AddHttpClient<IUserIdentityService, UserIdentityService>(opt =>
 {
     opt.BaseAddress = new Uri(values.IdentityServerUrl);
-}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+});
+
 builder.Services.AddHttpClient<IUserStatisticService, UserStatisticService>(opt =>
 {
     opt.BaseAddress = new Uri(values.IdentityServerUrl);
@@ -263,7 +269,7 @@ var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(sup
 app.UseRequestLocalization(localizationOptions);
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 
 

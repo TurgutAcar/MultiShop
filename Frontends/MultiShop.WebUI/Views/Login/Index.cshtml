@@ -1,4 +1,4 @@
-﻿@using MultiShop.DtoLayer.IdentityDtos.LoginDtos
+﻿@* @using MultiShop.DtoLayer.IdentityDtos.LoginDtos
 @model CreateLoginDto
 @{
 	Layout = null;
@@ -54,4 +54,226 @@
 	<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>
+ *@
+ @using MultiShop.DtoLayer.IdentityDtos.LoginDtos
+@model CreateLoginDto
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <title>MultiShop | Giriş Yap</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Modern Style -->
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 900px;
+            max-width: 95%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .login-left {
+            flex: 1;
+            padding: 60px;
+            color: #fff;
+            background: linear-gradient(135deg, #2193b0, #6dd5ed);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+            .login-left h2 {
+                font-size: 32px;
+                font-weight: 700;
+            }
+
+            .login-left p {
+                opacity: 0.95;
+                line-height: 1.6;
+            }
+
+            .login-left a {
+                display: inline-block;
+                margin-top: 20px;
+                padding: 12px 24px;
+                background: #fff;
+                color: #2193b0;
+                border-radius: 30px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: .3s;
+            }
+
+                .login-left a:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,.15);
+                }
+
+        .login-right {
+            flex: 1;
+            padding: 60px;
+        }
+
+            .login-right h2 {
+                font-size: 26px;
+                margin-bottom: 30px;
+                color: #333;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                font-size: 14px;
+                color: #666;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 14px 16px;
+                border-radius: 12px;
+                border: 1px solid #ddd;
+                outline: none;
+                margin-top: 6px;
+                font-size: 15px;
+                transition: .3s;
+            }
+
+                .form-group input:focus {
+                    border-color: #2193b0;
+                    box-shadow: 0 0 0 3px rgba(33,147,176,.15);
+                }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+            .password-wrapper i {
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #999;
+            }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2193b0, #6dd5ed);
+            border: none;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+            margin-top: 10px;
+        }
+
+            .btn-login:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 25px rgba(33,147,176,.4);
+            }
+
+        @@media(max - width: 768px)
+
+        {
+            .login-container
+
+        {
+            flex-direction: column;
+        }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <!-- SOL TARAF -->
+        <div class="login-left">
+            <div>
+                <h2>MultiShop</h2>
+                <p>
+                    İndirimli ürünler, kampanyalar ve hızlı alışveriş için hemen giriş yap.
+                </p>
+                <p>
+                    Hesabın yok mu? Saniyeler içinde kayıt olabilirsin.
+                </p>
+            </div>
+
+            <a href="/Register/Index">Kayıt Ol</a>
+        </div>
+
+        <!-- SAĞ TARAF -->
+        <div class="login-right">
+            <h2>Kullanıcı Girişi</h2>
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <form method="post">
+                <div class="form-group">
+                    <label asp-for="UserName">Kullanıcı Adı</label>
+                    <input asp-for="UserName" type="text" placeholder="Kullanıcı adınızı girin" required />
+                    <span class="text-danger" asp-validation-for="UserName"></span>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <div class="password-wrapper">
+                        <input asp-for="Password" id="password" type="password" placeholder="Şifrenizi girin" required />
+                        <i class="fa-solid fa-eye" onclick="togglePassword()"></i>
+                        <span class="text-danger" asp-validation-for="Password"></span>
+
+                    </div>
+                </div>
+
+                <button class="btn-login">Giriş Yap</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("password");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+    </script>
+
+</body>
 </html>

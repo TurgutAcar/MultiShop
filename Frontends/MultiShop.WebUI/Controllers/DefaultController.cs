@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MultiShop.WebUI.Controllers
 {
+    [Authorize]
     public class DefaultController : Controller
     {
         public IActionResult Index()

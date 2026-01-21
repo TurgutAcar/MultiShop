@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using MultiShop.DtoLayer.CatalogDtos.CategoryDtos;
 using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Handlers;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
 
@@ -9,11 +10,11 @@ namespace MultiShop.WebUI.Services.CatologService.CategoryService
     public class CategoryService : ICategoryService
     {
         private readonly HttpClient _httpClient;
-        private readonly IUiNotifierService _uiNotifier;
+        private readonly IUiNotifierService _uiNotifierService;
         public CategoryService(HttpClient httpClient, IUiNotifierService uiNotifier)
         {
             _httpClient = httpClient;
-            _uiNotifier = uiNotifier;
+            _uiNotifierService = uiNotifier;
         }
 
         public async Task CreateCategoryAsync(CreateCategoryDto createCategoryDto)
@@ -29,15 +30,14 @@ namespace MultiShop.WebUI.Services.CatologService.CategoryService
         public async Task<List<ResultCategoryDto>> GetAllCategoryAsync()
         {
             var responseMessage = await _httpClient.GetAsync("categories");
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-               // _uiNotifier.Warning("Bazı içerikler şu anda yüklenemiyor");
-                return new List<ResultCategoryDto>();
-            }
+         
             var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            var values = JsonConvert.DeserializeObject<Result<List<ResultCategoryDto>>>(jsonData);
+            return values.HandleUiResult(_uiNotifierService)
+       ?? new List<ResultCategoryDto>();
 
-            var values = JsonConvert.DeserializeObject<List<ResultCategoryDto>>(jsonData);
-            return values;
+          //  var values = JsonConvert.DeserializeObject<List<ResultCategoryDto>>(jsonData);
+          //  return values;
         }
 
         public async Task<UpdateCategoryDto> GetByIdCategoryAsync(string id)

@@ -1,4 +1,6 @@
 ﻿using MultiShop.DtoLayer.CatalogDtos.ProductDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Handlers;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
 
@@ -7,10 +9,11 @@ namespace MultiShop.WebUI.Services.CatologService.ProductService
     public class ProductService : IProductService
     {
         private readonly HttpClient _httpClient;
-        //private readonly IUiNotifier _uiNotifier;
-        public ProductService(HttpClient httpClient)
+        private readonly IUiNotifierService _uiNotifierService;
+        public ProductService(HttpClient httpClient, IUiNotifierService uiNotifierService)
         {
             _httpClient = httpClient;
+            _uiNotifierService = uiNotifierService;
         }
 
         public async Task CreateProductAsync(CreateProductDto createProductDto)
@@ -28,14 +31,14 @@ namespace MultiShop.WebUI.Services.CatologService.ProductService
         public async Task<List<ResultProductDto>> GetAllProductAsync()
         {
             var responseMessage = await _httpClient.GetAsync("products");
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-               // _uiNotifier.Warning("Bazı içerikler şu anda yüklenemiyor");
-                return new List<ResultProductDto>();
-            }
             var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<List<ResultProductDto>>(jsonData);
-            return values;
+            var values = JsonConvert.DeserializeObject<Result<List<ResultProductDto>>>(jsonData);
+            return values.HandleUiResult(_uiNotifierService)
+       ?? new List<ResultProductDto>();
+
+            //var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            //var values = JsonConvert.DeserializeObject<List<ResultProductDto>>(jsonData);
+            // return values;
         }
 
         public async Task<UpdateProductDto> GetByIdProductAsync(string id)

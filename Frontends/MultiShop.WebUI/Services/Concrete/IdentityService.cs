@@ -1,10 +1,13 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using MultiShop.DtoLayer.IdentityDtos.LoginDtos;
+using MultiShop.Shared.Dtos;
+using MultiShop.Shared.Responses;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Settings;
 
@@ -72,7 +75,7 @@ namespace MultiShop.WebUI.Services.Concrete
             return true;
         }
 
-        public async Task<bool> SignIn(SignInDto signUpDto)
+        public async Task<Result<List<string>>> SignIn(SignInDto signUpDto)
         {
             var discoveryEndPoint = await _httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
             {
@@ -91,6 +94,13 @@ namespace MultiShop.WebUI.Services.Concrete
                 Address = discoveryEndPoint.TokenEndpoint
             };
             var token=await _httpClient.RequestPasswordTokenAsync(passwordTokenRequest);
+            if (token.IsError)
+            {
+                var responseContent = await token.HttpResponse.Content.ReadAsStringAsync();
+                var errorDto = JsonSerializer.Deserialize<ErrorDto>(responseContent, new JsonSerializerOptions
+                { PropertyNameCaseInsensitive = true });
+                return Result<List<string>>.Failure(400, errorDto!.Errors);
+            }
             var userInfoRequest = new UserInfoRequest
             {
                 Token = token.AccessToken,
@@ -98,6 +108,7 @@ namespace MultiShop.WebUI.Services.Concrete
 
             };
             var userValues=await _httpClient.GetUserInfoAsync(userInfoRequest);
+           
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(userValues.Claims
                 ,CookieAuthenticationDefaults.AuthenticationScheme,"name","role");
 
@@ -126,8 +137,8 @@ namespace MultiShop.WebUI.Services.Concrete
             await _httpContextAccessor.HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, authenticationProperties);
 
-            return true;
-
+            return Result<List<string>>.Succeed(
+                    new() { "Giriş başarılı." });
         }
     }
 }

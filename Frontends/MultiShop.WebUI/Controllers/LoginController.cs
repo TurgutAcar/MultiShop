@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.IdentityDtos.LoginDtos;
+using MultiShop.Shared.Responses;
 using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.Interface;
 
@@ -29,14 +30,22 @@ namespace MultiShop.WebUI.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Default");
+            }
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Index(SignInDto signInDto)
         {
-            await _identityService.SignIn(signInDto);
-    
-            return RedirectToAction("Index","User");
+            var result= await _identityService.SignIn(signInDto);
+            if (!result.IsSuccessful)
+            {
+                ModelState.AddModelError(string.Empty, string.Join("<br/>", result.ErrorMessages));
+                return View();
+            }
+            return RedirectToAction("Index","Default");
         }
    
       

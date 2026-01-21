@@ -1,5 +1,8 @@
 ﻿
 using MultiShop.DtoLayer.CatalogDtos.SpecialOfferDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Services.CatologService.SpecialOfferServices
@@ -7,10 +10,12 @@ namespace MultiShop.WebUI.Services.CatologService.SpecialOfferServices
     public class SpecialOfferService : ISpecialOfferService
     {
         private readonly HttpClient _httpClient;
+        private readonly IUiNotifierService _uiNotifierService;
 
-        public SpecialOfferService(HttpClient httpClient)
+        public SpecialOfferService(HttpClient httpClient, IUiNotifierService uiNotifierService)
         {
             _httpClient = httpClient;
+            _uiNotifierService = uiNotifierService;
         }
 
         public async Task CreateSpecialOfferAsync(CreateSpecialOfferDto createSpecialOfferDto)
@@ -27,13 +32,13 @@ namespace MultiShop.WebUI.Services.CatologService.SpecialOfferServices
         public async Task<List<ResultSpecialOfferDto>> GetAllSpecialOfferAsync()
         {
             var responseMessage=await _httpClient.GetAsync("SpecialOffers");
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return new List<ResultSpecialOfferDto>();
-            }
-            var content=await responseMessage.Content.ReadAsStringAsync();
-            var values=JsonConvert.DeserializeObject<List<ResultSpecialOfferDto>>(content);
-            return values;
+            var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            var values = JsonConvert.DeserializeObject<Result<List<ResultSpecialOfferDto>>>(jsonData);
+            return values.HandleUiResult(_uiNotifierService)
+       ?? new List<ResultSpecialOfferDto>();
+            // var content=await responseMessage.Content.ReadAsStringAsync();
+            // var values=JsonConvert.DeserializeObject<List<ResultSpecialOfferDto>>(content);
+            // return values;
         }
 
         public async Task<UpdateSpecialOfferDto> GetByIdSpecialOfferAsync(string id)

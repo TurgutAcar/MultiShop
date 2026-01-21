@@ -2,6 +2,9 @@
 
 using System.Net.Http.Json;
 using MultiShop.DtoLayer.CatalogDtos.AboutDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Services.AboutServices
@@ -9,18 +12,24 @@ namespace MultiShop.WebUI.Services.AboutServices
     public class AboutService : IAboutService
     {
         private readonly HttpClient _httpClient;
+        private readonly IUiNotifierService _uiNotifierService;
 
-        public AboutService(HttpClient httpClient)
+        public AboutService(HttpClient httpClient, IUiNotifierService uiNotifierService)
         {
             _httpClient = httpClient;
+            _uiNotifierService = uiNotifierService;
         }
 
         public async Task<List<ResultAboutDto>> AboutListAsync()
         {
             var responseMessage =await _httpClient.GetAsync("Abouts");
-            var contentValues=await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<List<ResultAboutDto>>(contentValues);
-            return values;
+            var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            var values = JsonConvert.DeserializeObject<Result<List<ResultAboutDto>>>(jsonData);
+            return values.HandleUiResult(_uiNotifierService)
+       ?? new List<ResultAboutDto>();
+            // var contentValues=await responseMessage.Content.ReadAsStringAsync();
+            // var values = JsonConvert.DeserializeObject<List<ResultAboutDto>>(contentValues);
+            // return values;
 
         }
 
