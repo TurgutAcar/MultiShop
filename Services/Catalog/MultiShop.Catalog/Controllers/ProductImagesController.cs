@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Catalog.Application.Dtos.ProductImageDtos;
 using MultiShop.Catalog.Application.Services.ProductImageServices;
+using MultiShop.Catalog.Infrastructure.Middlewares;
 
 namespace MultiShop.Catalog.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductImagesController : ControllerBase

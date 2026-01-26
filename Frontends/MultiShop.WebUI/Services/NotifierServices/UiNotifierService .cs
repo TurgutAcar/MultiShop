@@ -15,6 +15,11 @@ namespace MultiShop.WebUI.Services.NotifierServices
             _uiHealthState.HasWarnings = true;
             _uiHealthState.Warnings.AddRange(messages);
         }
+        public void Info(string message)
+        {
+            _uiHealthState.HasWarnings = true;
+            _uiHealthState.Warnings.Add(message);
+        }
     }
 
 }

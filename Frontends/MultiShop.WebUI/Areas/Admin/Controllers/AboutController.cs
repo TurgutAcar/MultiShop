@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
+    [Authorize]
     [Area("Admin")]
     [Route("Admin/About")]
     public class AboutController : Controller

@@ -1,11 +1,13 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CommentDtos;
 using Newtonsoft.Json;
-
 namespace MultiShop.WebUI.Controllers
 {
+
+    [AllowAnonymous]
     public class ProductListController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

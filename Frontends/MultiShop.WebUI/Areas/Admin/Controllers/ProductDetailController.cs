@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AllowAnonymous]
+    [Authorize]
     [Route("Admin/ProductDetail")]
     public class ProductDetailController : Controller
     {

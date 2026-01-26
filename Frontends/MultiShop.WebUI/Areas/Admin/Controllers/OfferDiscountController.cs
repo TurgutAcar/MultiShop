@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     [Area("Admin")]
     [Route("Admin/OfferDiscount")]
     public class OfferDiscountController : Controller

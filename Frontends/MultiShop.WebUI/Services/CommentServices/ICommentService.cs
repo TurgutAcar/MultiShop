@@ -5,9 +5,9 @@ namespace MultiShop.WebUI.Services.CommentServices
     public interface ICommentService
     {
         Task<List<ResultCommentDto>> GetAllCommentAsync();
-        Task CreateCommentAsync(CreateCommentDto createCommentDto);
-        Task UpdateCommentAsync(UpdateCommentDto updateCommentDto);
-        Task DeleteCommentAsync(string id);
+        Task<string> CreateCommentAsync(CreateCommentDto createCommentDto);
+        Task<string> UpdateCommentAsync(UpdateCommentDto updateCommentDto);
+        Task<string> DeleteCommentAsync(string id);
         Task<UpdateCommentDto> GetByIdCommentAsync(string id);
         Task<List<ResultCommentDto>> CommentListByProductId(string productId);
     }

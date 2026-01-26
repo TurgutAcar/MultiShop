@@ -3,12 +3,15 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.IdentityDtos.RegisterDtos;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Controllers
 {
+    [AllowAnonymous]
+
     public class RegisterController : Controller
     {
         private IHttpClientFactory _httpClientFactory;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using IdentityModel.OidcClient;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MultiShop.IdentityServer.Dto;
 using MultiShop.IdentityServer.Models;
@@ -73,7 +74,19 @@ namespace MultiShop.IdentityServer.Services.Concrete
                 Name = dto.Name,
                 Surname = dto.Surname,
             };
-            return await _userManager.CreateAsync(user,dto.Password);
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (!result.Succeeded)
+            {
+                var errorMessages = result.Errors.Select(e => e.Description).ToList();
+                return MultiShop.Shared.Responses.Result<IdentityResult>.Failure(errorMessages);
+
+            }
+
+            await _userManager.AddToRoleAsync(user, "Customer");
+
+            return result;
+            // return await _userManager.CreateAsync(user,dto.Password);
         }
     }
 }

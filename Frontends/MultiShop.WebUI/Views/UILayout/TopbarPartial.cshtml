@@ -9,8 +9,38 @@
             <div class="d-flex align-items-center justify-content-end">
 
                 @*      @await Component.InvokeAsync("_TopbarUILayoutComponentPartial") currencies coming from api *@
-
                 <div class="btn-group">
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        @* Kullanıcı Login Olmuşsa *@
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-user mr-1"></i> @localizer["Hesabım"]
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" asp-controller="User" asp-action="Index">@localizer["Profilim"]</a>
+                            <a class="dropdown-item" asp-controller="Order" asp-action="MyOrders">@localizer["Siparişlerim"]</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger"
+                               asp-area="User"
+                               asp-controller="LogOut"
+                               asp-action="Index">
+                                @localizer["Çıkış Yap"]
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        @* Kullanıcı Login Olmamışsa *@
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
+                            @localizer["Üye İşlemleri"]
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" asp-controller="Login" asp-action="Index">@localizer["Giriş Yap"]</a>
+                            <a class="dropdown-item" asp-controller="Register" asp-action="Index">@localizer["Kayıt Ol"]</a>
+                        </div>
+                    }
+                </div>
+              @*   <div class="btn-group">
 
                     <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">@localizer["Hesabım"]</button>
 
@@ -22,7 +52,7 @@
 
                     </div>
 
-                </div>
+                </div> *@
 
                 <div class="btn-group">
 

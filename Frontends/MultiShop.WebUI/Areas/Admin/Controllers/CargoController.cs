@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CargoDtos.CargoCompanyDtos;
 using MultiShop.WebUI.Services.CargoServices.CargoCompanyServices;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
+    [Authorize]
     [Area("Admin")]
     [Route("Admin/Cargo")]
 

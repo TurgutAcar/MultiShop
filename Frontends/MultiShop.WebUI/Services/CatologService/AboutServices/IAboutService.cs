@@ -5,9 +5,9 @@ namespace MultiShop.WebUI.Services.AboutServices
     public interface IAboutService
     {
         public Task<List<ResultAboutDto>> AboutListAsync();
-        public Task CreateAboutAsync(CreateAboutDto createAboutDto);
-        public Task UpdateAboutAsync(UpdateAboutDto updateAboutDto);
-        public Task DeleteAboutAsync(string id);
+        public Task<string> CreateAboutAsync(CreateAboutDto createAboutDto);
+        public Task<string> UpdateAboutAsync(UpdateAboutDto updateAboutDto);
+        public Task<string> DeleteAboutAsync(string id);
         public Task<UpdateAboutDto> GetByIdAboutAsync(string id);
     }
 }

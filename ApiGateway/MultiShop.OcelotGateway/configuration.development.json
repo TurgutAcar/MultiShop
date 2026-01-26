@@ -239,7 +239,8 @@
     "RateLimitOptions": {
       "ClientIdHeader": "ClientId",
       "DisableRateLimitHeaders": false,
-      "QuotaExceededMessage": "Too many requests. Please try again later.",
+      //   "QuotaExceededMessage": "Too many requests. Please try again later.",
+      "QuotaExceededMessage": "İçerikler yüklenirken kısa bir gecikme yaşandı.",
       "HttpStatusCode": 429,
       "Period": "1m",
       "PeriodTimespan": 3000,

@@ -1,14 +1,15 @@
 ﻿
 using MultiShop.DtoLayer.CatalogDtos.FeatureDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.WebUI.Services.FeatureService
 {
     public interface IFeatureService
     {
-        public Task<List<ResultFeatureDto>> FeatureListAsync();
-        public Task CreateFeatureAsync(CreateFeatureDto feature);
-        public Task UpdateFeatureAsync(UpdateFeatureDto feature);
-        public Task DeleteFeatureAsync(string featureId);
+        public Task<Result<List<ResultFeatureDto>>> FeatureListAsync();
+        public Task<string> CreateFeatureAsync(CreateFeatureDto feature);
+        public Task<string> UpdateFeatureAsync(UpdateFeatureDto feature);
+        public Task<string> DeleteFeatureAsync(string featureId);
         public Task<UpdateFeatureDto> GetByIdFeatureAsync(string featureId);
     }
 }

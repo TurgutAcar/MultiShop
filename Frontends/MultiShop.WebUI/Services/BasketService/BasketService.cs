@@ -1,19 +1,28 @@
 ﻿using MultiShop.DtoLayer.BasketDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Enums;
+using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Services.Interface;
+using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Services.BasketService
 {
     public class BasketService : IBasketService
     {
-        private readonly HttpClient _httpClient;
+        //private readonly HttpClient _httpClient;
+        private readonly IApiClientFactory _factory;
+        private readonly IUiNotifierService _uiNotifierService;
 
-        public BasketService(HttpClient httpClient)
+        public BasketService(IApiClientFactory factory,IUiNotifierService uiNotifierService)
         {
-            _httpClient = httpClient;
+            _factory = factory;
+            _uiNotifierService = uiNotifierService;
         }
 
         public async Task AddBasketItem(BasketItemDto basketItemDto)
         {
+
             var values = await GetBasket();
             if(values!=null)
             {
@@ -37,10 +46,15 @@ namespace MultiShop.WebUI.Services.BasketService
 
         public async Task<BasketTotalDto> GetBasket()
         {
+            var _httpClient = _factory.Create("Basket");
             var responseMessage = await _httpClient.GetAsync("baskets");
-            var content=await responseMessage.Content.ReadAsStringAsync();
-            var value=JsonConvert.DeserializeObject<BasketTotalDto>(content);
-            return value;
+            var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            var values = JsonConvert.DeserializeObject<Result<BasketTotalDto>>(jsonData);
+            return values.HandleUiResult(_uiNotifierService)
+       ?? new BasketTotalDto();
+            //var content=await responseMessage.Content.ReadAsStringAsync();
+            // var value=JsonConvert.DeserializeObject<BasketTotalDto>(content);
+            // return value;
         }
 
         public async Task<bool> RemoveBasketItem(string productId)
@@ -52,9 +66,15 @@ namespace MultiShop.WebUI.Services.BasketService
             return true;
         }
 
-        public async Task SaveBasket(BasketTotalDto basket)
+        public async Task<string> SaveBasket(BasketTotalDto basket)
         {
-            await _httpClient.PostAsJsonAsync<BasketTotalDto>("baskets", basket);   
+            var _httpClient = _factory.Create("Basket");
+
+            var responseMessage=await _httpClient.PostAsJsonAsync<BasketTotalDto>("baskets", basket);
+            var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
+            return values.HandleUiResult(_uiNotifierService)
+       ?? "";
         }
     }
 }

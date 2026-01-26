@@ -4,13 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using MultiShop.Message.DAL.Context;
 using MultiShop.Message.Middlewares;
 using MultiShop.Message.Services;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt=>
 {
-    opt.Authority = builder.Configuration["IdentityServerUrl"];
+    //opt.Authority = builder.Configuration["IdentityServerUrl"];
+    opt.Authority= "http://localhost:5001";
     opt.Audience = "ResourceMessage";
     opt.RequireHttpsMetadata = false;
 });

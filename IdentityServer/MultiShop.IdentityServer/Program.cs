@@ -10,17 +10,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MultiShop.IdentityServer.Data;
 using MultiShop.IdentityServer.Models;
+using MultiShop.IdentityServer.Seeds;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MultiShop.IdentityServer
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -46,6 +48,11 @@ namespace MultiShop.IdentityServer
 
                 using (var scope = host.Services.CreateScope())
                 {
+                   
+                     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                     await RoleSeed.SeedRolesAsync(roleManager);
+
+
                     var serviceProvider = scope.ServiceProvider;
                     var applicationDbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
@@ -54,13 +61,16 @@ namespace MultiShop.IdentityServer
 
                     if (!userManager.Users.Any())
                     {
-                        userManager.CreateAsync(new ApplicationUser
-                        {
-                            Name="Turgut",
-                            Surname="Acar",
-                            UserName = "turgutacar05",
-                            Email = "turgut@gmail.com",
-                        }, "11111aA*").Wait();
+                        await RoleSeed.SeedAdminAsync(userManager);
+
+                        //userManager.CreateAsync(new ApplicationUser
+                        //{
+                        //    Name="Turgut",
+                        //    Surname="Acar",
+                        //    UserName = "turgutacar05",
+                        //    Email = "turgut@gmail.com",
+                        //}, "11111aA*").Wait();
+
                     }
                 }
 

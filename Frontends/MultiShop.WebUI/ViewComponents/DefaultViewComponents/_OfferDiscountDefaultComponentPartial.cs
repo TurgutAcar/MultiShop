@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.OfferDiscountDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Mapping;
 using MultiShop.WebUI.Services.OfferDiscountServices;
 using Newtonsoft.Json;
 
@@ -18,9 +20,10 @@ namespace MultiShop.WebUI.ViewComponents.DefaultViewComponents
           
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var values=await _offerDiscountService.OfferDiscountListAsync();
-            return View(values);
-           
+            var result = await _offerDiscountService.OfferDiscountListAsync();
+            ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
+
+            return View(result.Data ?? new List<ResultOfferDiscountDto>());
         }
     }
 }

@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Catalog.Application.Dtos.FeatureSliderDtos;
 using MultiShop.Catalog.Application.Services.FeatureSliderServices;
+using MultiShop.Catalog.Infrastructure.Middlewares;
 
 namespace MultiShop.Catalog.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FeatureSlidersController : ControllerBase

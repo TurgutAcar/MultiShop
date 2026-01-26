@@ -23,6 +23,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using HealthChecks.UI.Client;
+using MultiShop.IdentityServer.Seeds;
 
 namespace MultiShop.IdentityServer
 {
@@ -99,7 +100,8 @@ namespace MultiShop.IdentityServer
                 .AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<IdentityProfileService>();
             builder.Services.AddExceptionHandler<ExceptionHandler>();
             builder.Services.AddProblemDetails();
 
@@ -127,6 +129,7 @@ namespace MultiShop.IdentityServer
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
+          
             app.UseHttpsRedirection();
             app.UseResponseCompression();
 

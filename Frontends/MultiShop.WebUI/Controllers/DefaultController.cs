@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MultiShop.WebUI.Controllers
 {
-    [Authorize]
+
     public class DefaultController : Controller
     {
+        [AllowAnonymous]
+
         public IActionResult Index()
         {
             ViewBag.directory1 = "MultiShop";

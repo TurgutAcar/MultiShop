@@ -43,8 +43,8 @@ namespace MultiShop.WebUI.Services.Concrete
             });
             RefreshTokenRequest refreshTokenRequest = new()
             {
-                ClientId = _clientSettings.MultiShopAdminClient.ClientId,
-                ClientSecret=_clientSettings.MultiShopAdminClient.ClientSecret,
+                ClientId = _clientSettings.MultiShopWebClient.ClientId,
+                ClientSecret=_clientSettings.MultiShopWebClient.ClientSecret,
                 RefreshToken=refreshToken,
                 Address=discoveryEndPoint.TokenEndpoint
             };
@@ -87,8 +87,8 @@ namespace MultiShop.WebUI.Services.Concrete
             });
             var passwordTokenRequest = new PasswordTokenRequest
             {
-                ClientId = _clientSettings.MultiShopAdminClient.ClientId,
-                ClientSecret = _clientSettings.MultiShopAdminClient.ClientSecret,
+                ClientId = _clientSettings.MultiShopWebClient.ClientId,
+                ClientSecret = _clientSettings.MultiShopWebClient.ClientSecret,
                 UserName = signUpDto.UserName,
                 Password = signUpDto.Password,
                 Address = discoveryEndPoint.TokenEndpoint

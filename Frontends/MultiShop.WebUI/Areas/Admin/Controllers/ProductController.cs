@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
+    [Authorize]
     [Area("Admin")]
     [Route("Admin/Product")]
     public class ProductController : Controller
@@ -45,7 +46,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
             var client =_httpClientFactory.CreateClient();
             var values = await _categoryService.GetAllCategoryAsync();
-            List<SelectListItem> categoryValues = (from x in values
+            List<SelectListItem> categoryValues = (from x in values.Data
                                                    select new SelectListItem
                                                    {
                                                        Text = x.CategoryName,
@@ -80,7 +81,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
             var values1 = await _categoryService.GetAllCategoryAsync();
 
-            List<SelectListItem> categoryValues = (from x in values1
+            List<SelectListItem> categoryValues = (from x in values1.Data
                                                    select new SelectListItem
                                                    {
                                                        Text = x.CategoryName,

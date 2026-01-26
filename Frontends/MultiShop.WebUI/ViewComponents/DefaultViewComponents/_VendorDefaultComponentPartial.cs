@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Mapping;
 using MultiShop.WebUI.Services.BrandServices;
 using Newtonsoft.Json;
 
@@ -17,8 +19,10 @@ namespace MultiShop.WebUI.ViewComponents.DefaultViewComponents
            
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var values = await _brandService.BrandListAsync();
-            return View(values);
+            var result = await _brandService.BrandListAsync();
+            ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
+
+            return View(result.Data ?? new List<ResultBrandDto>());
         }
     }
 }

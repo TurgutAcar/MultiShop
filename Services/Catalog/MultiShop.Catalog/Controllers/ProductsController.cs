@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Catalog.Application.Dtos.ProductDtos;
 using MultiShop.Catalog.Application.Services.ProductService;
+using MultiShop.Catalog.Infrastructure.Middlewares;
 using MultiShop.Shared.Events;
 
 namespace MultiShop.Catalog.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase

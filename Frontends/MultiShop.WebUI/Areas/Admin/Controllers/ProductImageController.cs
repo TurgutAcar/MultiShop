@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AllowAnonymous]
+    [Authorize]
     [Route("Admin/ProductImage")]
     public class ProductImageController : Controller
     {

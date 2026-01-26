@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Catalog.Application.Dtos.CategoryDtos;
 using MultiShop.Catalog.Application.Services.CategoryServices;
+using MultiShop.Catalog.Infrastructure.Middlewares;
 
 namespace MultiShop.Catalog.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -15,7 +15,6 @@ namespace MultiShop.Catalog.Controllers
         {
             _categoryService = categoryService;
         }
-        [Authorize(Policy = "CatalogReadOrFullPermission")]
         [HttpGet]
         public async Task<IActionResult> CategoryList()
         {
@@ -29,7 +28,7 @@ namespace MultiShop.Catalog.Controllers
             var response =await  _categoryService.GetByIdCategoryAsync(id);
             return StatusCode(response.StatusCode, response);  
         }
-        [Authorize(Policy = "CatalogFullPermission")]
+       
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategoryDto createCategoryDto)
         {

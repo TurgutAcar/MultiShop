@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
+    [Authorize]
     [Area("Admin")]
-    [AllowAnonymous]
     [Route("Admin/Comment")]
     public class CommentController : Controller
     {

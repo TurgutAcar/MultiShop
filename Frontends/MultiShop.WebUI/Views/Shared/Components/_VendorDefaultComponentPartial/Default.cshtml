@@ -4,13 +4,23 @@
     <div class="row px-xl-5">
         <div class="col">
             <div class="owl-carousel vendor-carousel">
-                @foreach(var item in Model)
+                @if (ViewBag.InfoMessage != null)
                 {
-                    <div class="bg-light p-4;" style="height:120px;width:150px">
-                        <img src="@item.ImageUrl" alt="">
+                    <div class="alert alert-info mx-xl-5">
+                        @ViewBag.InfoMessage
                     </div>
-
                 }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="bg-light p-4;" style="height:120px;width:150px">
+                            <img src="@item.ImageUrl" alt="">
+                        </div>
+
+                    }
+                }
+              
 
             </div>
         </div>
