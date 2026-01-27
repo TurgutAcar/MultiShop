@@ -7,10 +7,10 @@ namespace MultiShop.WebUI.Services.BrandServices
     public interface IBrandService
     {
         public Task<Result<List<ResultBrandDto>>> BrandListAsync();
-        public Task<string> CreateBrandAsync(CreateBrandDto createBrandDto);
-        public Task<string> UpdateBrandAsync(UpdateBrandDto updateBrandDto);
-        public Task<string> DeleteBrandAsync(string id);    
-        public Task<UpdateBrandDto> GetByIdBrandAsync(string id);
+        public Task<Result<string>> CreateBrandAsync(CreateBrandDto createBrandDto);
+        public Task<Result<string>> UpdateBrandAsync(UpdateBrandDto updateBrandDto);
+        public Task<Result<string>> DeleteBrandAsync(string id);    
+        public Task<Result<UpdateBrandDto>> GetByIdBrandAsync(string id);
        
 
 

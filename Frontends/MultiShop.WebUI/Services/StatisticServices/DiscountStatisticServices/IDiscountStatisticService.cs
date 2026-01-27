@@ -1,7 +1,9 @@
-﻿namespace MultiShop.WebUI.Services.StatisticServices.DiscountStatisticServices
+﻿using MultiShop.Shared.Responses;
+
+namespace MultiShop.WebUI.Services.StatisticServices.DiscountStatisticServices
 {
     public interface IDiscountStatisticService
     {
-        Task<int> GetDiscountCouponCount();
+        Task<Result<int>> GetDiscountCouponCount();
     }
 }

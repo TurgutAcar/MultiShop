@@ -3,7 +3,7 @@ using MultiShop.Shared.Responses;
 using MultiShop.WebUI.GlobalException;
 using MultiShop.WebUI.Services.NotifierServices;
 
-namespace MultiShop.WebUI.Handlers
+namespace MultiShop.WebUI.Extensions
 {
     public static class ResultExtensions
     {

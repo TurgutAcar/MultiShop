@@ -1,6 +1,6 @@
 ﻿
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -18,16 +18,13 @@ namespace MultiShop.WebUI.Services.StatisticServices.DiscountStatisticServices
             _factory = factory;
         }
 
-        public async Task<int> GetDiscountCouponCount()
+        public async Task<Result<int>> GetDiscountCouponCount()
         {
             var _httpClient = _factory.Create("Discount");
 
             var response = await _httpClient.GetAsync("discounts/GetDiscountCouponCount");
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<int>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            //var value=await response.Content.ReadFromJsonAsync<int>();
-            // return value;
+            return await response.ReadSafeResultAsync<int>();
+
         }
     }
 }

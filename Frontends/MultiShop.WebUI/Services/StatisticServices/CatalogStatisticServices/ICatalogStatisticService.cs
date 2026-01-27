@@ -1,12 +1,14 @@
-﻿namespace MultiShop.WebUI.Services.StatisticServices.CatalogStatisticServices
+﻿using MultiShop.Shared.Responses;
+
+namespace MultiShop.WebUI.Services.StatisticServices.CatalogStatisticServices
 {
     public interface ICatalogStatisticService
     {
-        Task<long> GetCategoryCount();
-        Task<long> GetProductCount();
-        Task<long> GetBrandCount();
-        Task<decimal> GetProductAvgPrice();
-        Task<string> GetMaxPriceProductName();
-        Task<string> GetMinPriceProductName();
+        Task<Result<long>> GetCategoryCount();
+        Task<Result<long>> GetProductCount();
+        Task<Result<long>> GetBrandCount();
+        Task<Result<decimal>> GetProductAvgPrice();
+        Task<Result<string>> GetMaxPriceProductName();
+        Task<Result<string>> GetMinPriceProductName();
     }
 }

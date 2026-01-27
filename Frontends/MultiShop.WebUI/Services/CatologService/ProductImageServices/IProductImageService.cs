@@ -1,16 +1,17 @@
 ﻿
 using MultiShop.DtoLayer.CatalogDtos.ProductImageDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.WebUI.Services.ProductImageServices
 {
     public interface IProductImageService
     {
-        public Task<List<ResultProductImageDto>> GetAllProductImageAsync();
-        public Task<string> CreateProductImageAsync(CreateProductImageDto createProductImageDto);
-        public Task<string> UpdateProductImageAsync(UpdateProductImageDto updateProductImageDto);
-        public Task<string> DeleteProductImageAsync(string id);
-        public Task<UpdateProductImageDto> GetByIdProductImageAsync(string id);
-        public Task<UpdateProductImageDto> GetByProductIdProductImageAsync(string id);
+        public Task<Result<List<ResultProductImageDto>>> GetAllProductImageAsync();
+        public Task<Result<string>> CreateProductImageAsync(CreateProductImageDto createProductImageDto);
+        public Task<Result<string>> UpdateProductImageAsync(UpdateProductImageDto updateProductImageDto);
+        public Task<Result<string>> DeleteProductImageAsync(string id);
+        public Task<Result<UpdateProductImageDto>> GetByIdProductImageAsync(string id);
+        public Task<Result<UpdateProductImageDto>> GetByProductIdProductImageAsync(string id);
 
     }
 }

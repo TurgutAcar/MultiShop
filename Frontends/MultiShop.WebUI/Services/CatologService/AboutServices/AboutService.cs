@@ -1,10 +1,11 @@
 ﻿
 
 using System.Net.Http.Json;
+using MultiShop.DtoLayer.CargoDtos.CargoCustomerDtos;
 using MultiShop.DtoLayer.CatalogDtos.AboutDtos;
 using MultiShop.Shared.Responses;
 using MultiShop.WebUI.Enums;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -23,64 +24,45 @@ namespace MultiShop.WebUI.Services.AboutServices
             _factory = factory;
         }
 
-        public async Task<List<ResultAboutDto>> AboutListAsync()
+        public async Task<Result<List<ResultAboutDto>>> AboutListAsync()
         {
             var _httpClient = _factory.Create("Catalog");
-            var responseMessage =await _httpClient.GetAsync("Abouts");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<List<ResultAboutDto>>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new List<ResultAboutDto>();
-            // var contentValues=await responseMessage.Content.ReadAsStringAsync();
-            // var values = JsonConvert.DeserializeObject<List<ResultAboutDto>>(contentValues);
-            // return values;
+            var response = await _httpClient.GetAsync("Abouts");
+            return await response.ReadSafeResultAsync<List<ResultAboutDto>>();
 
         }
 
-        public async Task<string> CreateAboutAsync(CreateAboutDto createAboutDto)
+        public async Task<Result<string>> CreateAboutAsync(CreateAboutDto createAboutDto)
         {
             var _httpClient = _factory.Create("Catalog");
 
             var response =await _httpClient.PostAsJsonAsync<CreateAboutDto>("Abouts",createAboutDto);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            return await response.ReadSafeResultAsync<string>();
         }
 
-        public async Task<string> DeleteAboutAsync(string id)
+        public async Task<Result<string>> DeleteAboutAsync(string id)
         {
             var _httpClient = _factory.Create("Catalog");
 
             var response =  await _httpClient.DeleteAsync("Abouts?id="+id);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            return await response.ReadSafeResultAsync<string>();
         }
 
-        public async Task<UpdateAboutDto> GetByIdAboutAsync(string id)
+        public async Task<Result<UpdateAboutDto>> GetByIdAboutAsync(string id)
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Abouts/"+id);
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<UpdateAboutDto>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new UpdateAboutDto();
-            // var contentValues = await responseMessage.Content.ReadAsStringAsync();
-            //var value = JsonConvert.DeserializeObject<UpdateAboutDto>(contentValues);
-            // return value;
+            var response = await _httpClient.GetAsync("Abouts/"+id);
+            return await response.ReadSafeResultAsync<UpdateAboutDto>();
+
         }
 
-        public async Task<string> UpdateAboutAsync(UpdateAboutDto updateAboutDto)
+        public async Task<Result<string>> UpdateAboutAsync(UpdateAboutDto updateAboutDto)
         {
             var _httpClient = _factory.Create("Catalog");
 
             var response =await _httpClient.PostAsJsonAsync<UpdateAboutDto>("Abouts", updateAboutDto);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
+            return await response.ReadSafeResultAsync<string>();
         }
     }
 }

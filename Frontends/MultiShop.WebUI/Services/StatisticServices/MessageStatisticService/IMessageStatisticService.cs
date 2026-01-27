@@ -1,9 +1,11 @@
-﻿namespace MultiShop.WebUI.Services.StatisticServices.MessageStatisticService
+﻿using MultiShop.Shared.Responses;
+
+namespace MultiShop.WebUI.Services.StatisticServices.MessageStatisticService
 {
     public interface IMessageStatisticService
     {
-        Task<int> GetTotalMessageCount();
-        Task<int> GetTotalMessageCountByReceiverId(string id);
+        Task<Result<int>> GetTotalMessageCount();
+        Task<Result<int>> GetTotalMessageCountByReceiverId(string id);
 
     }
 }

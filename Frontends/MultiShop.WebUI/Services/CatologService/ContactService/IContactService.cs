@@ -1,14 +1,15 @@
 ﻿
 using MultiShop.DtoLayer.CatalogDtos.ContactDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.WebUI.Services.ContactService
 {
     public interface IContactService
     {
-        Task<List<ResultContactDto>> GetAllContactAsync();
-        Task<string> CreateContactAsync(CreateContactDto createContactDto);
-        Task<string> UpdateContactAsync(UpdateContactDto updateContactDto);
-        Task<string> DeleteContactAsync(string id);
-        Task<UpdateContactDto> GetByIdContactAsync(string id);
+        Task<Result<List<ResultContactDto>>> GetAllContactAsync();
+        Task<Result<string>> CreateContactAsync(CreateContactDto createContactDto);
+        Task<Result<string>> UpdateContactAsync(UpdateContactDto updateContactDto);
+        Task<Result<string>> DeleteContactAsync(string id);
+        Task<Result<UpdateContactDto>> GetByIdContactAsync(string id);
     }
 }

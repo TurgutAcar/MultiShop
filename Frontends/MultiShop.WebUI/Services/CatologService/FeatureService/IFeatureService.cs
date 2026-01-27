@@ -7,9 +7,9 @@ namespace MultiShop.WebUI.Services.FeatureService
     public interface IFeatureService
     {
         public Task<Result<List<ResultFeatureDto>>> FeatureListAsync();
-        public Task<string> CreateFeatureAsync(CreateFeatureDto feature);
-        public Task<string> UpdateFeatureAsync(UpdateFeatureDto feature);
-        public Task<string> DeleteFeatureAsync(string featureId);
-        public Task<UpdateFeatureDto> GetByIdFeatureAsync(string featureId);
+        public Task<Result<string>> CreateFeatureAsync(CreateFeatureDto feature);
+        public Task<Result<string>> UpdateFeatureAsync(UpdateFeatureDto feature);
+        public Task<Result<string>> DeleteFeatureAsync(string featureId);
+        public Task<Result<UpdateFeatureDto>> GetByIdFeatureAsync(string featureId);
     }
 }

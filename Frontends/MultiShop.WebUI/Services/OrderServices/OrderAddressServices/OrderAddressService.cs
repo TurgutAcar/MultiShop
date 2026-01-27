@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using MultiShop.DtoLayer.OrderDtos.OrderAddressDtos;
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -19,15 +19,13 @@ namespace MultiShop.WebUI.Services.OrderServices.OrderAddressServices
             _factory = factory;
         }
 
-        public async Task<string> CreateOrderAddressesAsync(CreateOrderAddressDto createOrderAddressDto)
+        public async Task<Result<string>> CreateOrderAddressesAsync(CreateOrderAddressDto createOrderAddressDto)
         {
             var _httpClient = _factory.Create("Order");
 
             var response = await _httpClient.PostAsJsonAsync<CreateOrderAddressDto>("Addresses", createOrderAddressDto);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            return await response.ReadSafeResultAsync<string>();
+
         }
     }
 }

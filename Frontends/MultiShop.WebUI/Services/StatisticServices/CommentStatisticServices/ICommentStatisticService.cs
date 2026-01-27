@@ -1,10 +1,12 @@
-﻿namespace MultiShop.WebUI.Services.StatisticServices.CommentStatisticServices
+﻿using MultiShop.Shared.Responses;
+
+namespace MultiShop.WebUI.Services.StatisticServices.CommentStatisticServices
 {
     public interface ICommentStatisticService
     {
-        Task<int> GetActiveCommentCount();
-        Task<int> GetPassiveCommentCount();
-        Task<int> GetTotalCommentCount();
+        Task<Result<int>> GetActiveCommentCount();
+        Task<Result<int>> GetPassiveCommentCount();
+        Task<Result<int>> GetTotalCommentCount();
 
     }
 }

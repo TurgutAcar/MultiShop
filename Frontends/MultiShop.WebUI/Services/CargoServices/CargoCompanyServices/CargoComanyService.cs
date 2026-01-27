@@ -1,7 +1,7 @@
 ﻿using MultiShop.DtoLayer.CargoDtos.CargoCompanyDtos;
 using MultiShop.DtoLayer.CommentDtos;
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -19,64 +19,47 @@ namespace MultiShop.WebUI.Services.CargoServices.CargoCompanyServices
             _uiNotifierService = uiNotifierService;
         }
 
-        public async Task<string> CreateCargoCompanyAsync(CreateCargoCompanyDto createCargoCompanyDto)
+        public async Task<Result<string>> CreateCargoCompanyAsync(CreateCargoCompanyDto createCargoCompanyDto)
         {
             var _httpClient = _factory.Create("Cargo");
-           var responseMessage=  await _httpClient.PostAsJsonAsync("CargoCompanies", createCargoCompanyDto);
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+           var response =  await _httpClient.PostAsJsonAsync("CargoCompanies", createCargoCompanyDto);
+            return await response.ReadSafeResultAsync<string>();
+
         }
 
-        public async Task<string> DeleteCargoCompanyAsync(int id)
+        public async Task<Result<string>> DeleteCargoCompanyAsync(int id)
         {
             var _httpClient = _factory.Create("Cargo");
 
-           var responseMessage= await _httpClient.DeleteAsync("CargoCompanies?id=" + id);
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+           var response = await _httpClient.DeleteAsync("CargoCompanies?id=" + id);
+            return await response.ReadSafeResultAsync<string>();
+
         }
 
-        public async Task<List<ResultCargoCompanyDto>> GetAllCargoCompanyAsync()
+        public async Task<Result<List<ResultCargoCompanyDto>>> GetAllCargoCompanyAsync()
         {
             var _httpClient = _factory.Create("Cargo");
 
-            var responseMessage = await _httpClient.GetAsync("CargoCompanies");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<List<ResultCargoCompanyDto>>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new List<ResultCargoCompanyDto>();
-            //var contentValue = await responseMessage.Content.ReadAsStringAsync();
-            // var value = JsonConvert.DeserializeObject<List<ResultCargoCompanyDto>>(contentValue);
-            //  return value;
+            var response = await _httpClient.GetAsync("CargoCompanies");
+            return await response.ReadSafeResultAsync<List<ResultCargoCompanyDto>>();
+
         }
 
-        public async Task<UpdateCargoCompanyDto> GetByIdCargoCompanyAsync(int id)
+        public async Task<Result<UpdateCargoCompanyDto>> GetByIdCargoCompanyAsync(int id)
         {
             var _httpClient = _factory.Create("Cargo");
 
-            var responseMessage = await _httpClient.GetAsync("CargoCompanies/" + id);
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<UpdateCargoCompanyDto>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new UpdateCargoCompanyDto();
-            // var contentValue = await responseMessage.Content.ReadAsStringAsync();
-            //  var value = JsonConvert.DeserializeObject<UpdateCargoCompanyDto>(contentValue);
-            // return value;
+            var response = await _httpClient.GetAsync("CargoCompanies/" + id);
+            return await response.ReadSafeResultAsync<UpdateCargoCompanyDto>();
+
         }
 
-        public async Task<string> UpdateCargoCompanyAsync(UpdateCargoCompanyDto updateCargoCompanyDto)
+        public async Task<Result<string>> UpdateCargoCompanyAsync(UpdateCargoCompanyDto updateCargoCompanyDto)
         {
             var _httpClient = _factory.Create("Cargo");
 
-           var responseMessage =  await _httpClient.PutAsJsonAsync<UpdateCargoCompanyDto>("CargoCompanies", updateCargoCompanyDto);
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            var response =  await _httpClient.PutAsJsonAsync<UpdateCargoCompanyDto>("CargoCompanies", updateCargoCompanyDto);
+            return await response.ReadSafeResultAsync<string>();
         }
     }
 }

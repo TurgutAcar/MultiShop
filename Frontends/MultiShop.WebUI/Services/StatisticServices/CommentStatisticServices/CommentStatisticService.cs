@@ -1,6 +1,6 @@
 ﻿
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -18,43 +18,31 @@ namespace MultiShop.WebUI.Services.StatisticServices.CommentStatisticServices
             _factory = factory;
         }
 
-        public async Task<int> GetActiveCommentCount()
+        public async Task<Result<int>> GetActiveCommentCount()
         {
             var _httpClient = _factory.Create("Comment");
 
             var response = await _httpClient.GetAsync("comments/GetActiveCommentCount");
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<int>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            //var jsonData=await response.Content.ReadAsStringAsync();
-            // var value = JsonConvert.DeserializeObject<int>(jsonData);
-            // return value;
+            return await response.ReadSafeResultAsync<int>();
+
         }
 
-        public async Task<int> GetPassiveCommentCount()
+        public async Task<Result<int>> GetPassiveCommentCount()
         {
             var _httpClient = _factory.Create("Comment");
 
             var response = await _httpClient.GetAsync("comments/GetPassiveCommentCount");
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<int>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            //   var jsonData = await response.Content.ReadAsStringAsync();
-            //  var value = JsonConvert.DeserializeObject<int>(jsonData);
-            //  return value;
+            return await response.ReadSafeResultAsync<int>();
+
         }
 
-        public async Task<int> GetTotalCommentCount()
+        public async Task<Result<int>> GetTotalCommentCount()
         {
             var _httpClient = _factory.Create("Comment");
 
             var response = await _httpClient.GetAsync("comments/GetTotalCommentCount");
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<int>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-          //  var jsonData = await response.Content.ReadAsStringAsync();
-          //  var value = JsonConvert.DeserializeObject<int>(jsonData);
-          //  return value;
+            return await response.ReadSafeResultAsync<int>();
+
         }
     }
 }

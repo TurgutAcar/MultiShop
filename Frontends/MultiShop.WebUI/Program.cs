@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
 using MultiShop.WebUI.Handlers;
 using MultiShop.WebUI.Services.AboutServices;
@@ -39,9 +38,6 @@ using MultiShop.WebUI.GlobalException;
 using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.NotifierServices;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt;
 using MultiShop.Shared.Enums;
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,13 +1,14 @@
 ﻿using MultiShop.DtoLayer.BasketDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.WebUI.Services.BasketService
 {
     public interface IBasketService
     {
-        Task<BasketTotalDto> GetBasket();
-        Task<string> SaveBasket(BasketTotalDto basket);
+        Task<Result<BasketTotalDto>> GetBasket();
+        Task<Result<string>> SaveBasket(BasketTotalDto basket);
         Task DeleteBasket(string userId);
-        Task<bool> RemoveBasketItem(string productId);
+        Task<Result<string>> RemoveBasketItem(string productId);
         Task AddBasketItem(BasketItemDto basketItemDto);
 
 

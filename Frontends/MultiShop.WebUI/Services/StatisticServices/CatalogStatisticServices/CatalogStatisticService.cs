@@ -1,6 +1,6 @@
 ﻿
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -18,77 +18,58 @@ namespace MultiShop.WebUI.Services.StatisticServices.CatalogStatisticServices
             _factory = factory;
         }
 
-        public async Task<long> GetBrandCount()
+        public async Task<Result<long>> GetBrandCount()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Statistics/GetBrandCount");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<long>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
+            var response = await _httpClient.GetAsync("Statistics/GetBrandCount");
+            return await response.ReadSafeResultAsync<long>();
 
-            //var values = await responseMessage.Content.ReadFromJsonAsync<long>();
-            //return values;
         }
 
-        public async Task<long> GetCategoryCount()
+        public async Task<Result<long>> GetCategoryCount()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Statistics/GetCategoryCount");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<long>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            // var values = await responseMessage.Content.ReadFromJsonAsync<long>();
-            // return values;
+            var response = await _httpClient.GetAsync("Statistics/GetCategoryCount");
+            return await response.ReadSafeResultAsync<long>();
+
         }
 
-        public async Task<string> GetMaxPriceProductName()
+        public async Task<Result<string>> GetMaxPriceProductName()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Statistics/GetMaxPriceProductName");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-           // var values = await responseMessage.Content.ReadAsStringAsync();
-           // return values;
+            var response = await _httpClient.GetAsync("Statistics/GetMaxPriceProductName");
+            return await response.ReadSafeResultAsync<string>();
+
         }
 
-        public async Task<string> GetMinPriceProductName()
+        public async Task<Result<string>> GetMinPriceProductName()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Statistics/GetMinPriceProductName");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            //var values = await responseMessage.Content.ReadAsStringAsync();
-            // return values;
+            var response = await _httpClient.GetAsync("Statistics/GetMinPriceProductName");
+            return await response.ReadSafeResultAsync<string>();
+
         }
 
-        public async Task<decimal> GetProductAvgPrice()
+        public async Task<Result<decimal>> GetProductAvgPrice()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Statistics/GetProductAvgPrice");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<decimal>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            //   var values = await responseMessage.Content.ReadFromJsonAsync<decimal>();
-            //return values;
+            var response = await _httpClient.GetAsync("Statistics/GetProductAvgPrice");
+            return await response.ReadSafeResultAsync<decimal>();
+
         }
 
-        public async Task<long> GetProductCount()
+        public async Task<Result<long>> GetProductCount()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Statistics/GetProductCount");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<long>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            // var values = await responseMessage.Content.ReadFromJsonAsync<long>();
-            // return values;
+            var response = await _httpClient.GetAsync("Statistics/GetProductCount");
+            return await response.ReadSafeResultAsync<long>();
+
         }
     }
 }

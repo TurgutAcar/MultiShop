@@ -1,7 +1,9 @@
-﻿namespace MultiShop.WebUI.Services.StatisticServices.UserStatisticServices
+﻿using MultiShop.Shared.Responses;
+
+namespace MultiShop.WebUI.Services.StatisticServices.UserStatisticServices
 {
     public interface IUserStatisticService
     {
-        Task<int> GetUserCount();
+        Task<Result<int>> GetUserCount();
     }
 }

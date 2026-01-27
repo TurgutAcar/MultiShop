@@ -6,11 +6,11 @@ namespace MultiShop.WebUI.Services.CatologService.ProductService
     public interface IProductService
     {
         Task<Result<List<ResultProductDto>>> GetAllProductAsync();
-        Task<string> CreateProductAsync(CreateProductDto createProductDto);
-        Task<string> UpdateProductAsync(UpdateProductDto updateProductDto);
-        Task<string> DeleteProductAsync(string id);
-        Task<UpdateProductDto> GetByIdProductAsync(string id);
-        Task<List<ResultProductsWithCategoryDto>> GetProductsWithCategoryAsync();
-        Task<List<ResultProductsWithCategoryDto>> GetProductsWithCategoryByCategoryIdAsync(string CategoryId);
+        Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto);
+        Task<Result<string>> UpdateProductAsync(UpdateProductDto updateProductDto);
+        Task<Result<string>> DeleteProductAsync(string id);
+        Task<Result<UpdateProductDto>> GetByIdProductAsync(string id);
+        Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryAsync();
+        Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryByCategoryIdAsync(string CategoryId);
     }
 }

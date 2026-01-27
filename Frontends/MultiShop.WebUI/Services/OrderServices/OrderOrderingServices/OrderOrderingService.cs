@@ -1,6 +1,6 @@
 ﻿using MultiShop.DtoLayer.OrderDtos.OrderOrderingDtos;
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
@@ -19,18 +19,12 @@ namespace MultiShop.WebUI.Services.OrderServices.OrderOrderingServices
             _uiNotifierService = uiNotifierService;
         }
 
-        public async Task<List<ResultOrderingByUserIdDto>> GetOrderingByUserId(string id)
+        public async Task<Result<List<ResultOrderingByUserIdDto>>> GetOrderingByUserId(string id)
         {
             var _httpClient = _factory.Create("Order");
 
-            var responseMessage = await _httpClient.GetAsync($"orderings/GetOrderingByUserId/{id}");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<List<ResultOrderingByUserIdDto>>> (jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new List<ResultOrderingByUserIdDto>();
-            // var jsonData=await responseMessage.Content.ReadAsStringAsync();
-            // var values= JsonConvert.DeserializeObject<List<ResultOrderingByUserIdDto>>(jsonData);
-            // return values;
+            var response = await _httpClient.GetAsync($"orderings/GetOrderingByUserId/{id}");
+            return await response.ReadSafeResultAsync<List<ResultOrderingByUserIdDto>>();
 
         }
     }

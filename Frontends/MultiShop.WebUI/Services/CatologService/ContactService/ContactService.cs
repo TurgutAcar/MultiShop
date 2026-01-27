@@ -3,7 +3,7 @@
 using MultiShop.DtoLayer.CatalogDtos.ContactDtos;
 using MultiShop.Shared.Responses;
 using MultiShop.WebUI.Enums;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.ContactService;
 using MultiShop.WebUI.Services.Interface;
 using MultiShop.WebUI.Services.NotifierServices;
@@ -22,63 +22,47 @@ namespace MultiShop.Catalog.Services.ContactService
             _factory = factory;
         }
 
-        public async Task<string> CreateContactAsync(CreateContactDto createContactDto)
+        public async Task<Result<string>> CreateContactAsync(CreateContactDto createContactDto)
         {
             var _httpClient = _factory.Create("Catalog");
             var response =await _httpClient.PostAsJsonAsync<CreateContactDto>("Contacts", createContactDto);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            return await response.ReadSafeResultAsync<string>();
+
         }
 
-        public async Task<string> DeleteContactAsync(string id)
+        public async Task<Result<string>> DeleteContactAsync(string id)
         {
             var _httpClient = _factory.Create("Catalog");
 
             var response =await _httpClient.DeleteAsync("Contacts?id="+id);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            return await response.ReadSafeResultAsync<string>();
+
         }
 
-        public async Task<List<ResultContactDto>> GetAllContactAsync()
+        public async Task<Result<List<ResultContactDto>>> GetAllContactAsync()
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var responseMessage = await _httpClient.GetAsync("Contacts");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<List<ResultContactDto>>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new List<ResultContactDto>();
-            //  var contentValue = await responseMessage.Content.ReadAsStringAsync();
-            //  var values = JsonConvert.DeserializeObject<List<ResultContactDto>>(contentValue);
-            //  return values;
+            var response = await _httpClient.GetAsync("Contacts");
+            return await response.ReadSafeResultAsync<List<ResultContactDto>>();
+
         }
 
-        public async Task<UpdateContactDto> GetByIdContactAsync(string id)
+        public async Task<Result<UpdateContactDto>> GetByIdContactAsync(string id)
         {
             var _httpClient = _factory.Create("Catalog");
-            var responseMessage =await _httpClient.GetAsync("Contacts/" + id);
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<UpdateContactDto>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? new UpdateContactDto();
-            // var contentValue=await responseMessage.Content.ReadAsStringAsync();
-            //   var value=JsonConvert.DeserializeObject<UpdateContactDto>(contentValue);
-            //  return value;
+            var response = await _httpClient.GetAsync("Contacts/" + id);
+            return await response.ReadSafeResultAsync<UpdateContactDto>();
+
         }
 
-        public async Task<string> UpdateContactAsync(UpdateContactDto updateContactDto)
+        public async Task<Result<string>> UpdateContactAsync(UpdateContactDto updateContactDto)
         {
             var _httpClient = _factory.Create("Catalog");
 
             var response =await _httpClient.PutAsJsonAsync<UpdateContactDto>("Contacts", updateContactDto);
-            var jsonData = await response.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<string>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService)
-       ?? "";
+            return await response.ReadSafeResultAsync<string>();
+
         }
     }
 }

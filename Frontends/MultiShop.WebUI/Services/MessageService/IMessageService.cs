@@ -1,11 +1,12 @@
 ﻿using MultiShop.DtoLayer.MessageDtos;
+using MultiShop.Shared.Responses;
 
 namespace MultiShop.WebUI.Services.MessageService
 {
     public interface IMessageService
     {
-        Task<List<ResultInboxMessageDto>> GetInboxMessageAsync(string id);
-        Task<List<ResultSendboxMessageDto>> GetSendboxMessageAsync(string id);
+        Task<Result<List<ResultInboxMessageDto>>> GetInboxMessageAsync(string id);
+        Task<Result<List<ResultSendboxMessageDto>>> GetSendboxMessageAsync(string id);
      
     }
 }

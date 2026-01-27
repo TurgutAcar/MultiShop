@@ -1,8 +1,9 @@
 ﻿using MultiShop.DtoLayer.IdentityDtos.UserDtos;
 using MultiShop.Shared.Responses;
-using MultiShop.WebUI.Handlers;
+using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Services.NotifierServices;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MultiShop.WebUI.Services.UserIdentityService
 {
@@ -17,15 +18,11 @@ namespace MultiShop.WebUI.Services.UserIdentityService
             _uiNotifierService = uiNotifierService;
         }
 
-        public async Task<List<ResultUserDto>> GetAllUserListAsync()
+        public async Task<Result<List<ResultUserDto>>> GetAllUserListAsync()
         {
-            var responseMessage = await _httpClient.GetAsync("/api/users/GetAllUserList");
-            var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<Result<List<ResultUserDto>>>(jsonData);
-            return values.HandleUiResult(_uiNotifierService);
-            // var jsonData=await responseMessage.Content.ReadAsStringAsync();
-            // var values=JsonConvert.DeserializeObject<List<ResultUserDto>>(jsonData);
-            //  return values;
+            var response = await _httpClient.GetAsync("/api/users/GetAllUserList");
+            return await response.ReadSafeResultAsync<List<ResultUserDto>>();
+
         }
     }
 }
