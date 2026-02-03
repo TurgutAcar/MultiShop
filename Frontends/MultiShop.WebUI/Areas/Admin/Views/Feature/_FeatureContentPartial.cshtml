@@ -1,0 +1,16 @@
+﻿@model FeatureIndexViewModel
+
+@if (Model.IsLoading)
+{
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+}
+else if (Model.Features == null || !Model.Features.Any())
+{
+    <div class="alert alert-secondary">Feature bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+    <partial name="_FeatureTable" model="Model.Features" />
+}

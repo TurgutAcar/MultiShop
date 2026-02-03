@@ -1,0 +1,72 @@
+﻿@model List<ResultFeatureDto>
+
+@{
+    int count = 0;
+}
+<script>
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: 'Emin misin?',
+            text: `"${name}" silinecek`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Evet, Sil',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                postDelete(id);
+            }
+        });
+    }
+
+    function postDelete(id) {
+        fetch(`/Admin/Feature/DeleteFeature/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${id}`
+        })
+        .then(r => r.json())
+    .then(res => {
+        toastr[res.type](res.message);
+
+        if (res.success) {
+            setTimeout(() => location.reload(), 4000);
+        }
+    });
+    }
+</script>
+<table class="table table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Öne Çıkan Alan Adı</th>
+            <th class="text-center">İşlemler</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <td>@count</td>
+                <td>@item.Title</td>
+                <td class="text-center">
+                    <a href="/Admin/Feature/UpdateFeature/@item.FeatureId"
+                       class="btn btn-sm btn-success me-1">
+                        <i class="fa fa-edit"></i>
+                    </a>
+
+                    <button class="btn btn-sm btn-danger"
+                            onclick="confirmDelete('@item.FeatureId','@item.FeatureId')">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

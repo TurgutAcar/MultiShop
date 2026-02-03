@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Mapping;
 using MultiShop.WebUI.Services.BasketService;
 using MultiShop.WebUI.Services.DiscountServices;
 
@@ -18,12 +20,28 @@ namespace MultiShop.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmDiscountCoupon(string code)
         {
-            var values=await _discountService.GetDiscountCouponCountRate(code);
-            var basketValues = await _basketService.GetBasket();
-            var totalPriceWithTax = basketValues.TotalPrice + basketValues.TotalPrice / 100 * 10;
+            var DiscountCouponCountRateResult = await _discountService.GetDiscountCouponCountRate(code);
+            TempData["UiMessage"] = UiMessageMapper.Map(DiscountCouponCountRateResult.Source);
+            if (!DiscountCouponCountRateResult.IsSuccessful)
+                return RedirectToAction("Index", "ShoppingCart");
 
-            var totalNewPriceWithDiscount = totalPriceWithTax - (totalPriceWithTax / 100 * values);
-            return RedirectToAction("Index", "ShoppingCart", new { code = code, discountRate=values, totalNewPriceWithDiscount= totalNewPriceWithDiscount });
+
+            //var basketResult = await _basketService.GetBasket();
+            //    ViewBag.InfoMessage = UiMessageMapper.Map(DiscountCouponCountRateResult.Source);
+            //if (!basketResult.IsSuccessful || basketResult.Data == null)
+            //{
+            //    TempData["UiMessage"] = "Sepet bilgileri alınamadı.";
+            //    return RedirectToAction("Index", "ShoppingCart");
+
+            //}
+            TempData["DiscountCode"] = code;
+            TempData["DiscountRate"] = DiscountCouponCountRateResult.Data;
+            // var totalPriceWithTax = basketResult.Data.TotalPrice + basketResult.Data.TotalPrice / 100 * 10;
+
+            //            var totalNewPriceWithDiscount = totalPriceWithTax - (totalPriceWithTax / 100 * DiscountCouponCountRateResult.Data);
+            return RedirectToAction("Index", "ShoppingCart");
+
+
         }
         [HttpGet]
         public PartialViewResult ConfirmDiscountCoupon()

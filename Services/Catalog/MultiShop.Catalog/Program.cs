@@ -79,7 +79,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     opt.RequireHttpsMetadata = false;
     opt.TokenValidationParameters = new TokenValidationParameters
     {
-        RoleClaimType = JwtClaimTypes.Role
+        //RoleClaimType = JwtClaimTypes.Role,
+        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+        // Eğer scope'larda da sorun yaşarsan şunu da ekleyebilirsin:
+        // NameClaimType = "name"
     };
 });
 builder.Services.AddApplication(builder);

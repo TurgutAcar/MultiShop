@@ -1,0 +1,16 @@
+﻿@model CategoryIndexViewModel
+
+@if (Model.IsLoading)
+{
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+}
+else if (Model.Categories == null || !Model.Categories.Any())
+{
+    <div class="alert alert-secondary">Kategori bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+    <partial name="_CategoryTable" model="Model.Categories" />
+}

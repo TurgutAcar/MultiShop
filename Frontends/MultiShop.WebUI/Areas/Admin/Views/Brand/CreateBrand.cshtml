@@ -7,16 +7,34 @@
 
 <section class="content container-fluid">
     <div class="row">
+      @*   @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @Html.ValidationSummary(false)
+            </div>
+        }
+        @if (ViewBag.InfoMessage != null)
+        {
+            <script>
+                toastr.warning("@ViewBag.InfoMessage");
+            </script>
+        } *@
+
 
         <div class="col-md-12">
             <div class="chart-box">
                 <div class="bs-example" data-example-id="bordered-table">
                     <form method="post">
+
                         <label>Marka Adı</label>
                         <input type="text" class="form-control" asp-for="BrandName" />
+                        <span asp-validation-for="BrandName" class="text-danger"></span>
+
                         <br />
                         <label>Marka Görseli</label>
                         <input type="text" class="form-control" asp-for="ImageUrl" />
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+
                         <br />
                         <button class="btn btn-primary">Markayı Ekle</button>
                     </form>

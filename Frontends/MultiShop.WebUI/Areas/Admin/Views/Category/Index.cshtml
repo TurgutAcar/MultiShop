@@ -1,4 +1,4 @@
-﻿@model List<ResultCategoryDto>
+﻿@model CategoryIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -6,7 +6,7 @@
     int count = 0;
 }
 
-<section class="content container-fluid">
+@* <section class="content container-fluid">
     <div class="row">
 
         <div class="col-md-12">
@@ -43,3 +43,58 @@
 
     </div>
 </section>
+ *@
+ <section class="content container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="chart-box">
+                <div class="bs-example">
+                    <div id="category-grid-container">
+                        @* Sayfa ilk açıldığında loading/skeleton görünsün diye *@
+                        <partial name="_CategoryContentPartial" model="Model" />
+                    </div>
+
+                 @*    @if (Model.IsLoading)
+                    {
+                         <div class="alert alert-info mb-3">
+                            Sistem yoğunluğu nedeniyle içerikler yükleniyor…
+                        </div> 
+
+                        <partial name="_SkeletonBrandTable" />
+                    }
+                    else if (!Model.Brands.Any())
+                    {
+                        <div class="alert alert-secondary">
+                            Henüz marka bulunmuyor.
+                        </div>
+                    }
+                    else
+                    {
+                        <partial name="_BrandTable" model="Model.Brands" />
+                    } *@
+                    <a href="/Admin/Category/CreateCategory/"
+                       class="btn btn-primary mt-3 @(Model.IsLoading ? "disabled" : "")">
+                        Yeni Kategori Girişi
+                    </a>
+                  
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+        var url = '@Url.Action("GetCategoryListPartial", "Category", new { area = "Admin" })';
+            // Sayfa açılır açılmaz isteği başlat
+            $.get(url, function (data) {
+                // Gelen hazır HTML paketini konteynerin içine bas
+                $("#category-grid-container").html(data);
+
+                // Yükleme bittiği için butonu aktif et (isteğe bağlı)
+                $(".btn-primary").removeClass("disabled");
+            });
+        });
+    </script>
+    }

@@ -61,7 +61,7 @@ namespace MultiShop.WebUI.Services.AboutServices
         {
             var _httpClient = _factory.Create("Catalog");
 
-            var response =await _httpClient.PostAsJsonAsync<UpdateAboutDto>("Abouts", updateAboutDto);
+            var response =await _httpClient.PutAsJsonAsync<UpdateAboutDto>("Abouts", updateAboutDto);
             return await response.ReadSafeResultAsync<string>();
         }
     }

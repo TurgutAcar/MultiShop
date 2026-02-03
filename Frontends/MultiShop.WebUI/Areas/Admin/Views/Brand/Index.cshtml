@@ -1,40 +1,110 @@
-﻿@model List<ResultBrandDto>
+﻿@* @model BrandIndexViewModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
     int count = 0;
 }
 
+
+<script>
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: 'Emin misin?',
+            text: `"${name}" markası silinecek`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Evet, Sil',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                postDelete(id);
+            }
+        });
+    }
+
+    function postDelete(id) {
+        fetch(`/Admin/Brand/DeleteBrand/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${id}`
+        })
+        .then(r => r.json())
+    .then(res => {
+        toastr[res.type](res.message);
+
+        if (res.success) {
+            setTimeout(() => location.reload(), 4000);
+        }
+    });
+    }
+</script>
+
 <section class="content container-fluid">
     <div class="row">
+    
 
         <div class="col-md-12">
             <div class="chart-box">
                 <div class="bs-example" data-example-id="bordered-table">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Marka Adı</th>
-                                <th>Marka Görsel</th>
-                                <th>Sil</th>
-                                <th>Güncelle</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                count++;
+                    @if (Model.IsLoading)
+                    {
+                        <div class="alert alert-info mb-3">
+                            Sistem yoğunluğu nedeniyle içerikler yükleniyor…
+                        </div>
+                        @await Component.InvokeAsync("_SkeletonBrandTable")
+
+                    }
+                    else if (!Model.Brands.Any())
+                    {
+                        <div class="alert alert-secondary">
+                            Henüz marka bulunmuyor.
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
                                 <tr>
-                                    <th scope="row">@count</th>
-                                    <td>@item.BrandName</td>
-                                    <td><img src="@item.ImageUrl" style="width:50px; height:50px;" /> </td>
-                                    <td><a href="/Admin/Brand/DeleteBrand/@item.BrandId" class="btn btn-danger">Sil</a></td>
-                                    <td><a href="/Admin/Brand/UpdateBrand/@item.BrandId" class="btn btn-success">Güncelle</a></td>
+                                    <th>#</th>
+                                    <th>Marka</th>
+                                    <th>Görsel</th>
+                                    <th class="text-center">İşlemler</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Brands)
+                                {
+                                    count++;
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@item.BrandName</td>
+                                        <td>
+                                            <img src="@item.ImageUrl"
+                                                 class="rounded"
+                                                 style="width:40px;height:40px;object-fit:cover;" />
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="/Admin/Brand/UpdateBrand/@item.BrandId"
+                                               class="btn btn-sm btn-success me-1">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <button class="btn btn-sm btn-danger"
+                                                    onclick="confirmDelete('@item.BrandId','@item.BrandName')">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    }
+
                     <a href="/Admin/Brand/CreateBrand/" class="btn btn-primary">Yeni Marka Girişi</a>
                 </div>
             </div>
@@ -45,3 +115,65 @@
     </div>
 </section>
 
+
+ *@
+ @model BrandIndexViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<section class="content container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="chart-box">
+                <div class="bs-example">
+                    <div id="brand-grid-container">
+                        @* Sayfa ilk açıldığında loading/skeleton görünsün diye *@
+                        <partial name="_BrandContentPartial" model="Model" />
+                    </div>
+
+                 @*    @if (Model.IsLoading)
+                    {
+                         <div class="alert alert-info mb-3">
+                            Sistem yoğunluğu nedeniyle içerikler yükleniyor…
+                        </div> 
+
+                        <partial name="_SkeletonBrandTable" />
+                    }
+                    else if (!Model.Brands.Any())
+                    {
+                        <div class="alert alert-secondary">
+                            Henüz marka bulunmuyor.
+                        </div>
+                    }
+                    else
+                    {
+                        <partial name="_BrandTable" model="Model.Brands" />
+                    } *@
+                    <a href="/Admin/Brand/CreateBrand/"
+                       class="btn btn-primary mt-3 @(Model.IsLoading ? "disabled" : "")">
+                        Yeni Marka Girişi
+                    </a>
+                  
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var url = '@Url.Action("GetBrandListPartial", "Brand", new { area = "Admin" })';
+            // Sayfa açılır açılmaz isteği başlat
+            $.get(url, function (data) {
+                // Gelen hazır HTML paketini konteynerin içine bas
+                $("#brand-grid-container").html(data);
+
+                // Yükleme bittiği için butonu aktif et (isteğe bağlı)
+                $(".btn-primary").removeClass("disabled");
+            });
+        });
+    </script>
+}

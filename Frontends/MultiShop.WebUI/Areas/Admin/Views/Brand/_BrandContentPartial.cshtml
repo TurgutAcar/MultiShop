@@ -1,0 +1,19 @@
+﻿@model BrandIndexViewModel
+
+@if (Model.IsLoading)
+{
+
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+@*      <partial name="_SkeletonBrandTable" />
+ *@}
+else if (Model.Brands == null || !Model.Brands.Any())
+{
+    <div class="alert alert-secondary">Marka bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+
+     <partial name="_BrandTable" model="Model.Brands" />
+ }

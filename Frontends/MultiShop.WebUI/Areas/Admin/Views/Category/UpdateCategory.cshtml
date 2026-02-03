@@ -14,9 +14,13 @@
                         <input type="hidden" readonly class="form-control" asp-for="CategoryId" />
                         <label>Kategori Adı</label>
                         <input type="text" class="form-control" asp-for="CategoryName" />
+                        <span asp-validation-for="CategoryName" class="text-danger"></span>
+
                         <br />
                         <label>Kategori Görsel</label>
                         <input type="text" class="form-control" asp-for="ImageUrl" />
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+
                         <br />
                         <button class="btn btn-primary">Kategoriyi Güncelle</button>
                     </form>

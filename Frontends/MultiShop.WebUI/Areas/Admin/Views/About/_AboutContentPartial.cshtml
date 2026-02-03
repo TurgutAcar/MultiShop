@@ -1,0 +1,19 @@
+﻿@model AboutIndexViewModel
+
+@if (Model.IsLoading)
+{
+
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+@*      <partial name="_SkeletonBrandTable" />
+ *@}
+else if (Model.Abouts == null || !Model.Abouts.Any())
+{
+    <div class="alert alert-secondary">Hakkımda bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+
+    <partial name="_AboutTable" model="Model.Abouts" />
+ }

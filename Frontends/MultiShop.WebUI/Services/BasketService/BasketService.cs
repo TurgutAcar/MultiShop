@@ -19,7 +19,7 @@ namespace MultiShop.WebUI.Services.BasketService
             _uiNotifierService = uiNotifierService;
         }
 
-        public async Task AddBasketItem(BasketItemDto basketItemDto)
+        public async Task<Result<string>> AddBasketItem(BasketItemDto basketItemDto)
         {
 
             var response = await GetBasket();
@@ -35,7 +35,7 @@ namespace MultiShop.WebUI.Services.BasketService
                     response.Data.BasketItems.Add(basketItemDto);
                 }
             }
-            await SaveBasket(response.Data!);
+            return await SaveBasket(response.Data!);
         }
 
         public Task DeleteBasket(string userId)

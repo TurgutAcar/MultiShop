@@ -39,6 +39,8 @@ using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.NotifierServices;
 using Microsoft.AspNetCore.Authentication;
 using MultiShop.Shared.Enums;
+using Polly;
+using MultiShop.WebUI.Helper;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAntiforgery(options =>
@@ -92,26 +94,55 @@ builder.Services.AddScoped<IUiNotifierService, UiNotifierService>();
 // Program.cs
 
 
+
 foreach (var service in values.Services)
 {
     builder.Services.AddHttpClient(service.Key + "Visitor", opt =>
     {
         opt.BaseAddress = new Uri($"{values.OcelotUrl}/{service.Value.Path}/");
-    }).AddHttpMessageHandler<ClientCredentialTokenHandler>()
-      .AddHttpMessageHandler<TooManyRequestsRetryHandler>()
+    })
+     .AddHttpMessageHandler<ClientCredentialTokenHandler>()
+
+    // 1️⃣ Polly Retry
+    .AddPolicyHandler(ResiliencePolicies.GetRetryPolicy())
+
+    // 2️⃣ Circuit Breaker
+    .AddPolicyHandler(ResiliencePolicies.GetCircuitBreakerPolicy())
+
+    // 3️⃣ Token
+
+    // 4️⃣ UI Exception Mapping
     .AddHttpMessageHandler<UiAwareHttpHandler>();
+    //        .AddHttpMessageHandler<ClientCredentialTokenHandler>()
+    //    // POLLY FIRST
+    //.AddTransientHttpErrorPolicy(p =>
+    //    p.WaitAndRetryAsync(3, retry =>
+    //        TimeSpan.FromSeconds(Math.Pow(2, retry))))
+    //.AddTransientHttpErrorPolicy(p =>
+    //    p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)))
+
+    //// UI Exception Mapping LAST
+    //.AddHttpMessageHandler<UiAwareHttpHandler>();
+    //  .AddHttpMessageHandler<TooManyRequestsRetryHandler>()
+    //.AddHttpMessageHandler<UiAwareHttpHandler>();
 
     builder.Services.AddHttpClient(service.Key + "Authorized", opt =>
     {
         opt.BaseAddress = new Uri($"{values.OcelotUrl}/{service.Value.Path}/");
-    }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>()
-     .AddHttpMessageHandler<TooManyRequestsRetryHandler>()
+    })
+            .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>()
+
+         .AddPolicyHandler(ResiliencePolicies.GetRetryPolicy())
+    .AddPolicyHandler(ResiliencePolicies.GetCircuitBreakerPolicy())
     .AddHttpMessageHandler<UiAwareHttpHandler>();
-   // builder.Services.AddHttpClient(service.Key + "Manager", opt =>
-   // {
-   //     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{service.Value.Path}/");
-   // }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>()
-   //.AddHttpMessageHandler<UiAwareHttpHandler>();
+    //.AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>()
+    // .AddHttpMessageHandler<TooManyRequestsRetryHandler>()
+    //  .AddHttpMessageHandler<UiAwareHttpHandler>();
+    // builder.Services.AddHttpClient(service.Key + "Manager", opt =>
+    // {
+    //     opt.BaseAddress = new Uri($"{values.OcelotUrl}/{service.Value.Path}/");
+    // }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>()
+    //.AddHttpMessageHandler<UiAwareHttpHandler>();
 }
 
 
@@ -313,6 +344,8 @@ builder.Services.AddFluentValidationAutoValidation(options =>
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRegisterValidators>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateBrandValidators>();
+
 ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("tr");
 
 
@@ -330,7 +363,7 @@ ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("tr");
 //  opt.DisableDataAnnotationsValidation = true;
 //   opt.ValidatorOptions.LanguageManager.Culture = new System.Globalization.CultureInfo("tr");
 //});
-builder.Services.AddValidatorsFromAssemblyContaining<CreateRegisterValidators>();
+//builder.Services.AddValidatorsFromAssemblyContaining<CreateRegisterValidators>();
 
 builder.Services.AddLocalization(opt =>
 {
@@ -347,7 +380,12 @@ app.Use(async (context, next) =>
     catch (UiCriticalException ex)
     {
         var criticality = ex.Criticality;
-
+        if (context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            context.Response.StatusCode =  500;
+            await context.Response.WriteAsJsonAsync(new { error = true });
+            return;
+        }
         if (criticality == UiCriticality.High)
         {
             await context.SignOutAsync();

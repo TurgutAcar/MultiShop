@@ -56,7 +56,7 @@ namespace MultiShop.WebUI.Services.BrandServices
         public async Task<Result<string>> UpdateBrandAsync(UpdateBrandDto updateBrandDto)
         {
             var _httpClient = _factory.Create("Catalog");
-            var response = await _httpClient.PostAsJsonAsync<UpdateBrandDto>("Brands", updateBrandDto);
+            var response = await _httpClient.PutAsJsonAsync<UpdateBrandDto>("Brands", updateBrandDto);
             return await response.ReadSafeResultAsync<string>();
         }
     }
