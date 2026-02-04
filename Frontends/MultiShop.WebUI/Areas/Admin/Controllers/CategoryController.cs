@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.CategoryDtos;
 using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Controllers;
 using MultiShop.WebUI.Enums;
 using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Mapping;
@@ -21,7 +22,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     [Area("Admin")]
     [Route("Admin/Category")]
 
-    public class CategoryController : Controller
+    public class CategoryController : BaseController
     {
         private readonly ICategoryService _categoryService;
         private readonly IValidator<CreateCategoryDto> _validator;
@@ -89,11 +90,13 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             var result=await _categoryService.CreateCategoryAsync(createCategoryDto);
             if (!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
 
                 return View(createCategoryDto);
 
@@ -131,11 +134,13 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
            var result= await _categoryService.UpdateCategoryAsync(updateCategoryDto);
             if (!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
 
                 return View(updateCategoryDto);
 

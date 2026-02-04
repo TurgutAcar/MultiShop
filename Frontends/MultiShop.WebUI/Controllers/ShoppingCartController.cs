@@ -76,7 +76,7 @@ namespace MultiShop.WebUI.Controllers
             var result=await _productService.GetByIdProductAsync(id);
             if (result.IsSuccessful && result.Data == null)
             {
-                ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
+                //ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
                 return View();
 
             }
@@ -91,7 +91,7 @@ namespace MultiShop.WebUI.Controllers
            var basketItemResult= await _basketService.AddBasketItem(items);
             if (result.IsSuccessful && result.Data == null)
             {
-                ViewBag.InfoMessage = UiMessageMapper.Map(basketItemResult.Source);
+               // ViewBag.InfoMessage = UiMessageMapper.Map(basketItemResult.Source);
                 return View();
 
             }

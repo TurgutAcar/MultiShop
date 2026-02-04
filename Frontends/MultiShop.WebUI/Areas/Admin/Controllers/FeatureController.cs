@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.FeatureDtos;
 using MultiShop.DtoLayer.CatalogDtos.FeatureSliderDtos;
+using MultiShop.WebUI.Controllers;
 using MultiShop.WebUI.Enums;
 using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Mapping;
@@ -19,7 +20,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     [Authorize]
     [Route("Admin/Feature")]
     [Area("Admin")]
-    public class FeatureController : Controller
+    public class FeatureController : BaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IFeatureService _featureService;
@@ -87,11 +88,13 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             var result=await _featureService.CreateFeatureAsync(createFeatureDto);
             if (!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
 
                 return View(createFeatureDto);
 
@@ -121,20 +124,24 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             var result=await _featureService.UpdateFeatureAsync(updateFeatureDto);
             if (!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
 
                 return View(updateFeatureDto);
 
             }
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            SetUISuccessMessage(result.Data);
+
+            //TempData.SetUiMessage(new UiMessage
+            //{
+            //    Type = UiMessageType.Success,
+            //    Message = result.Data!
+            //});
             return RedirectToAction("Index", "Feature", new { Area = "Admin" });
           
         }

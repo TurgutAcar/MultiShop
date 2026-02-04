@@ -20,7 +20,7 @@ namespace MultiShop.WebUI.ViewComponents.OrderViewComponents
         {
             var result = await _basketService.GetBasket();
 
-            ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
+           // ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
 
             return View(result.Data ?? new BasketTotalDto());
         }

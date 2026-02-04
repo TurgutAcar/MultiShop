@@ -5,6 +5,8 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.AboutDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Controllers;
 using MultiShop.WebUI.Enums;
 using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Mapping;
@@ -17,7 +19,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     [Authorize]
     [Area("Admin")]
     [Route("Admin/About")]
-    public class AboutController : Controller
+    public class AboutController : BaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAboutService _aboutService;
@@ -86,11 +88,13 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             var result=await _aboutService.CreateAboutAsync(createAboutDto);
             if (!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
              
 
                 return View(createAboutDto);
@@ -108,8 +112,19 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateAbout(string id)
         {
             AboutViewbagList();
-            var value=await _aboutService.GetByIdAboutAsync(id);
-            return View(value);
+            var result = await _aboutService.GetByIdAboutAsync(id);
+            if (!result.IsSuccessful && result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
+                return RedirectToAction("Index");
+            }
+            return View(result.Data);
          
         }
         [HttpPost]

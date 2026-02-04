@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
+using MultiShop.WebUI.Controllers;
 using MultiShop.WebUI.Enums;
 using MultiShop.WebUI.Extensions;
 using MultiShop.WebUI.Mapping;
@@ -15,7 +16,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     [Authorize]
     [Area("Admin")]
     [Route("Admin/Brand")]
-    public class BrandController : Controller
+    public class BrandController :BaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IBrandService _brandService;
@@ -90,22 +91,26 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             var result=await _brandService.CreateBrandAsync(createBrandDto);
             if(!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
                 //ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
                 //ModelState.AddModelError("", UiMessageMapper.Map(result.Source));
 
                 return View(createBrandDto);
 
             }
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            SetUISuccessMessage(result.Data);
+
+            //TempData.SetUiMessage(new UiMessage
+            //{
+            //    Type = UiMessageType.Success,
+            //    Message = result.Data!
+            //});
 
             return RedirectToAction("Index", "Brand", new { Area = "Admin" });
 
@@ -115,8 +120,18 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateBrand(string id)
         {
             var result = await _brandService.GetByIdBrandAsync(id);
-            ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
-            return View(result.Data ?? new UpdateBrandDto());
+            if (!result.IsSuccessful && result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
+                return RedirectToAction("Index");
+            }
+            return View(result.Data);
 
         }
         [HttpPost]
@@ -127,21 +142,22 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
             if (!result.IsSuccessful)
             {
-                TempData.SetUiMessage(new UiMessage
-                {
-                    Type = UiMessageType.Error,
-                    Message = UiMessageMapper.Map(result.Source)
-                });
-                //ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
+                SetUIErrorMessage(result.ErrorMessages);
+                //TempData.SetUiMessage(new UiMessage
+                //{
+                //    Type = UiMessageType.Error,
+                //    Message = UiMessageMapper.Map(result.Source)
+                //});
                 return View(updateBrandDto);
             }
+            SetUISuccessMessage(result.Data);
 
             //TempData["UiMessage"] = result.Data;
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            //TempData.SetUiMessage(new UiMessage
+            //{
+            //    Type = UiMessageType.Success,
+            //    Message = result.Data!
+            //});
             return RedirectToAction("Index", "Brand", new { Area = "Admin" });
 
         }
@@ -150,30 +166,25 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteBrand(string id)
         {
             var result = await _brandService.DeleteBrandAsync(id);
-            if (!result.IsSuccessful)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = UiMessageMapper.Map(result.Source),
-                    type = "error"
-                });
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-                //return View();
-            }
+            return Json(result);
+            //if (!result.IsSuccessful)
+            //{
+            //    return Json(new
+            //    {
+            //        success = false,
+            //        message = UiMessageMapper.Map(result.Source),
+            //        type = "error"
+            //    });
+             
+            //}
 
-            return Json(new
-            {
-                success = true,
-                message = result.Data,
-                type = "success"
-            });
+            //return Json(new
+            //{
+            //    success = true,
+            //    message = result.Data,
+            //    type = "success"
+            //});
 
-            //return RedirectToAction("Index", "Brand", new { Area = "Admin" });
 
         }
     }

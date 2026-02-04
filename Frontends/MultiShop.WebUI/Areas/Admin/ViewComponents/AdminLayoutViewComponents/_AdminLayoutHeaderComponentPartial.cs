@@ -25,7 +25,7 @@ namespace MultiShop.WebUI.Areas.Admin.ViewComponents.AdminLayoutViewComponents
             var totalMessageResult = await _messageStatisticService.GetTotalMessageCountByReceiverId(user.Data.Id);
             if(!totalMessageResult.IsSuccessful)
             {
-                ViewBag.InfoMessage = UiMessageMapper.Map(totalMessageResult.Source);
+             //   ViewBag.InfoMessage = UiMessageMapper.Map(totalMessageResult.Source);
 
                 return View();
             }
@@ -34,7 +34,7 @@ namespace MultiShop.WebUI.Areas.Admin.ViewComponents.AdminLayoutViewComponents
             var  totalCommentCountResponse = await _commentStatisticService.GetTotalCommentCount();
             if (!totalCommentCountResponse.IsSuccessful)
             {
-                ViewBag.InfoMessage = UiMessageMapper.Map(totalCommentCountResponse.Source);
+              //  ViewBag.InfoMessage = UiMessageMapper.Map(totalCommentCountResponse.Source);
 
                 return View();
             }

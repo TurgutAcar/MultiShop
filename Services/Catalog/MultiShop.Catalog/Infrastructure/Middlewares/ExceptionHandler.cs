@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
+using MongoDB.Driver;
 using MultiShop.Catalog.Domain.Exceptions;
 using MultiShop.Shared.Enums;
 using MultiShop.Shared.Responses;
@@ -114,6 +115,15 @@ namespace MultiShop.Catalog.Infrastructure.Middlewares
                         httpContext.Request.Path
                     );
                     break;
+                case MongoException:
+                case FormatException:
+                    httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    criticality = UiCriticality.Low; // Developer bug
+                    errorResult = Result<string>.Failure(500, "Sistem hatası.");
+                    errorResult.Criticality = criticality;
+
+                    break;
+
 
                 default:
                     httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;

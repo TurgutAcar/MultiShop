@@ -1,0 +1,16 @@
+﻿@model FeatureSliderIndexViewModel
+
+@if (Model.IsLoading)
+{
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+}
+else if (Model.FeatureSliders == null || !Model.FeatureSliders.Any())
+{
+    <div class="alert alert-secondary">Feature Slider bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+    <partial name="_FeatureSliderTable" model="Model.FeatureSliders" />
+}

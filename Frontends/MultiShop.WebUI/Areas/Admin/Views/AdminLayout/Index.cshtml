@@ -47,6 +47,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+                function handleJsResponse(res, callback) {
+            if (res.type && res.message) {
+                toastr[res.type](res.message);
+            }
+
+            if (res.success && callback) {
+                callback(res.data);
+            }
+        }
+
+    </script>
+    <script>
         toastr.options = {
             closeButton: true,
             progressBar: true,

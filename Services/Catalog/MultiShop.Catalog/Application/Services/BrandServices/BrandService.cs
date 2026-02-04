@@ -49,7 +49,7 @@ namespace MultiShop.Catalog.Application.Services.BrandServices
         public async Task<Result<string>> UpdateBrandAsync(UpdateBrandDto updateBrandDto)
         {
             var map = _mapper.Map<Brand>(updateBrandDto);
-            await _brandCollection.FindOneAndReplaceAsync(x=>x.BrandId==updateBrandDto.BrandId, map);
+            await _brandCollection.FindOneAndReplaceAsync(x=>x.BrandId=="updateBrandDto.BrandId", map);
             return "Brand kaydedildi.";
 
         }

@@ -1,23 +1,24 @@
 ﻿using MultiShop.Shared.Enums;
+using System.Net;
 
 namespace MultiShop.WebUI.Mapping
 {
     public static class UiMessageMapper
     {
-        public static string? Map(ResultSource source)
+        public static string? Map(int statusCode)
         {
-            return source switch
+            return statusCode switch
             {
-                ResultSource.RateLimited =>
+                (int)HttpStatusCode.TooManyRequests =>
                     "Şu anda yoğunluk var, içerikler biraz gecikebilir.",
 
-                ResultSource.ServiceUnavailable =>
+                (int)HttpStatusCode.ServiceUnavailable =>
                     "Servise şu anda ulaşılamıyor.",
 
-                ResultSource.Timeout =>
+                (int)HttpStatusCode.RequestTimeout =>
                     "Bağlantı zaman aşımına uğradı.",
 
-                ResultSource.Unauthorized =>
+                (int)HttpStatusCode.Unauthorized =>
                     "Oturum süren dolmuş olabilir.",
 
                 _ => null

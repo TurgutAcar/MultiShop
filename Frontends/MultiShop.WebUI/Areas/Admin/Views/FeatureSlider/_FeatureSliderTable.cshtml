@@ -1,4 +1,4 @@
-﻿@model List<ResultBrandDto>
+﻿@model List<ResultFeatureSliderDto>
 
 @{
     int count = 0;
@@ -7,7 +7,7 @@
     function confirmDelete(id, name) {
         Swal.fire({
             title: 'Emin misin?',
-            text: `"${name}" markası silinecek`,
+            text: `"${name}" silinecek`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -22,7 +22,7 @@
     }
 
     function postDelete(id) {
-        fetch(`/Admin/Brand/DeleteBrand/${id}`, {
+        fetch(`/Admin/FeatureSlider/DeleteFeatureSlider/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,18 +31,11 @@
         })
         .then(r => r.json())
     .then(res => {
-        handleJsResponse(res, () => {
+        toastr[res.type](res.message);
+
+        if (res.success) {
             setTimeout(() => location.reload(), 4000);
-        });
-        // if (res.IsSuccessful) {
-        //     toastr[res.Source](res.Data);
-        //     return;
-
-        // }
-        //   toastr[res.Source](res.errorMessages?.[0] ?? "Silme başarısız!");
-        //   setTimeout(() => location.reload(), 4000);
-
-        
+        }
     });
     }
 </script>
@@ -50,9 +43,9 @@
     <thead class="table-light">
         <tr>
             <th>#</th>
-            <th>Marka</th>
-            <th>Görsel</th>
+            <th>Görsel Başlığı</th>
             <th class="text-center">İşlemler</th>
+
         </tr>
     </thead>
     <tbody>
@@ -61,20 +54,15 @@
             count++;
             <tr>
                 <td>@count</td>
-                <td>@item.BrandName</td>
-                <td>
-                    <img src="@item.ImageUrl"
-                         class="rounded"
-                         style="width:40px;height:40px;object-fit:cover;" />
-                </td>
+                <td>@item.Title</td>
                 <td class="text-center">
-                    <a href="/Admin/Brand/UpdateBrand/@item.BrandId"
+                    <a href="/Admin/FeatureSlider/UpdateFeatureSlider/@item.FeatureSliderId"
                        class="btn btn-sm btn-success me-1">
                         <i class="fa fa-edit"></i>
                     </a>
 
                     <button class="btn btn-sm btn-danger"
-                            onclick="confirmDelete('@item.BrandId','@item.BrandName')">
+                            onclick="confirmDelete('@item.FeatureSliderId','@item.FeatureSliderId')">
                         <i class="fa fa-trash"></i>
                     </button>
                 </td>

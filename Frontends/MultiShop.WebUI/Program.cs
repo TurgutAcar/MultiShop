@@ -386,6 +386,17 @@ app.Use(async (context, next) =>
             await context.Response.WriteAsJsonAsync(new { error = true });
             return;
         }
+        if (criticality == UiCriticality.Low)
+        {
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                error = true,
+                message = ex.Message
+            });
+            return;
+        }
+
         if (criticality == UiCriticality.High)
         {
             await context.SignOutAsync();

@@ -1,4 +1,5 @@
 ﻿using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Mapping;
 using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Extensions
@@ -11,14 +12,25 @@ namespace MultiShop.WebUI.Extensions
             // 1️⃣ Success değilse
             if (!response.IsSuccessStatusCode)
             {
+                Result<T>? result = null;
+
                 var statusCode = (int)response.StatusCode;
 
                 // Body varsa al, yoksa default mesaj
-                var errorMessage = response.Content != null
-                    ? await response.Content.ReadAsStringAsync()
-                    : "İstek başarısız oldu.";
+                if (response.Content != null)
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<Result<T>>(body);
 
-                return Result<T>.Failure(statusCode, errorMessage);
+                  //  result = JsonSerializer.Deserialize<Result<T>>(body);
+                    return result ?? Result<T>.Failure(statusCode, UiMessageMapper.Map(statusCode));
+                    
+                }
+                //var errorMessage = response.Content != null
+                //    ? await response.Content.ReadAsStringAsync()
+                //    : "İstek başarısız oldu.";
+
+            //    return Result<T>.Failure(statusCode, "İstek başarısız oldu.");
             }
 
             // 2️⃣ Success ise deserialize et

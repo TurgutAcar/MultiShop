@@ -21,7 +21,7 @@ namespace MultiShop.WebUI.Controllers
         public async Task<IActionResult> ConfirmDiscountCoupon(string code)
         {
             var DiscountCouponCountRateResult = await _discountService.GetDiscountCouponCountRate(code);
-            TempData["UiMessage"] = UiMessageMapper.Map(DiscountCouponCountRateResult.Source);
+            //TempData["UiMessage"] = UiMessageMapper.Map(DiscountCouponCountRateResult.Source);
             if (!DiscountCouponCountRateResult.IsSuccessful)
                 return RedirectToAction("Index", "ShoppingCart");
 

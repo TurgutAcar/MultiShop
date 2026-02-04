@@ -104,7 +104,7 @@ namespace MultiShop.Shared.Responses
             ErrorMessages = errorMessages;
             Source = MapSource(statusCode);
         }
-
+    
         public Result(int statusCode, string errorMessage)
         {
             IsSuccessful = false;
@@ -154,7 +154,7 @@ namespace MultiShop.Shared.Responses
                 408 => ResultSource.Timeout,
                 429 => ResultSource.RateLimited,
                 503 => ResultSource.ServiceUnavailable,
-                >= 500 => ResultSource.ApiError,
+                >= 500 => ResultSource.Error,
                 _ => ResultSource.UnknownError
             };
         }
