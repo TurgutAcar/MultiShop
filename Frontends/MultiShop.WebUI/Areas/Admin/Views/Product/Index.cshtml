@@ -1,12 +1,48 @@
-﻿@model List<ResultProductDto>
+﻿@model ProductIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
     int count = 0;
 }
-
 <section class="content container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="chart-box">
+                <div class="bs-example">
+                    <div id="Product-grid-container">
+                        @* Sayfa ilk açıldığında loading/skeleton görünsün diye *@
+                        <partial name="_ProductContentPartial" model="Model" />
+                    </div>
+
+
+                    <a href="/Admin/Product/CreateProduct/"
+                       class="btn btn-primary mt-3 @(Model.IsLoading ? "disabled" : "")">
+                        Yeni Ürün Girişi
+                    </a>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+        var url = '@Url.Action("GetProductListPartial", "Product", new { area = "Admin" })';
+            // Sayfa açılır açılmaz isteği başlat
+            $.get(url, function (data) {
+                // Gelen hazır HTML paketini konteynerin içine bas
+                $("#Product-grid-container").html(data);
+
+                // Yükleme bittiği için butonu aktif et (isteğe bağlı)
+                $(".btn-primary").removeClass("disabled");
+            });
+        });
+    </script>
+    }
+@* <section class="content container-fluid">
     <div class="row">
 
         <div class="col-md-12">
@@ -45,4 +81,4 @@
 
     </div>
 </section>
-
+ *@

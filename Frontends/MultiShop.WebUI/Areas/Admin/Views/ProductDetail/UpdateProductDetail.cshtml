@@ -16,9 +16,13 @@
                          <input type="hidden" readonly class="form-control" asp-for="ProductId" />
                         <label>Ürün Açıklaması</label>
                         <textarea rows="5" class="form-control" asp-for="ProductDescription"></textarea>
+                        <span asp-validation-for="ProductDescription" class="text-danger"></span>
+
                         <br />
                         <label>Ürün Bilgisi</label>
                         <input type="text" class="form-control" asp-for="ProductInfo" />
+                        <span asp-validation-for="ProductInfo" class="text-danger"></span>
+
                         <br />
                         <button class="btn btn-primary">Ürün detayını Güncelle</button>
                     </form>

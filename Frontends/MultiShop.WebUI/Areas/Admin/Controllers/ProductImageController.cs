@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.ProductImageDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Controllers;
 using MultiShop.WebUI.Services.ProductImageServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,7 +14,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     [Area("Admin")]
     [Authorize]
     [Route("Admin/ProductImage")]
-    public class ProductImageController : Controller
+    public class ProductImageController : BaseController
     {
         private IProductImageService _productImageService;
 
@@ -24,15 +26,27 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> ProductImageDetail(string id)
         {
             ProductImageViewbagList();
-            var values=await _productImageService.GetByProductIdProductImageAsync(id);
-            return View(values);
-          
+            var result = await _productImageService.GetByProductIdProductImageAsync(id);
+            if (!result.IsSuccessful && result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+                return RedirectToAction("Index");
+            }
+            return View(result.Data);
         }
         [Route("ProductImageDetail/{id}")]
         [HttpPost]
         public async Task<IActionResult> ProductImageDetail(UpdateProductImageDto updateProductImageDto)
         {
-            await _productImageService.UpdateProductImageAsync(updateProductImageDto);
+            var result = await _productImageService.UpdateProductImageAsync(updateProductImageDto);
+            if (!result.IsSuccessful)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+
+                return View(updateProductImageDto);
+
+            }
+            SetUISuccessMessage(result.Data);
             return RedirectToAction("ProductListWithCategory", "Product", new { area = "Admin" });
 
           

@@ -41,6 +41,7 @@ using Microsoft.AspNetCore.Authentication;
 using MultiShop.Shared.Enums;
 using Polly;
 using MultiShop.WebUI.Helper;
+using MultiShop.WebUI.Validators.Catalog.Brand;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAntiforgery(options =>

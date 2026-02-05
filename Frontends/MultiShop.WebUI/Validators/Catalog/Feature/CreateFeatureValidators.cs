@@ -3,7 +3,7 @@ using MultiShop.DtoLayer.CatalogDtos.AboutDtos;
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
 using MultiShop.DtoLayer.CatalogDtos.FeatureDtos;
 
-namespace MultiShop.WebUI.Validators
+namespace MultiShop.WebUI.Validators.Catalog.Feature
 {
 
     public class CreateFeatureValidators : AbstractValidator<CreateFeatureDto>

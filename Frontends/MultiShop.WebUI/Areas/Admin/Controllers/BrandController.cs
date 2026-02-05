@@ -20,13 +20,15 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IBrandService _brandService;
-        private readonly IValidator<CreateBrandDto> _validator;
+        private readonly IValidator<CreateBrandDto> _createValidator;
+        private readonly IValidator<UpdateBrandDto> _updateValidator;
 
-        public BrandController(IHttpClientFactory httpClientFactory, IBrandService brandService, IValidator<CreateBrandDto> validator)
+        public BrandController(IHttpClientFactory httpClientFactory, IBrandService brandService, IValidator<CreateBrandDto> createValidator, IValidator<UpdateBrandDto> updateValidator)
         {
             _httpClientFactory = httpClientFactory;
             _brandService = brandService;
-            _validator = validator;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         [Route("Index")]
         public IActionResult Index()
@@ -37,35 +39,20 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
                 Brands = new List<ResultBrandDto>()
             };
             return View(vm);
-            //var result=await _brandService.BrandListAsync();
-            //var vm = new BrandIndexViewModel
-            //{
-            //    Brands = result.Data ?? new(),
-            //    IsRateLimited = result.StatusCode == 429,
-            //    IsLoading = result.StatusCode == 429
-            //};
-
-            //return View(vm);
-
-
-
         }
         [HttpGet]
         [Route("GetBrandListPartial")]
         public async Task<IActionResult> GetBrandListPartial()
         {
-            // Ocelot Gateway burada Retry/Circuit Breaker işlemlerini yapar.
-            // UI sadece bekler.
+          
             var result = await _brandService.BrandListAsync();
 
             var vm = new BrandIndexViewModel
             {
                 Brands = result.Data ?? new(),
-                IsLoading = false // Artık yükleme bitti
+                IsLoading = false 
             };
-
-            // Dikkat: Index değil, sadece içeriği döneceğiz!
-            // Bu sayede sayfa yenilenmeden tablo güncellenir.
+    
             return PartialView("_BrandContentPartial", vm);
         }
         [Route("CreateBrand")]
@@ -78,7 +65,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("CreateBrand")]
         public async Task<IActionResult> CreateBrand(CreateBrandDto createBrandDto)
         {
-            ValidationResult validationResult = await _validator.ValidateAsync(createBrandDto);
+            ValidationResult validationResult = await _createValidator.ValidateAsync(createBrandDto);
 
             if (!validationResult.IsValid)
             {
@@ -92,25 +79,10 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if(!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-                //ViewBag.InfoMessage = UiMessageMapper.Map(result.Source);
-                //ModelState.AddModelError("", UiMessageMapper.Map(result.Source));
-
-                return View(createBrandDto);
+                    return View(createBrandDto);
 
             }
             SetUISuccessMessage(result.Data);
-
-            //TempData.SetUiMessage(new UiMessage
-            //{
-            //    Type = UiMessageType.Success,
-            //    Message = result.Data!
-            //});
 
             return RedirectToAction("Index", "Brand", new { Area = "Admin" });
 
@@ -119,16 +91,11 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("UpdateBrand/{id}")]
         public async Task<IActionResult> UpdateBrand(string id)
         {
+            
             var result = await _brandService.GetByIdBrandAsync(id);
             if (!result.IsSuccessful && result.Data == null)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
                 return RedirectToAction("Index");
             }
             return View(result.Data);
@@ -138,26 +105,24 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("UpdateBrand/{id}")]
         public async Task<IActionResult> UpdateBrand(UpdateBrandDto updateBrandDto)
         {
-            var result = await _brandService.UpdateBrandAsync(updateBrandDto);
 
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(updateBrandDto);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+                return View(updateBrandDto);
+
+            }
+            var result = await _brandService.UpdateBrandAsync(updateBrandDto);
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
                 return View(updateBrandDto);
+
             }
             SetUISuccessMessage(result.Data);
 
-            //TempData["UiMessage"] = result.Data;
-            //TempData.SetUiMessage(new UiMessage
-            //{
-            //    Type = UiMessageType.Success,
-            //    Message = result.Data!
-            //});
             return RedirectToAction("Index", "Brand", new { Area = "Admin" });
 
         }
@@ -167,25 +132,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         {
             var result = await _brandService.DeleteBrandAsync(id);
             return Json(result);
-            //if (!result.IsSuccessful)
-            //{
-            //    return Json(new
-            //    {
-            //        success = false,
-            //        message = UiMessageMapper.Map(result.Source),
-            //        type = "error"
-            //    });
-             
-            //}
-
-            //return Json(new
-            //{
-            //    success = true,
-            //    message = result.Data,
-            //    type = "success"
-            //});
-
-
+          
         }
     }
 }

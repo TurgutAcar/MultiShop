@@ -2,7 +2,7 @@
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
 using MultiShop.DtoLayer.CatalogDtos.CategoryDtos;
 
-namespace MultiShop.WebUI.Validators
+namespace MultiShop.WebUI.Validators.Catalog.Category
 {
 
     public class CreateCategoryValidators : AbstractValidator<CreateCategoryDto>

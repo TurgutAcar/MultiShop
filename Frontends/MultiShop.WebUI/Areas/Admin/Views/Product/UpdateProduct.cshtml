@@ -12,14 +12,21 @@
                 <div class="bs-example" data-example-id="bordered-table">
                     <form method="post">
                         <input type="hidden" readonly class="form-control" asp-for="ProductId" />
+
                         <label>Ürün Adı</label>
                         <input type="text" class="form-control" asp-for="ProductName" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+
                         <br />
                         <label>Ürün Fiyatı</label>
                         <input type="text" class="form-control" asp-for="ProductPrice" />
+                        <span asp-validation-for="ProductPrice" class="text-danger"></span>
+
                         <br />
                         <label>Ürün Görseli</label>
                         <input type="text" class="form-control" asp-for="ProductImageUrl" />
+                        <span asp-validation-for="ProductImageUrl" class="text-danger"></span>
+
                         <br />
                         <label>Ürün Kategorisi</label>
                         @Html.DropDownListFor(x => x.CategoryId, (List<SelectListItem>)ViewBag.CategoryValues, new { @class = "form-control" })

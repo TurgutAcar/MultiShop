@@ -1,0 +1,16 @@
+﻿@model OfferDiscountViewModel
+
+@if (Model.IsLoading)
+{
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+}
+else if (Model.OfferDiscounts == null || !Model.OfferDiscounts.Any())
+{
+    <div class="alert alert-secondary">Feature bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+    <partial name="_OfferDiscountTable" model="Model.OfferDiscounts" />
+}

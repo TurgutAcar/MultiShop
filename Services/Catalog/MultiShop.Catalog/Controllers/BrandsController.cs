@@ -32,7 +32,7 @@ namespace MultiShop.Catalog.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBrand(CreateBrandDto createBrandDto)
         {
-            Thread.Sleep(999999999);
+           // Thread.Sleep(999999999);
            var response= await _brandService.CreateBrandAsync(createBrandDto);
             return StatusCode(response.StatusCode, response);
         }

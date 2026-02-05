@@ -13,15 +13,21 @@
                     <form method="post">
                         <label>İndirim Teklifi Başlığı</label>
                         <input type="text" class="form-control" asp-for="Title" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+
                         <br />
                         <label>İndirim Teklifi Alt Başlığı</label>
                         <input type="text" class="form-control" asp-for="SubTitle" />
+                        <span asp-validation-for="SubTitle" class="text-danger"></span>
+
                         <br />
                         <label>İndirim Teklifi Görseli</label>
                         <input type="text" class="form-control" asp-for="ImageUrl" />
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
                         <br />
                         <label>İndirim Teklifi Buton Adı</label>
                         <input type="text" class="form-control" asp-for="ButtonTitle" />
+                        <span asp-validation-for="ButtonTitle" class="text-danger"></span>
                         <br />
                         <button class="btn btn-primary">İndirim Teklifini Ekle</button>
                     </form>

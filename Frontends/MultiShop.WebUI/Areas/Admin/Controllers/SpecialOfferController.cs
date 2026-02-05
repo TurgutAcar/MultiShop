@@ -1,8 +1,14 @@
 ﻿using System.Net.Http;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.SpecialOfferDtos;
+using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Controllers;
+using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.CatologService.SpecialOfferServices;
 using Newtonsoft.Json;
 
@@ -11,25 +17,48 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     [Authorize]
     [Area("Admin")]
     [Route("Admin/SpecialOffer")]
-    public class SpecialOfferController : Controller
+    public class SpecialOfferController : BaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ISpecialOfferService _specialOfferService;
-
-        public SpecialOfferController(IHttpClientFactory httpClientFactory, ISpecialOfferService specialOfferService)
+        private readonly IValidator<CreateSpecialOfferDto> _createValidator;
+        private readonly IValidator<UpdateSpecialOfferDto> _updateValidator;
+        public SpecialOfferController(IHttpClientFactory httpClientFactory, ISpecialOfferService specialOfferService, IValidator<UpdateSpecialOfferDto> updateValidator, IValidator<CreateSpecialOfferDto> createValidator)
         {
             _httpClientFactory = httpClientFactory;
             _specialOfferService = specialOfferService;
+            _updateValidator = updateValidator;
+            _createValidator = createValidator;
         }
         [Route("Index")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             SpecialOfferViewbagList();
-            var values=await _specialOfferService.GetAllSpecialOfferAsync();
-            return View(values);
+            var vm = new SpecialOfferIndexViewModel
+            {
+                IsLoading = true,
+                SpecialOffers = new List<ResultSpecialOfferDto>()
+            };
+            return View(vm);
 
-          
         }
+        [HttpGet]
+        [Route("GetSpecialOfferListPartial")]
+        public async Task<IActionResult> GetSpecialOfferListPartial()
+        {
+
+            var result = await _specialOfferService.GetAllSpecialOfferAsync();
+
+            var vm = new SpecialOfferIndexViewModel
+            {
+                SpecialOffers = result.Data ?? new(),
+                IsLoading = false
+            };
+
+
+            return PartialView("_ProductContentPartial", vm);
+        }
+        
         [HttpGet]
         [Route("CreateSpecialOffer")]
         public IActionResult CreateSpecialOffer()
@@ -43,7 +72,25 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> CreateSpecialOffer(CreateSpecialOfferDto createSpecialOfferDto)
         {
-           await _specialOfferService.CreateSpecialOfferAsync(createSpecialOfferDto);
+            ValidationResult validationResult = await _createValidator.ValidateAsync(createSpecialOfferDto);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+                return View(createSpecialOfferDto);
+
+
+            }
+            var result = await _specialOfferService.CreateSpecialOfferAsync(createSpecialOfferDto);
+
+            if (!result.IsSuccessful)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+
+                return View(createSpecialOfferDto);
+
+            }
+            SetUISuccessMessage(result.Data);
             return RedirectToAction("Index", "SpecialOffer", new { area = "Admin" });
            
         }
@@ -51,8 +98,14 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateSpecialOffer(string id)
         {
             SpecialOfferViewbagList();
-            var value = await _specialOfferService.GetByIdSpecialOfferAsync(id);
-            return View(value);
+
+            var result = await _specialOfferService.GetByIdSpecialOfferAsync(id);
+            if (!result.IsSuccessful && result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+                return RedirectToAction("Index");
+            }
+            return View(result.Data);
 
           
         }
@@ -61,7 +114,26 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> UpdateSpecialOffer(UpdateSpecialOfferDto updateSpecialOfferDto)
         {
-            await _specialOfferService.UpdateSpecialOfferAsync(updateSpecialOfferDto);
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(updateSpecialOfferDto);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+                return View(updateSpecialOfferDto);
+
+
+            }
+            var result = await _specialOfferService.UpdateSpecialOfferAsync(updateSpecialOfferDto);
+
+            if (!result.IsSuccessful)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+
+                return View(updateSpecialOfferDto);
+
+            }
+            SetUISuccessMessage(result.Data);
+           
             return RedirectToAction("Index", "SpecialOffer", new { area = "Admin" });
           
         }
@@ -69,8 +141,8 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("DeleteSpecialOffer/{id}")]
         public async Task<IActionResult> DeleteSpecialOffer(string id)
         {
-            await _specialOfferService.DeleteSpecialOfferAsync(id);
-            return RedirectToAction("Index", "SpecialOffer", new { area = "Admin" });
+            var result=await _specialOfferService.DeleteSpecialOfferAsync(id);
+            return Json(result);
         }
 
         void SpecialOfferViewbagList()

@@ -1,4 +1,4 @@
-﻿@model List<ResultAboutDto>
+﻿@model List<ResultProductsWithCategoryDto>
 
 @{
     int count = 0;
@@ -22,7 +22,7 @@
     }
 
     function postDelete(id) {
-        fetch(`/Admin/About/DeleteAbout/${id}`, {
+        fetch(`/Admin/Product/DeleteProduct/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -43,11 +43,13 @@
     <thead class="table-light">
         <tr>
             <th>#</th>
-            <th>Açıklama</th>
-            <th>Adres</th>
-            <th>Email</th>
-            <th>Telefon</th>
+            <th>Ürün Adı</th>
+            <th>Ürün Fiyatı</th>
+            <th>Ürün Kategori</th>
+            <th>Ürün Görselleri</th>
+            <th>Açıklama ve Bilgi</th>
             <th class="text-center">İşlemler</th>
+
         </tr>
     </thead>
     <tbody>
@@ -56,18 +58,19 @@
             count++;
             <tr>
                 <td>@count</td>
-                <td>@item.Description</td>
-                <td>@item.Address</td>
-                <td>@item.Email</td>
-                <td>@item.Phone</td>
+                <td>@item.ProductName</td>
+                <td>@item.ProductPrice</td>
+                <td>@item.Category.CategoryName</td>
+                <td><a href="/Admin/ProductImage/ProductImageDetail/@item.ProductId" class="btn btn-warning">Ürün Görselleri</a></td>
+                <td><a href="/Admin/ProductDetail/UpdateProductDetail/@item.ProductId" class="btn btn-info">Açıklama ve Bilgi</a></td>
                 <td class="text-center">
-                    <a href="/Admin/About/UpdateAbout/@item.AboutId"
+                    <a href="/Admin/Product/UpdateProduct/@item.ProductId"
                        class="btn btn-sm btn-success me-1">
                         <i class="fa fa-edit"></i>
                     </a>
 
                     <button class="btn btn-sm btn-danger"
-                            onclick="confirmDelete('@item.AboutId','@item.AboutId')">
+                            onclick="confirmDelete('@item.ProductName','@item.ProductId')">
                         <i class="fa fa-trash"></i>
                     </button>
                 </td>

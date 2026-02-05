@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
 
-namespace MultiShop.WebUI.Validators
+namespace MultiShop.WebUI.Validators.Catalog.Brand
 {
 
     public class CreateBrandValidators : AbstractValidator<CreateBrandDto>

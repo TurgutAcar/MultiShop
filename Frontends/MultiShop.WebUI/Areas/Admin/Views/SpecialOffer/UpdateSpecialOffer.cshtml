@@ -13,14 +13,21 @@
                 <div class="bs-example" data-example-id="bordered-table">
                     <form method="post">
                         <input type="hidden" readonly class="form-control" asp-for="SpecialOfferId" />
+
                         <label>Teklif Başlığı</label>
                         <input type="text" class="form-control" asp-for="Title" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+
                         <br />
                         <label>Teklif Alt Başlığı</label>
                         <input type="text" class="form-control" asp-for="SubTitle" />
+                        <span asp-validation-for="SubTitle" class="text-danger"></span>
+
                         <br />
                         <label>Teklif Görsel Linki</label>
                         <input type="text" class="form-control" asp-for="ImageUrl" />
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+
                         <br />
                         <button class="btn btn-success">Özel Teklif Güncelle</button>
                     </form>

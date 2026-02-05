@@ -23,13 +23,15 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IFeatureSliderService _featureSliderService;
-        private readonly IValidator<CreateFeatureSliderDto> _validator;
+        private readonly IValidator<CreateFeatureSliderDto> _createValidator;
+        private readonly IValidator<UpdateFeatureSliderDto> _updateValidator;
 
-        public FeatureSliderController(IHttpClientFactory httpClientFactory, IFeatureSliderService featureSliderService, IValidator<CreateFeatureSliderDto> validator)
+        public FeatureSliderController(IHttpClientFactory httpClientFactory, IFeatureSliderService featureSliderService, IValidator<CreateFeatureSliderDto> validator, IValidator<UpdateFeatureSliderDto> updateValidator)
         {
             _httpClientFactory = httpClientFactory;
             _featureSliderService = featureSliderService;
-            _validator = validator;
+            _createValidator = validator;
+            _updateValidator = updateValidator;
         }
         [Route("Index")]
         public IActionResult Index()
@@ -57,8 +59,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
                 IsLoading = false // Artık yükleme bitti
             };
 
-            // Dikkat: Index değil, sadece içeriği döneceğiz!
-            // Bu sayede sayfa yenilenmeden tablo güncellenir.
+        
             return PartialView("_FeatureSliderContentPartial", vm);
         }
        
@@ -75,7 +76,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateFeatureSlider(CreateFeatureSliderDto createFeatureSliderDto)
         {
             createFeatureSliderDto.Status = false;
-            ValidationResult validationResult = await _validator.ValidateAsync(createFeatureSliderDto);
+            ValidationResult validationResult = await _createValidator.ValidateAsync(createFeatureSliderDto);
 
             if (!validationResult.IsValid)
             {
@@ -90,22 +91,10 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             {
                 SetUIErrorMessage(result.ErrorMessages);
 
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-
                 return View(createFeatureSliderDto);
 
             }
             SetUISuccessMessage(result.Data);
-
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
             return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
 
         }
@@ -114,34 +103,38 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateFeatureSlider(string id)
         {
             FeatureSliderViewbagList();
-            var value=await _featureSliderService.GetByIdFeatureSliderAsync(id);
-            return View(value);
-          
+            var result = await _featureSliderService.GetByIdFeatureSliderAsync(id);
+            if (!result.IsSuccessful && result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+                return RedirectToAction("Index");
+            }
+            return View(result.Data);
         }
         [HttpPost]
         [Route("UpdateFeatureSlider/{id}")]
         public async Task<IActionResult> UpdateFeatureSlider(UpdateFeatureSliderDto updateFeatureSliderDto)
         {
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(updateFeatureSliderDto);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+                return View(updateFeatureSliderDto);
+
+
+            }
             var result = await _featureSliderService.UpdateFeatureSliderAsync(updateFeatureSliderDto);
 
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
 
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-
                 return View(updateFeatureSliderDto);
 
             }
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            SetUISuccessMessage(result.Data);
+          
             return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
 
        
@@ -149,9 +142,9 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("DeleteFeatureSlider/{id}")]
         public async Task<IActionResult> DeleteFeatureSlider(string id)
         {
-            await _featureSliderService.DeleteFeatureSliderAsync(id);
-            return RedirectToAction("Index", "FeatureSlider", new { area = "Admin" });
-        
+            var result=await _featureSliderService.DeleteFeatureSliderAsync(id);
+            return Json(result);
+
         }
         void FeatureSliderViewbagList()
         {

@@ -2,12 +2,12 @@
 using MultiShop.DtoLayer.CatalogDtos.AboutDtos;
 using MultiShop.DtoLayer.CatalogDtos.BrandDtos;
 
-namespace MultiShop.WebUI.Validators
+namespace MultiShop.WebUI.Validators.Catalog.About
 {
 
-    public class CreateAboutValidators : AbstractValidator<CreateAboutDto>
+    public class UpdateAboutValidators : AbstractValidator<UpdateAboutDto>
     {
-        public CreateAboutValidators()
+        public UpdateAboutValidators()
         {
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Açıklama alanı boş olamaz!")

@@ -25,12 +25,14 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     public class CategoryController : BaseController
     {
         private readonly ICategoryService _categoryService;
-        private readonly IValidator<CreateCategoryDto> _validator;
+        private readonly IValidator<CreateCategoryDto> _createValidator;
+        private readonly IValidator<UpdateCategoryDto> _updateValidator;
 
-        public CategoryController(ICategoryService categoryService, IValidator<CreateCategoryDto> validator)
+        public CategoryController(ICategoryService categoryService, IValidator<CreateCategoryDto> validator, IValidator<UpdateCategoryDto> updateValidator)
         {
             _categoryService = categoryService;
-            _validator = validator;
+            _createValidator = validator;
+            _updateValidator = updateValidator;
         }
         [Route("Index")]
         public IActionResult Index()
@@ -78,7 +80,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
 
         public async Task<IActionResult> CreateCategory(CreateCategoryDto createCategoryDto)
         {
-            ValidationResult validationResult = await _validator.ValidateAsync(createCategoryDto);
+            ValidationResult validationResult = await _createValidator.ValidateAsync(createCategoryDto);
 
             if (!validationResult.IsValid)
             {
@@ -91,31 +93,20 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-
                 return View(createCategoryDto);
 
             }
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            SetUISuccessMessage(result.Data);
             return RedirectToAction("Index", "Category", new { area = "Admin" });
            
         }
         [Route("DeleteCategory/{id}")]
         public async Task<IActionResult> DeleteCategory(string id)
         {
-            await _categoryService.DeleteCategoryAsync(id);
-            return RedirectToAction("Index", "Category", new { area = "Admin" });
+            var result=await _categoryService.DeleteCategoryAsync(id);
+            return Json(result);
 
-           
+
         }
         [Route("UpdateCategory/{id}")]
         [HttpGet]
@@ -123,33 +114,36 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         {
             CategoryViewbagList();
 
-            var values =await _categoryService.GetByIdCategoryAsync(id);
-            return View(values);
+            var result = await _categoryService.GetByIdCategoryAsync(id);
+            if (!result.IsSuccessful && result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+                return RedirectToAction("Index");
+            }
+            return View(result.Data);
            
         }
         [Route("UpdateCategory/{id}")]
         [HttpPost]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryDto updateCategoryDto)
-        {   
-           var result= await _categoryService.UpdateCategoryAsync(updateCategoryDto);
+        {
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(updateCategoryDto);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+                return View(updateCategoryDto);
+
+
+            }
+            var result = await _categoryService.UpdateCategoryAsync(updateCategoryDto);
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-
                 return View(updateCategoryDto);
 
             }
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            SetUISuccessMessage(result.Data);
             return RedirectToAction("Index", "Category", new { area = "Admin" });
         }
         void CategoryViewbagList()

@@ -5,14 +5,11 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.AboutDtos;
-using MultiShop.Shared.Responses;
 using MultiShop.WebUI.Controllers;
 using MultiShop.WebUI.Enums;
 using MultiShop.WebUI.Extensions;
-using MultiShop.WebUI.Mapping;
 using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.AboutServices;
-using Newtonsoft.Json;
 
 namespace MultiShop.WebUI.Areas.Admin.Controllers
 {
@@ -23,14 +20,16 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAboutService _aboutService;
-        private readonly IValidator<CreateAboutDto> _validator;
+        private readonly IValidator<CreateAboutDto> _createValidator;
+        private readonly IValidator<UpdateAboutDto> _updateValidator;
 
 
-        public AboutController(IHttpClientFactory httpClientFactory, IAboutService aboutService, IValidator<CreateAboutDto> validator)
+        public AboutController(IHttpClientFactory httpClientFactory, IAboutService aboutService, IValidator<CreateAboutDto> createValidator, IValidator<UpdateAboutDto> updateValidator)
         {
             _httpClientFactory = httpClientFactory;
             _aboutService = aboutService;
-            _validator = validator;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         [Route("Index")]
         public IActionResult Index()
@@ -49,18 +48,14 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("GetAboutListPartial")]
         public async Task<IActionResult> GetAboutListPartial()
         {
-            // Ocelot Gateway burada Retry/Circuit Breaker işlemlerini yapar.
-            // UI sadece bekler.
+          
             var result = await _aboutService.AboutListAsync();
 
             var vm = new AboutIndexViewModel
             {
                 Abouts = result.Data ?? new(),
-                IsLoading = false // Artık yükleme bitti
+                IsLoading = false 
             };
-
-            // Dikkat: Index değil, sadece içeriği döneceğiz!
-            // Bu sayede sayfa yenilenmeden tablo güncellenir.
             return PartialView("_AboutContentPartial", vm);
         }
      
@@ -75,7 +70,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("CreateAbout")]
         public async Task<IActionResult> CreateAbout(CreateAboutDto createAboutDto)
         {
-            ValidationResult validationResult = await _validator.ValidateAsync(createAboutDto);
+            ValidationResult validationResult = await _createValidator.ValidateAsync(createAboutDto);
 
             if (!validationResult.IsValid)
             {
@@ -89,22 +84,9 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
-             
-
                 return View(createAboutDto);
-
             }
-            TempData.SetUiMessage(new UiMessage
-            {
-                Type = UiMessageType.Success,
-                Message = result.Data!
-            });
+            SetUISuccessMessage(result.Data);
             return RedirectToAction("Index", "About", new { Area = "Admin" });
          
         }
@@ -116,12 +98,6 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!result.IsSuccessful && result.Data == null)
             {
                 SetUIErrorMessage(result.ErrorMessages);
-
-                //TempData.SetUiMessage(new UiMessage
-                //{
-                //    Type = UiMessageType.Error,
-                //    Message = UiMessageMapper.Map(result.Source)
-                //});
                 return RedirectToAction("Index");
             }
             return View(result.Data);
@@ -131,16 +107,33 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("UpdateAbout/{id}")]
         public async Task<IActionResult> UpdateAbout(UpdateAboutDto updateAboutDto)
         {
-            await _aboutService.UpdateAboutAsync(updateAboutDto);
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(updateAboutDto);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+                return View(updateAboutDto);
+
+
+            }
+            var result=await _aboutService.UpdateAboutAsync(updateAboutDto);
+            if (!result.IsSuccessful)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+                return View(updateAboutDto);
+            }
+            SetUISuccessMessage(result.Data);
             return RedirectToAction("Index", "About", new { Area = "Admin" });
         
         }
         [Route("DeleteAbout/{id}")]
         public async Task<IActionResult> DeleteAbout(string id)
         {
-            await _aboutService.DeleteAboutAsync(id);
-            return RedirectToAction("Index", "About", new { Area = "Admin" });
-           
+           var result= await _aboutService.DeleteAboutAsync(id);
+            return Json(result);
+
+            // return RedirectToAction("Index", "About", new { Area = "Admin" });
+
         }
         void AboutViewbagList()
         {

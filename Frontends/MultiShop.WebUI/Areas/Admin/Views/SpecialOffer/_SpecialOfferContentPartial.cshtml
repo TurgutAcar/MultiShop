@@ -1,0 +1,16 @@
+﻿@model SpecialOfferIndexViewModel
+
+@if (Model.IsLoading)
+{
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+}
+else if (Model.SpecialOffers == null || !Model.SpecialOffers.Any())
+{
+    <div class="alert alert-secondary">Özel Teklif bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+    <partial name="_SpecialOfferTable" model="Model.SpecialOffers" />
+}

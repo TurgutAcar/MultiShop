@@ -1,0 +1,16 @@
+﻿@model ProductsWithCategoryIndexViewModel
+
+@if (Model.IsLoading)
+{
+    @await Component.InvokeAsync("_SkeletonTableComponentPartial")
+
+}
+else if (Model.Products == null || !Model.Products.Any())
+{
+    <div class="alert alert-secondary">Feature bulunmuyor.</div>
+}
+else
+{
+    @* Senin asıl tablon *@
+    <partial name="_ProductListWithCategoryTable" model="Model.Products" />
+}
