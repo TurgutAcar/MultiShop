@@ -29,7 +29,7 @@ namespace MultiShop.Catalog.Application.Services.ProductService
             var database = _client.GetDatabase(databaseSettings.DatabaseName);
             _productCollection = database.GetCollection<Product>(databaseSettings.ProductCollectionName);
             _categoryCollection = database.GetCollection<Category>(databaseSettings.CategoryCollectionName);
-            _outboxMessageCollection = database.GetCollection<OutboxMessage>(databaseSettings.CategoryCollectionName);
+            _outboxMessageCollection = database.GetCollection<OutboxMessage>(databaseSettings.OutboxMessageCollectionName);
             _mapper = mapper;
           //  _es = es;
            // _eventBus = eventBus;
@@ -37,14 +37,15 @@ namespace MultiShop.Catalog.Application.Services.ProductService
         }
         public async Task<Result<string>> CreateProductAsync(CreateProductDto createProductDto)
         {
-            using var session = await _client.StartSessionAsync();
-            session.StartTransaction();
-            try
-            {
+          //  using var session = await _client.StartSessionAsync();
+           // session.StartTransaction();
+          //  try
+          //  {
                
                 var product = _mapper.Map<Product>(createProductDto);
-                await _productCollection.InsertOneAsync(session, product);
-                var @event = new ProductCreatedEvent
+            //   await _productCollection.InsertOneAsync(session, product);
+            await _productCollection.InsertOneAsync(product);
+            var @event = new ProductCreatedEvent
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
@@ -57,30 +58,31 @@ namespace MultiShop.Catalog.Application.Services.ProductService
                     Payload = JsonSerializer.Serialize(@event),
                     OccurredOn = DateTime.UtcNow
                 };
-                // await _publishEndpoint.Publish(@event);
-                await _outboxMessageCollection.InsertOneAsync(session, outbox);
-                //await session.CommitTransactionAsync();
+            // await _publishEndpoint.Publish(@event);
+            //    await _outboxMessageCollection.InsertOneAsync(session, outbox);
+                await _outboxMessageCollection.InsertOneAsync(outbox);
+            //await session.CommitTransactionAsync();
 
-                //   await _eventBus.PublishAsync(@event);
-                //            var result=await _es.IndexAsync(value, idx => idx
-                //    .Index("products")
-                //    .Id(value.ProductId ?? Guid.NewGuid().ToString())
-                //);
-                //            if (!result.IsValidResponse)
-                //            {
-                //                Console.WriteLine(result.DebugInformation);
-                //                throw new Exception(result.DebugInformation);
+            //   await _eventBus.PublishAsync(@event);
+            //            var result=await _es.IndexAsync(value, idx => idx
+            //    .Index("products")
+            //    .Id(value.ProductId ?? Guid.NewGuid().ToString())
+            //);
+            //            if (!result.IsValidResponse)
+            //            {
+            //                Console.WriteLine(result.DebugInformation);
+            //                throw new Exception(result.DebugInformation);
 
-                //            }
-                await session.CommitTransactionAsync();
+            //            }
+            //  await session.CommitTransactionAsync();
 
-                return "Product olusturuldu.";
-            }
-            catch (Exception ex)
-            {
-                await session.AbortTransactionAsync();
-                throw;
-            }
+            return "Product olusturuldu.";
+            //}
+            //catch (Exception ex)
+            //{
+            //    await session.AbortTransactionAsync();
+            //    throw;
+            //}
 
            
         }
@@ -109,7 +111,7 @@ namespace MultiShop.Catalog.Application.Services.ProductService
             var values =await _productCollection.Find(x=>true).ToListAsync();
             foreach (var item in values) 
             {
-                item.Category = await _categoryCollection.Find(x => x.CategoryId == item.CategoryId).FirstAsync();
+                item.Category = await _categoryCollection.Find(x => x.CategoryId == item.CategoryId).FirstOrDefaultAsync();
             
             }
             return _mapper.Map<List<ResultProductsWithCategoryDto>>(values);

@@ -30,7 +30,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-        var url = '@Url.Action("_ProductListWithCategoryContentPartial", "Product", new { area = "Admin" })';
+        var url = '@Url.Action("GetProductListWithCategoryPartial", "Product", new { area = "Admin" })';
             // Sayfa açılır açılmaz isteği başlat
             $.get(url, function (data) {
                 // Gelen hazır HTML paketini konteynerin içine bas

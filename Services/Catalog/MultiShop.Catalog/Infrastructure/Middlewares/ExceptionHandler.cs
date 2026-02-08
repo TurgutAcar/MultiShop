@@ -115,7 +115,7 @@ namespace MultiShop.Catalog.Infrastructure.Middlewares
                         httpContext.Request.Path
                     );
                     break;
-                case MongoException:
+                case MongoException mongoEx:
                 case FormatException:
                     httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     criticality = UiCriticality.Low; // Developer bug

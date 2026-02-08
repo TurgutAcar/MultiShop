@@ -5,7 +5,7 @@ using MultiShop.DtoLayer.CatalogDtos.ProductDtos;
 namespace MultiShop.WebUI.Validators
 {
 
-    public class UpdateProductValidators : AbstractValidator<CreateProductDto>
+    public class UpdateProductValidators : AbstractValidator<UpdateProductDto>
     {
         public UpdateProductValidators()
         {

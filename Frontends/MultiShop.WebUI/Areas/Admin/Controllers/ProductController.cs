@@ -68,18 +68,10 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         [Route("CreateProduct")]
         public async Task<IActionResult> CreateProduct()
         {
-            ProductViewbagList();
-            
+            var ok = await LoadCategoriesForView();
+            if (!ok)
+                return RedirectToAction("Index");
 
-            var client =_httpClientFactory.CreateClient();
-            var values = await _categoryService.GetAllCategoryAsync();
-            List<SelectListItem> categoryValues = (from x in values.Data
-                                                   select new SelectListItem
-                                                   {
-                                                       Text = x.CategoryName,
-                                                       Value = x.CategoryId
-                                                   }).ToList();
-            ViewBag.CategoryValues = categoryValues;
             return View();
         }
         [HttpPost]
@@ -91,6 +83,8 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(this.ModelState);
+                await LoadCategoriesForView(); // 🔥 tekrar doldur
+
                 return View(createProductDto);
 
 
@@ -100,6 +94,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
+                await LoadCategoriesForView(); // 🔥 tekrar doldur
 
                 return View(createProductDto);
 
@@ -124,20 +119,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         {
             ProductViewbagList();
 
-            var result = await _categoryService.GetAllCategoryAsync();
-            if (!result.IsSuccessful && result.Data == null)
-            {
-                SetUIErrorMessage(result.ErrorMessages);
-                return RedirectToAction("Index");
-            }
-
-            List<SelectListItem> categoryValues = (from x in result.Data
-                                                   select new SelectListItem
-                                                   {
-                                                       Text = x.CategoryName,
-                                                       Value = x.CategoryId
-                                                   }).ToList();
-            ViewBag.CategoryValues = categoryValues;
+           
 
 
             var resultGetByIdProduct = await _productService.GetByIdProductAsync(id);
@@ -146,6 +128,9 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
                 SetUIErrorMessage(resultGetByIdProduct.ErrorMessages);
                 return RedirectToAction("Index");
             }
+            var ok = await LoadCategoriesForView();
+            if (!ok)
+                return RedirectToAction("Index");
             return View(resultGetByIdProduct.Data);
           
         }
@@ -158,6 +143,8 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(this.ModelState);
+                await LoadCategoriesForView(); // 🔥 tekrar doldur
+
                 return View(updateProductDto);
 
 
@@ -168,6 +155,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
+                await LoadCategoriesForView(); // 🔥 tekrar doldur
 
                 return View(updateProductDto);
 
@@ -203,7 +191,7 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             };
 
 
-            return PartialView("_ProductListWithCategoryPartial", vm);
+            return PartialView("_ProductListWithCategoryContentPartial", vm);
         }
        
         void ProductViewbagList()
@@ -212,6 +200,30 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             ViewBag.v1 = "Ana Sayfa";
             ViewBag.v2 = "Ürünler";
             ViewBag.v3 = "Ürün Listesi";
+        }
+        private async Task<bool> LoadCategoriesForView()
+        {
+            var result = await _categoryService.GetAllCategoryAsync();
+
+            if (!result.IsSuccessful || result.Data == null)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+                return false;
+            }
+
+            if (!result.Data.Any())
+            {
+                SetUIWarnMessage("Ürün eklemek için önce kategori oluşturmalısınız.");
+                return false;
+            }
+
+            ViewBag.CategoryValues = result.Data.Select(x => new SelectListItem
+            {
+                Text = x.CategoryName,
+                Value = x.CategoryId
+            }).ToList();
+
+            return true;
         }
 
 

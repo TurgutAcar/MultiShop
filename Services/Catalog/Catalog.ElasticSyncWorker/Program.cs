@@ -20,7 +20,7 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq", 5672, "/", h =>
+        cfg.Host("localhost", 5672, "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
@@ -49,7 +49,7 @@ builder.Services.AddMassTransit(x =>
 
 //builder.Services.AddHostedService<ElasticSyncWorker>();
 // Elasticsearch Ayar
-var esSettings = new ElasticsearchClientSettings(new Uri("http://elasticsearch:9200"))
+var esSettings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
                     .DefaultIndex("products");
 
 var esClient = new ElasticsearchClient(esSettings);

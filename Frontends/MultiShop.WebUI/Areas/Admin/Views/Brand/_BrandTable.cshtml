@@ -32,7 +32,7 @@
         .then(r => r.json())
     .then(res => {
         handleJsResponse(res, () => {
-            setTimeout(() => location.reload(), 4000);
+            setTimeout(() => location.reload(), 2000);
         });
         // if (res.IsSuccessful) {
         //     toastr[res.Source](res.Data);

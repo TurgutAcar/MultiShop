@@ -26,6 +26,17 @@ namespace MultiShop.WebUI.Controllers
             
         
         }
+        protected void SetUIWarnMessage(string errorMessage)
+        {
+
+            TempData.SetUiMessage(new UiMessage
+            {
+                Type = UiMessageType.Error,
+                Message = errorMessage
+            });
+
+
+        }
         protected void SetUISuccessMessage(Result<string> result)
         {
          

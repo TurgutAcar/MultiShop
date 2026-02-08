@@ -26,6 +26,7 @@ builder.Services.AddSingleton<IDatabaseSettings>(sp =>
 builder.Services.Configure<OutboxOptions>(
     builder.Configuration.GetSection("Outbox"));
 builder.Services.AddHealthChecks();
+
 //  .AddRabbitMQ(
 //      "rabbitmq:5672",
 //      name: "rabbitmq",
@@ -45,7 +46,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq", 5672, "/", h =>
+        cfg.Host("localhost", 5672, "/", h =>
         {
             h.Username("guest");
             h.Password("guest");

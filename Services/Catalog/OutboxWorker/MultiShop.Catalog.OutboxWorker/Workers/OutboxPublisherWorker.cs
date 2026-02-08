@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MultiShop.Catalog.OutboxWorker.Entities;
 using MultiShop.Catalog.OutboxWorker.Infrastructure.Settings;
+using MultiShop.Shared.Events;
 using System.Text.Json;
 
 namespace MultiShop.Catalog.OutboxWorker.Workers
@@ -68,10 +69,10 @@ namespace MultiShop.Catalog.OutboxWorker.Workers
                 {
                     using var scope = _scopeFactory.CreateScope();
                     var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
+                    var assembly = typeof(ProductCreatedEvent).Assembly;
+                    var eventType = assembly.GetType($"MultiShop.Shared.Events.{message.Type}");
 
-                    var eventType = Type.GetType(
-                        $"MultiShop.Shared.Events.{message.Type}, MultiShop.Shared"
-                    );
+                 
 
                     var @event = JsonSerializer.Deserialize(message.Payload, eventType!);
 
