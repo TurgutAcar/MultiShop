@@ -53,6 +53,13 @@ namespace MultiShop.WebUI.Services.CatologService.ProductService
 
         }
 
+        public async Task<Result<List<ResultProductDto>>> GetPagedProductsByCategoryIdAsync(string categoryId, int page)
+        {
+            var _httpClient = _factory.Create("Catalog");
+            var response = await _httpClient.GetAsync($"ProductSearchs/sort?categoryId={categoryId}&page={page}&pageSize=10&sortField=productPrice&sortOrder=asc");
+            return await response.ReadSafeResultAsync<List<ResultProductDto>>();
+        }
+
         public async Task<Result<List<ResultProductsWithCategoryDto>>> GetProductsWithCategoryAsync()
         {
             var _httpClient = _factory.Create("Catalog");

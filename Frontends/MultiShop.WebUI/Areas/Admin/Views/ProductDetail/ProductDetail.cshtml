@@ -1,0 +1,16 @@
+﻿@model ProductDetailIndexViewModel
+
+@{
+    ViewData["Title"] = "UpdateProductDetail";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+@if (ViewBag.ProductImageId == null)
+{
+    <partial name="CreateProductDetail" model="Model.CreateProductDetail" />
+
+}
+else
+{
+    <partial name="UpdateProductDetail" model="Model.UpdateProductDetail" />
+}
+

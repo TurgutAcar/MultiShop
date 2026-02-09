@@ -42,6 +42,8 @@ using MultiShop.Shared.Enums;
 using Polly;
 using MultiShop.WebUI.Helper;
 using MultiShop.WebUI.Validators.Catalog.Brand;
+using Microsoft.AspNetCore.Mvc;
+using MultiShop.Shared.Responses;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAntiforgery(options =>
@@ -165,6 +167,22 @@ builder.Services.AddHttpClient<IUserStatisticService, UserStatisticService>(opt 
     opt.BaseAddress = new Uri(values.IdentityServerUrl);
 }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .ToList();
+
+        return new BadRequestObjectResult(
+            Result<object>.Failure(400, errors)
+        );
+    };
+});
 
 //builder.Services.AddHttpClient<ICategoryService, CategoryService>("Visitor",opt =>
 //{

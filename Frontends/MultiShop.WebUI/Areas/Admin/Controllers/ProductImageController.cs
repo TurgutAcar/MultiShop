@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.ProductImageDtos;
 using MultiShop.Shared.Responses;
 using MultiShop.WebUI.Controllers;
+using MultiShop.WebUI.Models;
 using MultiShop.WebUI.Services.ProductImageServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -27,16 +28,46 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
         {
             ProductImageViewbagList();
             var result = await _productImageService.GetByProductIdProductImageAsync(id);
-            if (!result.IsSuccessful && result.Data == null)
+            if (!result.IsSuccessful)
             {
                 SetUIErrorMessage(result.ErrorMessages);
                 return RedirectToAction("Index");
             }
-            return View(result.Data);
+            if(result.Data == null)
+            {
+             
+                return View(new ProductImageIndexViewModel
+                {
+                    CreateProductImage = new CreateProductImageDto { ProductId = id },
+                });
+            }
+            ViewBag.ProductImageId = result.Data.ProductImageId;
+            return View(new ProductImageIndexViewModel
+            {
+                UpdateProductImage = result.Data,
+            });
+
         }
-        [Route("ProductImageDetail/{id}")]
+        [Route("CreateProductImageDetail")]
         [HttpPost]
-        public async Task<IActionResult> ProductImageDetail(UpdateProductImageDto updateProductImageDto)
+        public async Task<IActionResult> CreateProductImageDetail(CreateProductImageDto createProductImageDto)
+        {
+            var result = await _productImageService.CreateProductImageAsync(createProductImageDto);
+            if (!result.IsSuccessful)
+            {
+                SetUIErrorMessage(result.ErrorMessages);
+
+                return View(createProductImageDto);
+
+            }
+            SetUISuccessMessage(result.Data);
+            return RedirectToAction("ProductListWithCategory", "Product", new { area = "Admin" });
+
+          
+        }
+        [Route("UpdateProductImageDetail")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateProductImageDetail(UpdateProductImageDto updateProductImageDto)
         {
             var result = await _productImageService.UpdateProductImageAsync(updateProductImageDto);
             if (!result.IsSuccessful)
@@ -49,9 +80,8 @@ namespace MultiShop.WebUI.Areas.Admin.Controllers
             SetUISuccessMessage(result.Data);
             return RedirectToAction("ProductListWithCategory", "Product", new { area = "Admin" });
 
-          
-        }
 
+        }
         void ProductImageViewbagList()
         {
             ViewBag.v0 = "Ürün Görsel İşlemleri";

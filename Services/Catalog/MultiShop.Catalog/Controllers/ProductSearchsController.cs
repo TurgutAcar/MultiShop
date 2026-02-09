@@ -16,16 +16,30 @@ namespace MultiShop.Catalog.Controllers
             _productSearchService = productSearchService;
         }
         [HttpGet("sort")]
-        public async Task<IActionResult> SearchProductsList(int page = 1,
+        [ResponseCache(Duration = 30)]
+        public async Task<IActionResult> SearchProductsList(string categoryId, int page = 1,
             int pageSize = 10,
+            double lastPrice = 0,
+            string lastId = null,
             string sortField = "productPrice",
             string sortOrder = "asc")
         {
-            var response =  await _productSearchService.SearchProductsAsync(page, pageSize, sortField, sortOrder);
+            var response = await _productSearchService.SearchProductsAsync(categoryId, pageSize, lastPrice, lastId, sortField, sortOrder);
             return StatusCode(response.StatusCode, response);
 
         }
+        //public async Task<IActionResult> SearchProductsList(string categoryId,int page = 1,
+        //    int pageSize = 10,
+        //    string sortField = "productPrice",
+        //    string sortOrder = "asc")
+        //{
+        //    var response =  await _productSearchService.SearchProductsAsync(categoryId, page, pageSize, sortField, sortOrder);
+        //    return StatusCode(response.StatusCode, response);
+
+        //}
         [HttpGet("search")]
+        [ResponseCache(Duration = 30)]
+
         public async Task<IActionResult> Search([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
 

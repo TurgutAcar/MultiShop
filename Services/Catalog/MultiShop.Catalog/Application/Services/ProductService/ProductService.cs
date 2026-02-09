@@ -50,7 +50,9 @@ namespace MultiShop.Catalog.Application.Services.ProductService
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     ProductPrice = product.ProductPrice,
+                    ProductImageUrl=product.ProductImageUrl,
                     CategoryId = product.CategoryId
+                    
                 };
                 var outbox = new OutboxMessage
                 {
@@ -90,6 +92,19 @@ namespace MultiShop.Catalog.Application.Services.ProductService
         public async Task<Result<string>> DeleteProductAsync(string id)
         {
             await _productCollection.DeleteOneAsync(x=>x.ProductId==id);
+            var @event = new ProductDeletedEvent
+            {
+                ProductId =id,
+               
+            };
+            var outbox = new OutboxMessage
+            {
+                Type = nameof(ProductDeletedEvent),
+                Payload = JsonSerializer.Serialize(@event),
+                OccurredOn = DateTime.UtcNow
+            };
+
+            await _outboxMessageCollection.InsertOneAsync(outbox);
             return "Product silindi.";
 
         }
@@ -130,8 +145,24 @@ namespace MultiShop.Catalog.Application.Services.ProductService
 
         public async Task<Result<string>> UpdateProductAsync(UpdateProductDto updateProductDto)
         {
-           var value = _mapper.Map<Product>(updateProductDto);
-            await _productCollection.FindOneAndReplaceAsync(x => x.ProductId == updateProductDto.ProductId, value);
+           var product = _mapper.Map<Product>(updateProductDto);
+            await _productCollection.FindOneAndReplaceAsync(x => x.ProductId == updateProductDto.ProductId, product);
+            var @event = new ProductUpdatedEvent
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                ProductPrice = product.ProductPrice,
+                ProductImageUrl = product.ProductImageUrl,
+                CategoryId = product.CategoryId
+            };
+            var outbox = new OutboxMessage
+            {
+                Type = nameof(ProductUpdatedEvent),
+                Payload = JsonSerializer.Serialize(@event),
+                OccurredOn = DateTime.UtcNow
+            };
+        
+            await _outboxMessageCollection.InsertOneAsync(outbox);
             return "Product kaydedildi.";
 
         }

@@ -1,4 +1,5 @@
-﻿@model UpdateProductDetailDto
+﻿@model CreateProductDetailDto
+
 
 <section class="content container-fluid">
     <div class="row">
@@ -6,8 +7,7 @@
         <div class="col-md-12">
             <div class="chart-box">
                 <div class="bs-example" data-example-id="bordered-table">
-                    <form method="post" asp-action="UpdateProductDetail" asp-controller="ProductDetail" asp-area="Admin">
-                        <input type="hidden" readonly class="form-control" asp-for="ProductDetailID" />
+                    <form method="post" asp-action="CreateProductDetail" asp-controller="ProductDetail" asp-area="Admin">
                          <input type="hidden" readonly class="form-control" asp-for="ProductId" />
                         <label>Ürün Açıklaması</label>
                         <textarea rows="5" class="form-control" asp-for="ProductDescription"></textarea>
@@ -19,7 +19,7 @@
                         <span asp-validation-for="ProductInfo" class="text-danger"></span>
 
                         <br />
-                        <button class="btn btn-primary">Ürün detayını Güncelle</button>
+                        <button class="btn btn-primary">Ürün detayı Girişi</button>
                     </form>
                 </div>
             </div>

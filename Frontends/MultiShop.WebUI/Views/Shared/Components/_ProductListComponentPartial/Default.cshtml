@@ -1,11 +1,16 @@
-﻿@model List<ResultProductsWithCategoryDto>
+﻿@model List<ResultProductDto>
 
-<div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-    @foreach(var item in Model)
+@* <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+ *@
+<div id="productContainer" class="row">
+
+        @Html.Partial("_ProductListItemsPartial",Model)
+    
+   @*  @foreach(var item in Model)
     {
             <div class="product-item bg-light mb-4">
         <div class="product-img position-relative overflow-hidden">
-            <img class="img-fluid w-100" src="@item.ProductImageUrl" alt="">
+                <img loading="lazy" class="img-fluid w-100" src="@item.ProductImageUrl" alt="">
             <div class="product-action">
                 <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
                 <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
@@ -29,5 +34,5 @@
         </div>
     </div>
 
-    }
+    } *@
 </div>

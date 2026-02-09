@@ -66,8 +66,9 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 builder.Configuration
     .AddJsonFile($"configuration.{builder.Environment.EnvironmentName.ToLower()}.json", optional: true)
     .AddEnvironmentVariables();
-builder.Services.AddOcelot(builder.Configuration);
-  //  .AddDelegatingHandler<GatewayRetryHandler>(global: true); // 'global: true' dersen TÜM mikroservisleri kapsar!
+builder.Services.AddOcelot(builder.Configuration)
+.AddDelegatingHandler<ResultNormalizationHandler>(true);
+//  .AddDelegatingHandler<GatewayRetryHandler>(global: true); // 'global: true' dersen TÜM mikroservisleri kapsar!
 
 
 var env = builder.Environment;

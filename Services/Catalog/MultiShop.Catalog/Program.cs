@@ -64,7 +64,7 @@ builder.Services.AddMassTransit(x =>
 });
 
 // Elasticsearch Ayar
-var esSettings = new ElasticsearchClientSettings(new Uri("http://elasticsearch:9200"))
+var esSettings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
                     .DefaultIndex("products");
 
 var esClient = new ElasticsearchClient(esSettings);

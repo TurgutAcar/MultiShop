@@ -17,6 +17,8 @@ builder.Services.AddMassTransit(x =>
 {
     // Consumer'ý ekle
     x.AddConsumer<ProductCreatedConsumer>();
+    x.AddConsumer<ProductUpdatedConsumer>();
+    x.AddConsumer<ProductDeletedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
