@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CommentDtos;
+using MultiShop.WebUI.Services.CatologService.ProductSearchServices;
 using MultiShop.WebUI.Services.CatologService.ProductService;
 using Newtonsoft.Json;
 namespace MultiShop.WebUI.Controllers
@@ -12,12 +13,12 @@ namespace MultiShop.WebUI.Controllers
     public class ProductListController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IProductService _productService;
+        private readonly IProductSearchService _productSearchService;
 
-        public ProductListController(IHttpClientFactory httpClientFactory, IProductService productService)
+        public ProductListController(IHttpClientFactory httpClientFactory, IProductSearchService productSearchService)
         {
             _httpClientFactory = httpClientFactory;
-            _productService = productService;
+            _productSearchService = productSearchService;
         }
 
         public IActionResult Index(string id)
@@ -28,9 +29,9 @@ namespace MultiShop.WebUI.Controllers
             ViewBag.i = id;
             return View();
         }
-        public async Task<IActionResult> LoadMore(string id, int page)
+        public async Task<IActionResult> LoadMore(string id, double lastPrice, string lastId)
         {
-            var result = await _productService.GetPagedProductsByCategoryIdAsync(id, page);
+            var result = await _productSearchService.GetPagedProductsByCategoryIdAsync(categoryId: id,lastPrice: lastPrice,lastId: lastId);
             return PartialView("_ProductListItemsPartial", result.Data);
         }
         public IActionResult ProductDetail(string id)

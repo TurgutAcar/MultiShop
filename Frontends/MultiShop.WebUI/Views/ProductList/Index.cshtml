@@ -34,6 +34,20 @@
     let loading = false;
     let finished = false;
     let categoryId = '@ViewBag.i';
+    let lastPrice=null; 
+    let lastId="";
+        $(document).ready(function () {
+        updateCursor();
+    });
+
+        function updateCursor() {
+        let cursor = $("#cursorData");
+        if (cursor.length) {
+            lastPrice = cursor.data("lastprice");
+            lastId = cursor.data("lastid");
+            console.log("Cursor updated:", lastPrice, lastId);
+        }
+    }
 
     window.addEventListener("scroll", function () {
 
@@ -50,12 +64,13 @@
 
         $("#loading").removeClass("d-none");
 
-        $.get(`/ProductList/LoadMore?id=${categoryId}&page=${page}`, function (data) {
+        $.get(`/ProductList/LoadMore?id=${categoryId}&lastPrice=${lastPrice}&lastId=${lastId}`, function (data) {
 
             if (data.trim().length == 0) {
                 finished = true;
             } else {
                 $("#productContainer").append(data);
+                updateCursor();
             }
 
             loading = false;

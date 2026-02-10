@@ -15,7 +15,7 @@ namespace MultiShop.Catalog.Search.Controllers
         }
         [HttpGet("sort")]
         [ResponseCache(Duration = 30)]
-        public async Task<IActionResult> SearchProductsList(string categoryId, int page = 1,
+        public async Task<IActionResult> SearchProductsList(string categoryId,
             int pageSize = 10,
             double lastPrice = 0,
             string lastId = null,

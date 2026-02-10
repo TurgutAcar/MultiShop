@@ -1,5 +1,7 @@
-﻿@model List<ResultProductDto>
-@foreach (var item in Model)
+﻿@using MultiShop.Shared.Responses
+@model PagedResult<ResultProductDto>
+
+@foreach (var item in Model.Items )
 {
     <div class="col-lg-4 col-md-6 col-sm-6 pb-1 product-card">
 
@@ -30,3 +32,8 @@
 </div>
     </div>
 }
+<!-- Cursor Values -->
+<div id="cursorData"
+     data-lastprice="@Model.LastPrice"
+     data-lastid="@Model.LastId">
+</div>

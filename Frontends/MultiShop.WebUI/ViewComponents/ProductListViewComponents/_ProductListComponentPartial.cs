@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MultiShop.DtoLayer.CatalogDtos.ProductDtos;
+using MultiShop.WebUI.Services.CatologService.ProductSearchServices;
 using MultiShop.WebUI.Services.CatologService.ProductService;
 using Newtonsoft.Json;
 
@@ -7,16 +8,16 @@ namespace MultiShop.WebUI.ViewComponents.ProductListViewComponents
 {
     public class _ProductListComponentPartial:ViewComponent
     {
-        private readonly IProductService _productService;
+        private readonly IProductSearchService _productSearchService;
 
-        public _ProductListComponentPartial(IProductService productService)
+        public _ProductListComponentPartial(IProductSearchService productSearchService)
         {
-            _productService = productService;
+            _productSearchService = productSearchService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string id)
         {
-            var values =await _productService.GetPagedProductsByCategoryIdAsync(id,1);
+            var values =await _productSearchService.GetPagedProductsByCategoryIdAsync(id);
             return View(values.Data);
           
         }
