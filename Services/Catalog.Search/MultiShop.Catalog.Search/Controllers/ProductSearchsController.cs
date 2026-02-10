@@ -1,10 +1,8 @@
 ﻿
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MultiShop.Catalog.Application.Services.ProductSearch;
-using MultiShop.Catalog.Infrastructure.Middlewares;
+using MultiShop.Catalog.Search.Services.ProductSearch;
 
-namespace MultiShop.Catalog.Controllers
+namespace MultiShop.Catalog.Search.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

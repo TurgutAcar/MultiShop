@@ -6,6 +6,7 @@
         public string IdentityServerUrl {  get; set; }
         public Dictionary<string, ServiceApi> Services { get; set; }
         public ServiceApi Catalog { get; set; }
+        public ServiceApi CatalogSearch { get; set; }
         public ServiceApi Image { get; set; }
         public ServiceApi Discount { get; set; }
         public ServiceApi Order { get; set; }

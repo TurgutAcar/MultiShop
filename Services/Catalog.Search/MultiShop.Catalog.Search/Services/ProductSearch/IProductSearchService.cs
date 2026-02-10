@@ -1,7 +1,9 @@
-﻿using MultiShop.Catalog.Application.Dtos.ProductDtos;
+﻿
+
+using MultiShop.Catalog.Search.Dtos.ProductDtos;
 using MultiShop.Shared.Responses;
 
-namespace MultiShop.Catalog.Application.Services.ProductSearch
+namespace MultiShop.Catalog.Search.Services.ProductSearch
 {
     public interface IProductSearchService
     {

@@ -1,9 +1,9 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.QueryDsl;
-using Elastic.Clients.Elasticsearch.Core.Search;
-using MultiShop.Catalog.Application.Dtos.ProductDtos;
+using MultiShop.Catalog.Search.Dtos.ProductDtos;
 using MultiShop.Shared.Responses;
-namespace MultiShop.Catalog.Application.Services.ProductSearch
+
+namespace MultiShop.Catalog.Search.Services.ProductSearch
 {
     public class ProductSearchService : IProductSearchService
     {

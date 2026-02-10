@@ -46,7 +46,9 @@ namespace MultiShop.WebUI.Services.Concrete
                 ClientId = _clientSettings.MultiShopWebClient.ClientId,
                 ClientSecret=_clientSettings.MultiShopWebClient.ClientSecret,
                 RefreshToken=refreshToken,
-                Address=discoveryEndPoint.TokenEndpoint
+                Address=discoveryEndPoint.TokenEndpoint,
+                Scope = _clientSettings.MultiShopWebClient.Scopes
+
             };
             var token = await _httpClient.RequestRefreshTokenAsync(refreshTokenRequest);
 
@@ -91,7 +93,8 @@ namespace MultiShop.WebUI.Services.Concrete
                 ClientSecret = _clientSettings.MultiShopWebClient.ClientSecret,
                 UserName = signUpDto.UserName,
                 Password = signUpDto.Password,
-                Address = discoveryEndPoint.TokenEndpoint
+                Address = discoveryEndPoint.TokenEndpoint,
+                Scope = _clientSettings.MultiShopWebClient.Scopes
             };
             var token=await _httpClient.RequestPasswordTokenAsync(passwordTokenRequest);
             if (token.IsError)
