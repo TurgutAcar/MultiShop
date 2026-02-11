@@ -36,20 +36,21 @@
     let categoryId = '@ViewBag.i';
     let lastPrice=null; 
     let lastId="";
-        $(document).ready(function () {
-        updateCursor();
-    });
 
-        function updateCursor() {
-        let cursor = $("#cursorData");
+
+      function updateCursor() {
+        let cursor = $(".cursorData").last(); // ⚠️ SON eklenen
         if (cursor.length) {
             lastPrice = cursor.data("lastprice");
             lastId = cursor.data("lastid");
+
             console.log("Cursor updated:", lastPrice, lastId);
         }
     }
 
+
     window.addEventListener("scroll", function () {
+            console.log("scroll fired");
 
         if (finished || loading) return;
 
@@ -77,4 +78,6 @@
             $("#loading").addClass("d-none");
         });
     }
+    setTimeout(updateCursor, 500);
+
 </script>

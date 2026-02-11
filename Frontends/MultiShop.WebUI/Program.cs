@@ -44,6 +44,7 @@ using MultiShop.WebUI.Helper;
 using MultiShop.WebUI.Validators.Catalog.Brand;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Shared.Responses;
+using MultiShop.WebUI.Services.CatologService.ProductSearchServices;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAntiforgery(options =>
@@ -229,6 +230,7 @@ builder.Services.AddTransient<IFeatureService, FeatureService>();
 //    opt.BaseAddress = new Uri($"{values.OcelotUrl}/{values.Catalog.Path}/");
 //}).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 builder.Services.AddTransient<IOfferDiscountService, OfferDiscountService>();
+builder.Services.AddTransient<IProductSearchService, ProductSearchService>();
 
 //builder.Services.AddHttpClient<IOfferDiscountService, OfferDiscountService>("Visitor",opt =>
 //{
