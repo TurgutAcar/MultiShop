@@ -1,0 +1,48 @@
+﻿.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.card {
+    width: 300px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes shine {
+    to {
+        background-position-x: -200%;
+    }
+}
+
+/* Skeleton için özel scope */
+.skeleton .card__image,
+.skeleton h2,
+.skeleton p {
+    background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 1s shine linear infinite;
+}
+
+.skeleton .card__image {
+    height: 200px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.card__content {
+    padding: 20px;
+}
+
+.skeleton h2 {
+    height: 30px;
+}
+
+.skeleton p {
+    height: 70px;
+    width: 80%;
+}

@@ -17,12 +17,26 @@
         <div class="col-lg-9 col-md-8">
             <div class="row pb-3">
                 @await Component.InvokeAsync("_ProductListGetProductCountComponentPartial")
-                @await Component.InvokeAsync("_ProductListComponentPartial",new{id=ViewBag.i})
+
+                <!-- ✅ ÜRÜNLER + SKELETON CONTAINER -->
+                <div id="productContainer" class="row">
+                    @* Sayfa ilk açıldığında skeleton *@
+                    @await Component.InvokeAsync("_SkeletonCardComponentPartial")
+                </div>
+
+                <!-- LoadMore skeleton -->
+                <div id="skeletonLoading" class="d-none w-100">
+                    @await Component.InvokeAsync("_SkeletonCardComponentPartial")
+                </div>
+
                 <div id="loading" class="text-center d-none">
                     <img src="/img/loading.gif" />
                 </div>
-                @await Component.InvokeAsync("_ProductListPaginationComponentPartial")
 
+@*                 @await Component.InvokeAsync("_ProductListComponentPartial",new{id=ViewBag.i})
+ *@              
+@*                 @await Component.InvokeAsync("_ProductListPaginationComponentPartial")
+ *@
              
         
             </div>
@@ -47,8 +61,32 @@
             console.log("Cursor updated:", lastPrice, lastId);
         }
     }
+            document.addEventListener("DOMContentLoaded", function () {
+
+        fetch(`/ProductList/FirstLoad?id=${categoryId}`)
+            .then(r => r.json()) //  TEXT DEĞİL JSON
+            .then(res => {
+
+                console.log(res);
+
+                $("#productContainer").html(""); // skeleton temizle
+
+                if (!res.items || res.items.length == 0) {
+                    finished = true;
+                    return;
+                }
+
+                res.items.forEach(p => {
+                    $("#productContainer").append(renderProduct(p));
+                });
+
+                lastPrice = res.lastPrice;
+                lastId = res.lastId;
+            });
+    });
 
 
+  
     window.addEventListener("scroll", function () {
             console.log("scroll fired");
 
@@ -58,26 +96,50 @@
             loadMore();
         }
     });
-
-    function loadMore() {
-        loading = true;
-        page++;
-
-        $("#loading").removeClass("d-none");
-
-        $.get(`/ProductList/LoadMore?id=${categoryId}&lastPrice=${lastPrice}&lastId=${lastId}`, function (data) {
-
-            if (data.trim().length == 0) {
-                finished = true;
-            } else {
-                $("#productContainer").append(data);
-                updateCursor();
-            }
-
-            loading = false;
-            $("#loading").addClass("d-none");
-        });
+            function renderProduct(product) {
+        return `
+        <div class="col-lg-4 col-md-6 col-sm-6 pb-1 product-card">
+            <div class="product-item bg-light mb-4">
+                <div class="product-img position-relative overflow-hidden">
+                    <img class="img-fluid w-100" src="${product.productImageUrl}">
+                </div>
+                <div class="text-center py-4">
+                    <h6>${product.productName}</h6>
+                    <h5>${product.productPrice} ₺</h5>
+                </div>
+            </div>
+        </div>`;
     }
+
+
+        function loadMore() {
+        if (loading || finished) return;
+
+        loading = true;
+        $("#skeletonLoading").removeClass("d-none");
+
+        fetch(`/ProductList/LoadMore?id=${categoryId}&lastPrice=${lastPrice}&lastId=${lastId}`)
+            .then(r => r.json())
+            .then(res => {
+
+                if (!res.items || res.items.length == 0) {
+                    finished = true;
+                    return;
+                }
+
+                res.items.forEach(p => {
+                    $("#productContainer").append(renderProduct(p));
+                });
+
+                lastPrice = res.lastPrice;
+                lastId = res.lastId;
+            })
+            .finally(() => {
+                $("#skeletonLoading").addClass("d-none");
+                loading = false;
+            });
+    }
+
     setTimeout(updateCursor, 500);
 
 </script>

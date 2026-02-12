@@ -22,6 +22,7 @@ namespace MultiShop.Catalog.Search.Controllers
             string sortField = "productPrice",
             string sortOrder = "asc")
         {
+            Thread.Sleep(10000);
             var response = await _productSearchService.SearchProductsAsync(categoryId, pageSize, lastPrice, lastId, sortField, sortOrder);
             return StatusCode(response.StatusCode, response);
 

@@ -26,13 +26,23 @@ namespace MultiShop.WebUI.Controllers
             ViewBag.directory1 = "Ana Sayfa";
             ViewBag.directory2 = "Ürünler";
             ViewBag.directory3 = "Ürün Listesi";
+            ViewBag.IsLoading = true;
             ViewBag.i = id;
             return View();
         }
+        public async Task<IActionResult> FirstLoad(string id)
+        {
+            var result = await _productSearchService.GetPagedProductsByCategoryIdAsync(id);
+            return Json(result.Data);
+          //  return PartialView("_ProductListItemsPartial", result.Data);
+        }
+
         public async Task<IActionResult> LoadMore(string id, double lastPrice, string lastId)
         {
             var result = await _productSearchService.GetPagedProductsByCategoryIdAsync(categoryId: id,lastPrice: lastPrice,lastId: lastId);
-            return PartialView("_ProductListItemsPartial", result.Data);
+            return Json(result.Data);
+
+         //     return PartialView("_ProductListItemsPartial", result.Data);
         }
         public IActionResult ProductDetail(string id)
         {
