@@ -11,6 +11,9 @@ namespace MultiShop.IdentityServer.Services
     public interface IUserService
     {
         Task<Result<IdentityResult>> RegisterAsync(UserRegisterDto dto);
+        Task<Result<string>> ForgotPasswordAsync(ForgotPasswordDto dto);
+        Task<Result<string>> ResetPasswordAsync(ResetPasswordDto dto);
+
         Task<Result<TokenResponseViewModel>> LoginAsync(UserLoginDto dto);
         Task<Result<ApplicationUser>> GetUserAsync(string id);
         Task<Result<List<ApplicationUser>>> GetUserListAsync();

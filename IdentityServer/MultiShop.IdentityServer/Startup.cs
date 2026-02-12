@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using HealthChecks.UI.Client;
 using MultiShop.IdentityServer.Seeds;
+using MultiShop.IdentityServer.Settings;
 
 namespace MultiShop.IdentityServer
 {
@@ -43,6 +44,8 @@ namespace MultiShop.IdentityServer
             services.AddLocalApiAuthentication();
             services.AddControllersWithViews();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
+
             services.AddDefaultCors(Environment);
             services.AddHealthChecks()
     .AddSqlServer(
@@ -81,7 +84,12 @@ namespace MultiShop.IdentityServer
                     options.Window = TimeSpan.FromSeconds(1);
                 });
             });
-            
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            {
+                opt.TokenLifespan = TimeSpan.FromHours(2);
+            });
+
+
             var builder = services.AddIdentityServer(options =>
             {
                  options.Events.RaiseErrorEvents = true;
@@ -108,6 +116,7 @@ namespace MultiShop.IdentityServer
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
             builder.AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>();
+            builder.Services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
             services.AddAuthentication()
                 .AddGoogle(options =>
